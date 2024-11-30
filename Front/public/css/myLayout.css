@@ -1,0 +1,238 @@
+
+main {
+    /*width: 100%;*/
+    /*display: flex;*/
+    /*flex-direction: column;*/
+}
+
+aside.profileContainer {
+    background-color: var(--color-ui-white);
+    border-right: 1px solid var(--color-ui-backgroundb);
+    /*width: 100%;*/
+    /*box-sizing: border-box;*/
+
+    /*영역 관상용*/
+}
+
+.profileContainer{
+    /*box-sizing: border-box;*/
+    /*vertical-align: baseline;*/
+    /*display: block;*/
+
+}
+
+div.profile{
+    display: flex;
+    background-color: var(--color-ui-white);
+    padding: 30px;
+    border-bottom: 1px solid var(--color-ui-backgroundb);
+}
+
+div.profile img{
+    width: 80px;
+    height: 80px;
+    /*display: block;*/
+    background-color: #989CA2;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+div.icon{
+    display: flex;
+    margin-left: auto;
+    width: 20px;
+    height: 32px;
+    /*background-color: #989CA2;*/
+    padding: 0px 20px;
+}
+div.icon#extend {
+    display: none;
+}
+ul.info{
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+li.info-name{
+    color:var(--color-text-title);
+    font-size: var(--font-regular-h3);
+}
+li.info-email{
+    color:var(--color-text-unselected);
+    font-size: var(--font-regular-notion);
+
+}
+li.info button{
+    color: var(--color-text-unselected);
+    background-color: var(--color-ui-white);
+    border: 1px solid var(--color-text-caption);
+    font-size: var(--font-regular-notion);
+    border-radius: 3px;
+    width: 74px;
+    height: 25px;
+}
+
+nav.profileNav{
+    /*display: flex;*/
+    /*justify-content: space-around;*/
+    /*flex-wrap: nowrap;*/
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--color-text-caption);
+}
+nav.profileNav ul{
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+}
+
+nav.profileNav li{
+    cursor : pointer;
+}
+nav.profileNav li img{
+    cursor : pointer;
+}
+nav.profileNav li:hover{
+    color: var(--color-text-unselected);
+}
+
+nav.profileNav li.active  {
+    color: var(--color-text-unselected);
+
+}
+nav.profileNav li:hover img{
+    filter: brightness(0) saturate(100%);
+    opacity: 0.5;
+}
+nav.profileNav li:active img{
+    filter: brightness(0) saturate(100%);
+    opacity: 0.5;
+}
+
+nav.profileNav li a{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+
+}
+nav.profileNav li img{
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+}
+
+
+nav.profileNav li span:nth-child(1){
+    /*border : 1px solid var(--color-text-caption);*/
+    width: 30px;
+    height: 30px;
+    object-fit: contain;
+    /*background-color: var(--color-text-caption);*/
+}
+
+
+/*-------아이콘 영역---------*/
+button.icon\:close {
+    align-self: flex-start;
+    /*padding-top: 5px;*/
+    /*margin: px;*/
+}
+.icon\:close{
+    --icon-width: 30px;
+    --icon-color:black;
+    display: inline-flex;
+    align-items: center;
+    height: var(--icon-width);
+    width: var(--icon-width);
+    overflow: visible;
+    color: var(--color-text-unselected);
+    margin: 10px;
+    /*overflow: visible;*/
+    padding: 0;
+    border: none;
+    background-color: transparent;
+    flex-wrap: nowrap;
+    /*flex-grow: 0;*/
+}
+:is(
+.icon\:close
+)::before{
+    flex-shrink: 0;
+    content: "";
+    width: var(--icon-width);
+    height: var(--icon-width);
+    display: inline-flex;
+    overflow: hidden;
+    /*text-indent: -999px;*/
+    background-color: var(--color-text-unselected);
+    background-repeat: no-repeat;
+    mask-size: var(--icon-width);
+}
+.icon\:close::before{
+    mask-image: url("../imgs/icon/cancel.svg");
+}
+.icon\:close span{
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+
+
+    /*!* 아이콘 이미지에 대한 hover 효과도 필요한 경우 *!*/
+    /*nav.profileNav li a:hover img {*/
+    /*    filter: brightness(0) saturate(100%) invert(var(--color-ui-backgroundb));*/
+    /*}*/
+
+    /*nav.profileNav li a.router-link-active img {*/
+    /*    filter: brightness(0) saturate(100%) invert(var(--color-text-caption));*/
+    /*}*/
+
+
+}
+
+@media (min-width: 769px) {
+
+    .mainLayout {
+        display: flex;
+        /*background-color: #58ccff;*/
+        overflow: hidden;
+    }
+    aside.profileContainer {
+        min-width: 300px;
+        /*margin-left: calc(max(0px, 20vw - 160px));*/
+        border-right: 1px solid var(--color-text-caption);
+        /*최소 크기 때문에 넣어둔거...*/
+        max-height: 10000px;
+        min-height: 500px;
+
+    }
+    nav.profileNav{
+        border-bottom: none;
+    }
+
+    nav.profileNav ul{
+        display: inline-block;
+    }
+    nav.profileNav li a{
+        /*display: flex;*/
+        /*align-items: center;*/
+        flex-direction: row;
+        }
+    div.profile{
+        display: flex;
+        flex-direction: column;
+    }
+    div.icon#reduce {
+        display: none;
+    }
+    div.icon#extend {
+        display: flex;
+    }
+    @media (min-width: 1400px) {
+        aside.profileContainer {
+            margin-left: calc(max(15px, 1vw));
+        }
+    }
+ }
+
