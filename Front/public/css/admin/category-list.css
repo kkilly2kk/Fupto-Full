@@ -1,168 +1,258 @@
-section {
-  display: flex;
-  gap:50px;
-  justify-content: center;
-}
-
 .card {
-  width: 350px;
   background-color: #fff;
   border: none;
-  border-radius: 4px;
+  border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
 }
-
-.card1 {
-  width: 350px;
-  background-color: #fff;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
-}
-  
 
 .card-body {
   padding: 15px;
 }
 
-.card1-body {
-  padding: 15px;
-}
-
-/* 카드 레이블 */
-.card-body label {
-  display: block;
-  /* margin-bottom: 20px; */
-}
-
-/* 레이블 텍스트와 입력 필드 간격 조정 */
-.card-body label span {
-  display: block;
-  font-weight: 600;
-  color: var(--dark-grey);
-}
-
-/* 입력 필드 스타일 */
-.card-body input[type="text"],
-.card-body input[type="url"],
-.card-body input[type="number"],
-.card-body textarea,
-.card-body select {
+.table {
   width: 100%;
-  padding: 3px;
-  margin: 5px 0;
-  border: 1px solid var(--dark-grey);
-  border-radius: 5px;
-  transition: border-color 0.3s;
-  font-size: 16px;
+  border-collapse: collapse;
+  margin-top: 10px;
+  margin-bottom: 15px;
 }
 
-.card-body input[type="text"]:focus,
-.card-body input[type="url"]:focus,
-.card-body input[type="number"]:focus,
-.card-body textarea:focus,
-.card-body select:focus {
-  border-color: var(--blue);
-  outline: none;
+.table th,
+.table td {
+  padding: 8px;
+  border: 1px solid #e0e0e0;
 }
 
-/* 파일 업로드 스타일 */
-.card-body .file-upload {
-  position: relative;
-  display: inline-block;
+.table th {
+  background-color: #f8f8f8;
+  font-weight: 500;
+  text-align: center;
+  color: #333;
+  width: 100px;
 }
 
-.card-body .file-upload input[type="file"] {
-  display: none;
+.select,
+.input-text {
+  width: auto;
+  padding: 6px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 12px;
 }
 
-.card-body .file-upload label {
-  display: inline-block;
-  padding: 6px 10px;
-  border: solid 1px var(--dark-grey);
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  font-size: 14px;
+.select {
+  background-color: #fff;
+  margin-right: 5px;
 }
 
-.card-body .file-upload label:hover {
-  background-color: var(--blue);
-}
-
-/* 이미지 미리보기 스타일 */
-.image-preview {
-  margin-top: 15px;
-}
-
-.image-preview img {
-  max-width: 100%;
-  max-height: 150px;
-  border: 1px solid var(--dark-grey);
-  border-radius: 5px;
-  object-fit: cover;
-}
-
-/* 버튼 그룹 */
-.button-group {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 25px;
-}
-
-.button-group .submit-btn,
-.button-group .cancel-btn {
-  padding: 5px 10px;
+.btn {
+  padding: 6px 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 12px;
   transition: background-color 0.3s;
-  margin-left: 15px;
-  font-size: 14px;
 }
 
-.button-group .submit-btn {
+.btn-primary {
   background-color: var(--blue);
-  color: var(--light);
+  color: white;
 }
 
-.button-group .submit-btn:hover {
+.btn-primary:hover {
   background-color: var(--dark-blue);
 }
 
-.button-group .cancel-btn {
-  background-color: var(--grey);
-  color: var(--dark-grey);
+.text-center {
+  text-align: center;
 }
 
-.button-group .cancel-btn:hover {
-  background-color: var(--light-green);
+/* Category List specific styles */
+.category-list-table {
+  table-layout: fixed;
+  width: 100%;
 }
 
-/* 텍스트 영역 */
-textarea {
-  resize: vertical;
-  min-height: 100px;
+.category-list-table th,
+.category-list-table td {
+  text-align: center;
+  vertical-align: middle;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* 반응형 디자인
-@media (max-width: 768px) {
-  .container {
-      width: 90%;
-      padding: 20px;
-  }
+/* Column width adjustments */
+.category-list-table th:nth-child(1),
+.category-list-table td:nth-child(1) {
+  width: 5%; /* Checkbox */
+}
 
-  .button-group {
-      flex-direction: column;
-      align-items: stretch;
-  }
+.category-list-table th:nth-child(2),
+.category-list-table td:nth-child(2) {
+  width: 8%; /* ID */
+}
 
-  .button-group .submit-btn,
-  .button-group .cancel-btn {
-      width: 100%;
-      margin-left: 0;
-      margin-bottom: 10px;
-  }
-} */
+.category-list-table th:nth-child(3),
+.category-list-table td:nth-child(3) {
+  width: 10%; /* Level */
+}
+
+.category-list-table th:nth-child(4),
+.category-list-table td:nth-child(4) {
+  width: 25%; /* Category Name */
+}
+
+.category-list-table td:nth-child(4) span {
+  text-align: left;
+  display: block;
+}
+
+.category-list-table th:nth-child(5),
+.category-list-table td:nth-child(5) {
+  width: 20%; /* Parent Category */
+}
+
+.category-list-table th:nth-child(6),
+.category-list-table td:nth-child(6),
+.category-list-table th:nth-child(7),
+.category-list-table td:nth-child(7) {
+  width: 12%; /* Dates */
+}
+
+.category-list-table th:nth-child(8),
+.category-list-table td:nth-child(8) {
+  width: 8%; /* Actions */
+}
+
+/* Level badges */
+.badge-pill {
+  padding: 0.25em 0.6em;
+  border-radius: 10rem;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.level-1 {
+  background-color: #007bff;
+  color: white;
+}
+
+.level-2 {
+  background-color: #6c757d;
+  color: white;
+}
+
+.level-3 {
+  background-color: #28a745;
+  color: white;
+}
+
+/* Buttons */
+.btn-outline-secondary {
+  color: #6c757d;
+  border: 1px solid #6c757d;
+  background-color: transparent;
+}
+
+.btn-outline-secondary:hover {
+  color: #fff;
+  background-color: #6c757d;
+}
+
+.btn-outline-danger {
+  color: #dc3545;
+  border: 1px solid #dc3545;
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  color: #fff;
+  background-color: #dc3545;
+}
+
+/* Utils */
+.pl-checkbox {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.d-flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Pagination */
+.pagination-container {
+  margin-top: 1rem;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+}
+
+.page-item {
+  margin: 0 0.25rem;
+}
+
+.page-link {
+  padding: 0.5rem 1rem;
+  border: 1px solid #dee2e6;
+  background-color: #fff;
+  color: #007bff;
+  cursor: pointer;
+}
+
+.page-item.active .page-link {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: #fff;
+}
+
+.page-item.disabled .page-link {
+  color: #6c757d;
+  pointer-events: none;
+  background-color: #fff;
+  border-color: #dee2e6;
+}
+
+/* 날짜 관련 스타일 */
+.date {
+  width: 100px;
+}
+
+.btn-calendar {
+  background-color: #e9ecef;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  padding: 5px 8px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.ml-2 {
+  margin-left: 0.5rem;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+/* 날짜 셀 스타일 */
+.date-cell {
+  text-align: center;
+  vertical-align: middle;
+  padding: 8px;
+}
+
+/* 테이블의 날짜 열 너비 수정 */
+.category-list-table th:nth-child(6),
+.category-list-table td:nth-child(6),
+.category-list-table th:nth-child(7),
+.category-list-table td:nth-child(7) {
+  width: 12%; /* 등록일자와 수정일자 열 */
+}

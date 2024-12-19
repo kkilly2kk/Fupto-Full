@@ -172,7 +172,6 @@ watch(
           </li>
         </ul>
       </li>
-      <!--
       <li>
         <a href="#" @click="handleDropdownClick('categories', $event)" :class="{ active: isMenuActive('categories') }">
           <i class="bx bxs-widget icon"></i> 카테고리
@@ -181,12 +180,16 @@ watch(
         <ul class="side-dropdown" :class="{ show: shouldShowDropdown('categories') }">
           <li>
             <NuxtLink to="/admin/categories/list" :class="{ 'sub-menu-active': isSubMenuActive('/admin/categories/list') }">
-              카테고리 관리
+              카테고리 목록
+            </NuxtLink>
+          </li>
+          <li>
+            <NuxtLink to="/admin/categories/reg" :class="{ 'sub-menu-active': isSubMenuActive('/admin/categories/reg') }">
+              카테고리 등록
             </NuxtLink>
           </li>
         </ul>
       </li>
-      -->
       <li class="divider">User</li>
       <li>
         <a href="#" @click="handleDropdownClick('members', $event)" :class="{ active: isMenuActive('members') }">

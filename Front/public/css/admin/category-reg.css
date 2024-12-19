@@ -1,0 +1,126 @@
+.container {
+  max-width: 100%;
+  margin: 0;
+}
+
+.card {
+  width: 800px;
+  background-color: #fff;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+}
+
+.card-body {
+  padding: 15px;
+}
+
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.form-group label span {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+  color: #342e37;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3c91e6;
+}
+
+/* Error States */
+.form-group input.error,
+.form-group select.error {
+  border-color: #dc3545;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Level-specific styles */
+select[value="1"] {
+  border-left: 4px solid #007bff;
+}
+
+select[value="2"] {
+  border-left: 4px solid #6c757d;
+}
+
+select[value="3"] {
+  border-left: 4px solid #28a745;
+}
+
+/* Button Group */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 30px;
+}
+
+.btn {
+  min-width: 120px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.btn-primary {
+  background-color: #3c91e6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2d7bc0;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group .btn {
+    width: 100%;
+  }
+}
