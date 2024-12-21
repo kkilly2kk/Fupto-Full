@@ -107,7 +107,8 @@
   height: calc(1rem - 4px);
   background-color: #adb5bd;
   border-radius: 0.5rem;
-  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 }
 .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
   background-color: #fff;
@@ -283,13 +284,13 @@
 /* 페이징네이션 */
 .pagination-container {
   margin-top: 1rem;
-  display: flex; /* Flexbox를 사용하여 정렬 */
-  justify-content: center; /* 중앙 정렬 */
+  display: flex;
+  justify-content: center;
 }
 
 .pagination {
   display: flex;
-  justify-content: center; /* 기존 중앙 정렬 유지 */
+  justify-content: center;
   list-style: none;
   padding: 0;
 }
@@ -323,7 +324,7 @@
   background-color: #007bff; /* 활성화된 페이지의 배경색 */
   color: white; /* 활성화된 페이지의 텍스트 색상 */
 }
- 
+
 .date-cell {
   text-align: center;
   vertical-align: middle;

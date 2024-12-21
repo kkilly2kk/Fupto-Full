@@ -6,6 +6,9 @@ useHead({
   link: [{ rel: "stylesheet", href: "/css/admin/category-reg.css" }],
 });
 
+const route = useRoute();
+const categoryId = route.params.id;
+
 const category = ref({
   name: "",
   level: "",
@@ -16,6 +19,47 @@ const intermediateParents = ref([]);
 const selectedIntermediateId = ref(null);
 const availableParents = ref([]);
 const errors = ref({});
+
+// 초기 데이터 로드
+const fetchCategoryData = async () => {
+  try {
+    const categoryData = await use$Fetch(`/admin/categories/${categoryId}/edit`);
+
+    category.value = {
+      name: categoryData.name,
+      level: categoryData.level.toString(),
+      parentId: null,
+    };
+
+    // 레벨에 따라 상위 카테고리 정보 로드
+    if (categoryData.level > 1) {
+      await fetchFirstLevelCategories();
+
+      // 2차 카테고리의 경우
+      if (categoryData.level === 2) {
+        category.value.parentId = categoryData.parentId;
+      }
+
+      // 3차 카테고리의 경우
+      if (categoryData.level === 3) {
+        // 먼저 1차 카테고리를 찾기 위해 2차 카테고리 조회
+        const parentCategory = await use$Fetch(`/admin/categories/${categoryData.parentId}/edit`);
+
+        // 1차 카테고리 ID 설정
+        category.value.parentId = parentCategory.parentId;
+
+        // 1차 카테고리가 선택된 후 2차 카테고리 목록 로드
+        await fetchIntermediateCategories(parentCategory.parentId);
+
+        // 2차 카테고리 ID 설정
+        selectedIntermediateId.value = categoryData.parentId;
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching category data:", error);
+    alert("카테고리 정보를 불러오는데 실패했습니다.");
+  }
+};
 
 // 1차 카테고리 목록 가져오기
 const fetchFirstLevelCategories = async () => {
@@ -41,15 +85,6 @@ const fetchIntermediateCategories = async (parentId) => {
     console.error("Error fetching intermediate categories:", error);
   }
 };
-
-// 레벨 변경 시 상위 카테고리 목록 갱신
-watch(
-  () => category.value.level,
-  (newLevel) => {
-    category.value.parentId = null;
-    fetchParentCategories(newLevel);
-  }
-);
 
 // 유효성 검사
 const validateForm = () => {
@@ -87,8 +122,8 @@ const handleSubmit = async () => {
   }
 
   try {
-    await use$Fetch("/admin/categories", {
-      method: "POST",
+    await use$Fetch(`/admin/categories/${categoryId}`, {
+      method: "PUT",
       body: {
         name: category.value.name,
         level: parseInt(category.value.level),
@@ -96,11 +131,11 @@ const handleSubmit = async () => {
       },
     });
 
-    alert("카테고리가 등록되었습니다.");
+    alert("카테고리가 수정되었습니다.");
     navigateTo("/admin/categories/list");
   } catch (error) {
-    console.error("Error creating category:", error);
-    alert("카테고리 등록에 실패했습니다.");
+    console.error("Error updating category:", error);
+    alert("카테고리 수정에 실패했습니다.");
   }
 };
 
@@ -133,15 +168,20 @@ watch(
     }
   }
 );
+
+// 초기화
+onMounted(async () => {
+  await fetchCategoryData();
+});
 </script>
 
 <template>
   <main>
-    <h1 class="title">카테고리 등록</h1>
+    <h1 class="title">카테고리 수정</h1>
     <ul class="breadcrumbs">
       <li><a href="#">FUPTO</a></li>
       <li class="divider">/</li>
-      <li><a href="#" class="active">카테고리 등록</a></li>
+      <li><a href="#" class="active">카테고리 수정</a></li>
     </ul>
 
     <div class="container">
@@ -150,7 +190,7 @@ watch(
           <form @submit.prevent="handleSubmit">
             <div class="form-group">
               <label>
-                <span>* 등록할 카테고리 레벨</span>
+                <span>* 현재 카테고리 레벨</span>
                 <select v-model="category.level" :class="{ error: errors.level }">
                   <option value="">선택하세요</option>
                   <option value="1">1차 카테고리</option>
@@ -204,7 +244,7 @@ watch(
             </div>
 
             <div class="button-group">
-              <button type="submit" class="btn btn-primary">등록</button>
+              <button type="submit" class="btn btn-primary">수정</button>
               <button type="button" class="btn btn-secondary" @click="handleCancel">취소</button>
             </div>
           </form>

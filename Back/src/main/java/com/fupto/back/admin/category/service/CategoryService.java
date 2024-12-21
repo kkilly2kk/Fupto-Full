@@ -9,8 +9,10 @@ import java.util.List;
 
 public interface CategoryService {
     CategoryResponseDto getList(CategorySearchDto categorySearchDto);
-    CategoryListDto createCategory(CategoryCreateDto categoryCreateDto);
     CategoryListDto show(Long id);
-    void deleteCategory(Long id);
     List<CategoryListDto> getParentCategories(Integer level);
+    List<CategoryListDto> getChildCategories(Long parentId);
+    CategoryListDto createCategory(CategoryCreateDto categoryCreateDto);
+    CategoryListDto updateCategory(Long id, CategoryCreateDto updateDto);
+    void deleteCategory(Long id);
 }

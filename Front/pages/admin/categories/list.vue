@@ -10,6 +10,7 @@ const categories = ref([]);
 const totalElements = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
+const totalPages = ref(0);
 
 // 날짜 관련 변수 추가
 const startDatePicker = ref(null);
@@ -22,12 +23,12 @@ const searchForm = ref(null);
 const formData = ref({
   name: "",
   level: "",
-  dateType: "reg", // 추가
-  startDate: "", // 추가
-  endDate: "", // 추가
+  dateType: "reg",
+  startDate: "",
+  endDate: "",
 });
 
-// Flatpickr 관련 함수 추가
+// Flatpickr 관련
 const waitForFlatpickr = (callback) => {
   if (window.flatpickr) {
     callback();
@@ -65,7 +66,7 @@ const initializeFlatpickr = () => {
   });
 };
 
-// 날짜 설정 함수들 추가
+// 날짜 설정 함수
 const setYesterday = () => {
   const yesterday = new Date();
   yesterday.setDate(yesterday.getDate() - 1);
@@ -115,6 +116,12 @@ const setThisMonth = () => {
   }
 };
 
+// 날짜 포맷팅
+const formatDate = (dateString) => {
+  if (!dateString) return "";
+  return dateString.replace("T", " ").slice(0, 19);
+};
+
 // 체크박스 상태
 const selectedItems = ref(new Set());
 const selectAll = ref(false);
@@ -123,19 +130,32 @@ const selectAll = ref(false);
 const fetchCategories = async () => {
   try {
     const params = new URLSearchParams({
-      page: currentPage.value.toString(),
+      page: (currentPage.value - 1).toString(),
       size: pageSize.value.toString(),
+      sort: "id",
     });
 
     if (formData.value.name) params.append("name", formData.value.name);
     if (formData.value.level) params.append("level", formData.value.level);
     if (formData.value.dateType) params.append("dateType", formData.value.dateType);
-    if (formData.value.startDate) params.append("startDate", formData.value.startDate);
-    if (formData.value.endDate) params.append("endDate", formData.value.endDate);
+    if (formData.value.startDate) {
+      const date = new Date(formData.value.startDate);
+      params.append("startDate", date.toISOString());
+    }
+    if (formData.value.endDate) {
+      const date = new Date(formData.value.endDate + "T23:59:59");
+      params.append("endDate", date.toISOString());
+    }
+
+    console.log("Search params:", {
+      startDate: formData.value.startDate,
+      endDate: formData.value.endDate,
+    });
 
     const data = await use$Fetch(`/admin/categories?${params.toString()}`);
     categories.value = data.categories;
     totalElements.value = data.totalElements;
+    totalPages.value = data.totalPages;
   } catch (error) {
     console.error("Error fetching categories:", error);
   }
@@ -154,6 +174,35 @@ const handleDelete = async (categoryId) => {
       console.error("Error deleting category:", error);
       alert("카테고리 삭제에 실패했습니다.");
     }
+  }
+};
+
+// 일괄 삭제 처리
+const handleBulkDelete = async () => {
+  if (selectedItems.value.size === 0) {
+    alert("삭제할 카테고리를 선택해주세요.");
+    return;
+  }
+
+  if (!confirm("선택한 카테고리를 모두 삭제하시겠습니까?")) {
+    return;
+  }
+
+  try {
+    const deletePromises = Array.from(selectedItems.value).map((id) =>
+      use$Fetch(`/admin/categories/${id}`, {
+        method: "DELETE",
+      })
+    );
+
+    await Promise.all(deletePromises);
+    alert("선택한 카테고리가 삭제되었습니다.");
+    selectedItems.value.clear();
+    selectAll.value = false;
+    await fetchCategories();
+  } catch (error) {
+    console.error("Error deleting categories:", error);
+    alert("카테고리 삭제 중 오류가 발생했습니다.");
   }
 };
 
@@ -190,6 +239,20 @@ const pageSizeChange = (event) => {
   currentPage.value = 1;
   fetchCategories();
 };
+
+// 페이지 변경 핸들러
+const pageChange = (newPage) => {
+  if (newPage < 1 || newPage > totalPages.value) return;
+  currentPage.value = newPage;
+  fetchCategories();
+};
+
+// 페이지 번호 계산
+const visiblePages = computed(() => {
+  const startPage = Math.floor((currentPage.value - 1) / 5) * 5 + 1;
+  const endPage = Math.min(startPage + 4, totalPages.value);
+  return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+});
 
 // 초기화
 onMounted(() => {
@@ -263,12 +326,17 @@ onMounted(() => {
     <div class="card">
       <div class="card-body">
         <div class="d-flex justify-content-between">
-          <select class="select" v-model="pageSize" @change="pageSizeChange">
-            <option :value="10">10</option>
-            <option :value="20">20</option>
-            <option :value="50">50</option>
-          </select>
-          <router-link to="/admin/categories/reg" class="btn btn-primary"> + Add Category </router-link>
+          <div>
+            <button class="btn btn-outline-danger" @click="handleBulkDelete">선택 삭제</button>
+          </div>
+          <div class="d-flex align-items-center">
+            <select class="select mr-2" v-model="pageSize" @change="pageSizeChange">
+              <option :value="10">10</option>
+              <option :value="20">20</option>
+              <option :value="50">50</option>
+            </select>
+            <router-link to="/admin/categories/reg" class="btn btn-primary">+ Add Category</router-link>
+          </div>
         </div>
 
         <table class="table category-list-table">
@@ -303,16 +371,17 @@ onMounted(() => {
               <td>
                 <span
                   :style="{
-                    marginLeft: (category.level - 1) * 20 + 'px',
                     fontWeight: category.level === 1 ? 'bold' : 'normal',
                   }"
                 >
                   {{ category.name }}
                 </span>
               </td>
-              <td>{{ category.parentName || "-" }}</td>
-              <td>{{ category.createDate }}</td>
-              <td>{{ category.updateDate }}</td>
+              <td>
+                <span class="badge-pill badge-light text-md">{{ category.parentName || "-" }}</span>
+              </td>
+              <td>{{ formatDate(category.createDate) }}</td>
+              <td>{{ formatDate(category.updateDate) }}</td>
               <td>
                 <NuxtLink :to="`/admin/categories/${category.id}/edit`" class="btn btn-outline-secondary btn-sm">
                   <i class="bx bxs-pencil"></i>
@@ -324,6 +393,28 @@ onMounted(() => {
             </tr>
           </tbody>
         </table>
+
+        <div class="pagination-container">
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" href="#" @click.prevent="pageChange(1)">&lt;&lt;</a>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === 1 }">
+                <a class="page-link" href="#" @click.prevent="pageChange(currentPage - 1)">이전</a>
+              </li>
+              <li class="page-item" v-for="page in visiblePages" :key="page" :class="{ active: currentPage === page }">
+                <a class="page-link" href="#" @click.prevent="pageChange(page)">{{ page }}</a>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <a class="page-link" href="#" @click.prevent="pageChange(currentPage + 1)">다음</a>
+              </li>
+              <li class="page-item" :class="{ disabled: currentPage === totalPages }">
+                <a class="page-link" href="#" @click.prevent="pageChange(totalPages)">&gt;&gt;</a>
+              </li>
+            </ul>
+          </nav>
+        </div>
       </div>
     </div>
   </main>
