@@ -61,6 +61,7 @@ public class DefaultProductService implements ProductService {
         this.modelMapper = modelMapper;
     }
 
+    @Override
     public ProductResponseDto searchProducts(ProductSearchDto searchDto, Long memberId) {
         // 정렬 값 검증
         validateSort(searchDto.getSort());
@@ -164,6 +165,7 @@ public class DefaultProductService implements ProductService {
         return String.format("http://localhost:8085/api/v1/products/%d/image/%d", productId, displayOrder);
     }
 
+    @Override
     public List<ProductCateDto> getCategories(Long parentId) {
         return categoryRepository.findByParentIdOrderByName(parentId)
                 .stream()
@@ -174,6 +176,7 @@ public class DefaultProductService implements ProductService {
                 .toList();
     }
 
+    @Override
     public List<ProductBrandDto> getBrands() {
         return brandRepository.findByActiveIsTrueOrderByEngNameAsc()
                 .stream()

@@ -3,26 +3,26 @@
   margin: 0 auto;
   padding: 20px;
   display: flex;
-  justify-content: center; 
+  justify-content: center;
 }
 
 .board-detail {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  width: 100%; 
+  width: 100%;
   max-width: 1000px;
-  padding: 15px; 
+  padding: 15px;
   justify-content: center;
 }
 
 .table {
-  width: 100%;  /* 테이블 너비를 100%로 설정 */
+  width: 100%; /* 테이블 너비를 100%로 설정 */
   border-collapse: collapse;
   margin-top: 10px;
   margin-bottom: 15px;
   margin-left: auto;
-  margin-right: auto;  /* 좌우 자동으로 중앙 정렬 */
+  margin-right: auto; /* 좌우 자동으로 중앙 정렬 */
   table-layout: fixed; /* 고정 너비로 설정하여 셀의 크기가 일정하게 유지되도록 함 */
 }
 
@@ -55,7 +55,6 @@
   margin-right: 5px;
 }
 
-
 .btn {
   padding: 6px 12px;
   border: none;
@@ -76,7 +75,8 @@
   text-align: center;
 }
 
-.content, .input-text {
+.content,
+.input-text {
   width: 95%;
   /* max-width: 300px;  최대 너비를 설정하여 너무 커지지 않도록 제한 */
   padding: 6px;
@@ -110,7 +110,6 @@
   border-radius: 4px;
   font-size: 12px;
 } */
-
 
 .image-preview {
   position: relative;
@@ -152,8 +151,3 @@
   color: #007bff;
   margin-right: 15px;
 }
-
-<<<<<<< HEAD
-
-=======
->>>>>>> d9dac12098eab459e1abd0a41c5305389a669a97

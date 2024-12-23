@@ -58,6 +58,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/products/*/image/*").permitAll()
                         .requestMatchers("/products/*/image/*").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/comments/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated())

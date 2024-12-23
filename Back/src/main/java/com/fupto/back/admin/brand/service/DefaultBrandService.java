@@ -135,8 +135,6 @@ public class DefaultBrandService implements BrandService {
 
         // 브랜드 기본 상태 설정
         brand.setState(true);
-//        brand.setCreateDate(Instant.now());
-//        brand.setUpdateDate(Instant.now());
         brand.setImg("-");
 
         // 먼저 브랜드를 저장하여 ID를 생성
