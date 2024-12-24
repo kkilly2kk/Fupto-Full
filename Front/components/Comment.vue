@@ -19,9 +19,7 @@ const userDetails = useUserDetails();
 // 댓글 목록 조회
 const fetchComments = async () => {
   try {
-    console.log("게시글 ID:", props.boardId);
     const data = await use$Fetch(`/comments/board/${props.boardId}`);
-    console.log("받은 댓글 전체:", data);
     comments.value = data;
   } catch (error) {
     console.error("댓글 조회 실패:", error);
@@ -68,7 +66,8 @@ onMounted(() => {
         v-for="comment in comments"
         :key="comment.id"
         :comment="comment"
-        :user-id="userDetails.id"
+        :user-id="userDetails.id.value"
+        :board-id="boardId"
         @refresh="fetchComments"
       />
     </div>

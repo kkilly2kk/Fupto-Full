@@ -14,6 +14,10 @@ const props = defineProps({
     type: [Number, String],
     required: true,
   },
+  boardId: {
+    type: Number,
+    required: true,
+  },
 });
 
 const emit = defineEmits(["refresh"]);
@@ -47,21 +51,24 @@ const formatDate = (dateString) => {
 const submitReply = async () => {
   if (!replyContent.value.trim()) return;
 
+  const requestData = {
+    boardId: props.boardId,
+    memberId: props.userId,
+    content: replyContent.value,
+    parentId: props.comment.id,
+  };
+
   try {
     await use$Fetch("/comments", {
       method: "POST",
-      body: {
-        boardId: props.comment.boardId,
-        memberId: props.userId,
-        content: replyContent.value,
-        parentId: props.comment.id,
-      },
+      body: requestData,
     });
     replyContent.value = "";
     isReplying.value = false;
     emit("refresh");
   } catch (error) {
     console.error("답글 작성 실패:", error);
+    console.error("Request Data was:", requestData);
   }
 };
 
@@ -113,22 +120,28 @@ const startReply = () => {
 
 <template>
   <div class="comment-wrapper">
-    <!-- 메인 댓글 -->
     <div class="comment" :class="{ reply: comment.parentId }">
-      <div v-if="comment.parentId" class="reply-line">
-        <div class="vertical-line"></div>
-        <div class="horizontal-line"></div>
-      </div>
+      <div v-if="comment.parentId" class="reply-line"></div>
       <div class="comment-content">
         <div class="comment-header">
-          <span class="author">{{ comment.member.nickname }}</span>
-          <span class="date">{{ formatDate(comment.createDate) }}</span>
+          <div class="user-info">
+            <span class="author">{{ comment.member.nickname }}</span>
+            <span class="date">{{ formatDate(comment.createDate) }}</span>
+            <div class="button-group">
+              <button @click="startReply">답글</button>
+              <!-- userId를 숫자로 변환하여 비교 -->
+              <template v-if="Number(userId) === comment.member.id">
+                <button @click="startEdit">수정</button>
+                <button @click="deleteComment">삭제</button>
+              </template>
+            </div>
+          </div>
         </div>
 
         <!-- 수정 모드 -->
         <div v-if="isEditing" class="comment-body">
           <textarea v-model="editContent" class="edit-input"></textarea>
-          <div class="button-group">
+          <div class="edit-buttons">
             <button @click="submitEdit">수정완료</button>
             <button @click="isEditing = false">취소</button>
           </div>
@@ -137,19 +150,12 @@ const startReply = () => {
         <!-- 일반 모드 -->
         <div v-else class="comment-body">
           <p class="text">{{ comment.content }}</p>
-          <div class="button-group">
-            <button @click="startReply">답글</button>
-            <template v-if="userId === comment.member.id">
-              <button @click="startEdit">수정</button>
-              <button @click="deleteComment">삭제</button>
-            </template>
-          </div>
         </div>
 
         <!-- 답글 작성 폼 -->
         <div v-if="isReplying" class="reply-form">
-          <textarea v-model="replyContent" placeholder="답글을 입력하세요" class="reply-input"> </textarea>
-          <div class="button-group">
+          <textarea v-model="replyContent" placeholder="답글을 입력하세요" class="reply-input"></textarea>
+          <div class="reply-buttons">
             <button @click="submitReply">답글작성</button>
             <button @click="isReplying = false">취소</button>
           </div>
@@ -164,6 +170,7 @@ const startReply = () => {
         :key="child.id"
         :comment="child"
         :user-id="userId"
+        :board-id="boardId"
         @refresh="$emit('refresh')"
       />
     </div>

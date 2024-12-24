@@ -194,7 +194,7 @@ onBeforeUnmount(() => {
       </section>
 
       <section class="comments-section">
-        <h2 class="comments-title">댓글</h2>
+        <h5 class="comments-title">댓글</h5>
         <Comment :board-id="Number(route.params.id)" />
       </section>
     </article>
@@ -202,7 +202,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-/* 기존 스타일에 댓글 섹션 관련 스타일 추가 */
 .comments-section {
   margin-top: 40px;
   border-top: 1px solid #eee;
