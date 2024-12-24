@@ -15,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,12 +34,19 @@ public class DefaultCommentService implements CommentService {
         this.memberRepository = memberRepository;
     }
 
-    // 게시글의 모든 댓글 조회
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getCommentsByBoardId(Long boardId) {
-        return commentRepository.findByBoardIdOrderByCreateDateAsc(boardId)
-                .stream()
-                .map(this::convertToDto)
+        List<Comment> allComments = commentRepository.findByBoardIdOrderByCreateDateAsc(boardId);
+
+        // 전체 댓글을 parent_id로 그룹화
+        Map<Long, List<Comment>> commentsByParentId = allComments.stream()
+                .filter(comment -> comment.getParent() != null)
+                .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
+
+        // 최상위 댓글 (parent_id가 null)만 우선 변환
+        return allComments.stream()
+                .filter(comment -> comment.getParent() == null)
+                .map(comment -> convertToDtoWithChildren(comment, commentsByParentId))
                 .collect(Collectors.toList());
     }
 
@@ -97,6 +107,22 @@ public class DefaultCommentService implements CommentService {
         commentRepository.delete(comment);
     }
 
+    private CommentResponseDto convertToDtoWithChildren(Comment comment, Map<Long, List<Comment>> commentsByParentId) {
+        // 현재 댓글을 DTO로 변환
+        CommentResponseDto dto = convertToDto(comment);
+
+        // 현재 댓글의 자식 댓글들을 재귀적으로 처리
+        if (commentsByParentId.containsKey(comment.getId())) {
+            List<CommentResponseDto> children = commentsByParentId.get(comment.getId()).stream()
+                    .sorted(Comparator.comparing(Comment::getCreateDate))
+                    .map(child -> convertToDtoWithChildren(child, commentsByParentId))
+                    .collect(Collectors.toList());
+            dto.setChildren(children);
+        }
+
+        return dto;
+    }
+
     private CommentResponseDto convertToDto(Comment comment) {
         return CommentResponseDto.builder()
                 .id(comment.getId())
@@ -108,6 +134,7 @@ public class DefaultCommentService implements CommentService {
                         .nickname(comment.getMember().getNickname())
                         .build())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                .children(new ArrayList<>())
                 .build();
     }
 

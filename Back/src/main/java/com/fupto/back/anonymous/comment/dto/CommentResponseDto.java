@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -18,6 +19,7 @@ public class CommentResponseDto {
     private Instant updateDate;
     private MemberDto member;
     private Long parentId;
+    private List<CommentResponseDto> children;
 
     @Data
     @AllArgsConstructor

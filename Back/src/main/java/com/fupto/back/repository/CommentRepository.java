@@ -10,12 +10,9 @@ import java.util.List;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    @Query("SELECT c FROM Comment c LEFT JOIN c.parent p " +
+    @Query("SELECT c FROM Comment c " +
             "WHERE c.board.id = :boardId " +
-            "ORDER BY " +
-            "COALESCE(p.id, c.id) ASC, " +
-            "CASE WHEN c.parent IS NULL THEN 0 ELSE 1 END, " +
-            "c.createDate ASC")
+            "ORDER BY COALESCE(c.parent.id, c.id), c.createDate ASC")
     List<Comment> findByBoardIdOrderByCreateDateAsc(@Param("boardId") Long boardId);
 
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.board.id = :boardId")
