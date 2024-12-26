@@ -34,6 +34,7 @@ public class DefaultCommentService implements CommentService {
         this.memberRepository = memberRepository;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<CommentResponseDto> getCommentsByBoardId(Long boardId) {
         List<Comment> allComments = commentRepository.findByBoardIdOrderByCreateDateAsc(boardId);
@@ -43,7 +44,7 @@ public class DefaultCommentService implements CommentService {
                 .filter(comment -> comment.getParent() != null)
                 .collect(Collectors.groupingBy(comment -> comment.getParent().getId()));
 
-        // 최상위 댓글 (parent_id가 null)만 우선 변환
+        // 최상위 댓글만 필터링 (active 상관없이)
         return allComments.stream()
                 .filter(comment -> comment.getParent() == null)
                 .map(comment -> convertToDtoWithChildren(comment, commentsByParentId))
@@ -51,11 +52,13 @@ public class DefaultCommentService implements CommentService {
     }
 
     // 댓글 개수 조회
+    @Override
     @Transactional(readOnly = true)
     public Long getCommentCount(Long boardId) {
         return commentRepository.countByBoardId(boardId);
     }
 
+    @Override
     @Transactional
     public CommentResponseDto createComment(Long boardId, Long memberId, String content, Long parentId) {
         Board board = boardRepository.findById(boardId)
@@ -67,6 +70,7 @@ public class DefaultCommentService implements CommentService {
                 .content(content)
                 .board(board)
                 .member(member)
+                .active(true)
                 .build();
 
         if (parentId != null) {
@@ -78,6 +82,7 @@ public class DefaultCommentService implements CommentService {
         return convertToDto(commentRepository.save(comment));
     }
 
+    @Override
     @Transactional
     public CommentResponseDto updateComment(Long commentId, Long memberId, String content) {
         Comment comment = commentRepository.findById(commentId)
@@ -93,7 +98,28 @@ public class DefaultCommentService implements CommentService {
         return convertToDto(commentRepository.save(comment));
     }
 
+    @Override
+    @Transactional
+    public void softDeleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new EntityNotFoundException("댓글을 찾을 수 없습니다."));
+
+        if (!comment.getMember().getId().equals(memberId)) {
+            throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
+        }
+
+        // 최상위 댓글이고 대댓글이 있는 경우
+        if (comment.getParent() == null && !comment.getChildren().isEmpty()) {
+            comment.setActive(false);
+            commentRepository.save(comment);
+        } else {
+            // 대댓글이거나 대댓글이 없는 최상위 댓글은 완전 삭제
+            commentRepository.delete(comment);
+        }
+    }
+
     // 댓글 삭제
+    @Override
     @Transactional
     public void deleteComment(Long commentId, Long memberId) {
         Comment comment = commentRepository.findById(commentId)
@@ -104,6 +130,17 @@ public class DefaultCommentService implements CommentService {
             throw new AccessDeniedException("댓글 삭제 권한이 없습니다.");
         }
 
+        // 대댓글 삭제 시, 부모 댓글 확인
+        if (comment.getParent() != null) {
+            Comment parentComment = comment.getParent();
+            // 이 댓글을 삭제하고 부모의 다른 자식 댓글이 없다면
+            if (!parentComment.getActive() && parentComment.getChildren().size() <= 1) {
+                // 부모 댓글도 삭제
+                commentRepository.delete(parentComment);
+            }
+        }
+
+        // 현재 댓글 삭제
         commentRepository.delete(comment);
     }
 
@@ -124,6 +161,20 @@ public class DefaultCommentService implements CommentService {
     }
 
     private CommentResponseDto convertToDto(Comment comment) {
+        // active가 false인 경우 null 처리
+        if (!comment.getActive()) {
+            return CommentResponseDto.builder()
+                    .id(comment.getId())
+                    .content(null)
+                    .createDate(comment.getCreateDate())
+                    .updateDate(comment.getUpdateDate())
+                    .member(null)
+                    .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
+                    .children(new ArrayList<>())
+                    .active(comment.getActive())
+                    .build();
+        }
+
         return CommentResponseDto.builder()
                 .id(comment.getId())
                 .content(comment.getContent())
@@ -135,6 +186,7 @@ public class DefaultCommentService implements CommentService {
                         .build())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .children(new ArrayList<>())
+                .active(comment.getActive())
                 .build();
     }
 

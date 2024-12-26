@@ -96,9 +96,19 @@ const deleteComment = async () => {
   if (!confirm("댓글을 삭제하시겠습니까?")) return;
 
   try {
-    await use$Fetch(`/comments/${props.comment.id}?memberId=${props.userId}`, {
-      method: "DELETE",
-    });
+    // 최상위 댓글이고 대댓글이 있는 경우
+    if (!props.comment.parentId && props.comment.children?.length > 0) {
+      await use$Fetch(`/comments/${props.comment.id}/soft-delete`, {
+        method: "PATCH",
+        params: { memberId: props.userId },
+      });
+    } else {
+      // 대댓글이거나 대댓글이 없는 최상위 댓글
+      await use$Fetch(`/comments/${props.comment.id}`, {
+        method: "DELETE",
+        params: { memberId: props.userId },
+      });
+    }
     emit("refresh");
   } catch (error) {
     console.error("댓글 삭제 실패:", error);
@@ -123,43 +133,53 @@ const startReply = () => {
     <div class="comment" :class="{ reply: comment.parentId }">
       <div v-if="comment.parentId" class="reply-line"></div>
       <div class="comment-content">
-        <div class="comment-header">
-          <div class="user-info">
-            <span class="author">{{ comment.member.nickname }}</span>
-            <span class="date">{{ formatDate(comment.createDate) }}</span>
-            <div class="button-group">
-              <button @click="startReply">답글</button>
-              <!-- userId를 숫자로 변환하여 비교 -->
-              <template v-if="Number(userId) === comment.member.id">
-                <button @click="startEdit">수정</button>
-                <button @click="deleteComment">삭제</button>
-              </template>
+        <!-- active가 false인 최상위 댓글만 "삭제된 댓글입니다" 표시 -->
+        <template v-if="!comment.active && !comment.parentId">
+          <div class="comment-header">
+            <div class="user-info">
+              <span class="deleted-comment">삭제된 댓글입니다.</span>
             </div>
           </div>
-        </div>
-
-        <!-- 수정 모드 -->
-        <div v-if="isEditing" class="comment-body">
-          <textarea v-model="editContent" class="edit-input"></textarea>
-          <div class="edit-buttons">
-            <button @click="submitEdit">수정완료</button>
-            <button @click="isEditing = false">취소</button>
+        </template>
+        <!-- 그 외의 경우 정상 표시 -->
+        <template v-else>
+          <div class="comment-header">
+            <div class="user-info">
+              <span class="author">{{ comment.member.nickname }}</span>
+              <span class="date">{{ formatDate(comment.createDate) }}</span>
+              <div class="button-group">
+                <button v-if="!comment.parentId" @click="startReply">답글</button>
+                <template v-if="Number(userId) === comment.member.id">
+                  <button @click="startEdit">수정</button>
+                  <button @click="deleteComment">삭제</button>
+                </template>
+              </div>
+            </div>
           </div>
-        </div>
 
-        <!-- 일반 모드 -->
-        <div v-else class="comment-body">
-          <p class="text">{{ comment.content }}</p>
-        </div>
-
-        <!-- 답글 작성 폼 -->
-        <div v-if="isReplying" class="reply-form">
-          <textarea v-model="replyContent" placeholder="답글을 입력하세요" class="reply-input"></textarea>
-          <div class="reply-buttons">
-            <button @click="submitReply">답글작성</button>
-            <button @click="isReplying = false">취소</button>
+          <!-- 수정 모드 -->
+          <div v-if="isEditing" class="comment-body">
+            <textarea v-model="editContent" class="edit-input"></textarea>
+            <div class="edit-buttons">
+              <button @click="submitEdit">수정완료</button>
+              <button @click="isEditing = false">취소</button>
+            </div>
           </div>
-        </div>
+
+          <!-- 일반 모드 -->
+          <div v-else class="comment-body">
+            <p class="text">{{ comment.content }}</p>
+          </div>
+
+          <!-- 답글 작성 폼 -->
+          <div v-if="isReplying" class="reply-form">
+            <textarea v-model="replyContent" placeholder="답글을 입력하세요" class="reply-input"></textarea>
+            <div class="reply-buttons">
+              <button @click="submitReply">답글작성</button>
+              <button @click="isReplying = false">취소</button>
+            </div>
+          </div>
+        </template>
       </div>
     </div>
 

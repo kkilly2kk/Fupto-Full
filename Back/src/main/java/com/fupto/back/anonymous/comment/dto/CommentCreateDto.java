@@ -14,4 +14,5 @@ public class CommentCreateDto {
     private Long memberId;
     private String content;
     private Long parentId;
+    private Boolean active = true;
 }

@@ -20,6 +20,7 @@ public class CommentResponseDto {
     private MemberDto member;
     private Long parentId;
     private List<CommentResponseDto> children;
+    private Boolean active;
 
     @Data
     @AllArgsConstructor

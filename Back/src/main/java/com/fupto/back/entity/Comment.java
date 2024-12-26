@@ -30,6 +30,9 @@ public class Comment {
     @Column(name = "content", length = 1000)
     private String content;
 
+    @Column(name = "active", nullable = false)
+    private Boolean active = true;
+
     @ColumnDefault("current_timestamp()")
     @Column(name = "create_date", insertable = false, updatable = false)
     private Instant createDate;
@@ -53,8 +56,8 @@ public class Comment {
     @JsonBackReference
     private Comment parent;
 
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private List<Comment> comments = new ArrayList<>();
+    private List<Comment> children = new ArrayList<>();
 
 }

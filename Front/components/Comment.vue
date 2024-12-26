@@ -53,15 +53,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="comments-section">
+  <div class="comments-inner-section">
     <!-- 댓글 작성 폼 -->
-    <div class="comment-form" v-if="userDetails.id">
-      <textarea v-model="newComment" placeholder="댓글을 입력하세요" class="comment-input"> </textarea>
-      <button @click="submitComment" class="submit-btn">댓글 작성</button>
+    <div class="comment-compose" v-if="userDetails.id">
+      <textarea v-model="newComment" placeholder="댓글을 입력하세요" class="comment-compose-input"> </textarea>
+      <button @click="submitComment" class="comment-submit-btn">댓글 작성</button>
     </div>
 
     <!-- 댓글 목록 -->
-    <div class="comments-list">
+    <div class="comment-list">
       <comment-item
         v-for="comment in comments"
         :key="comment.id"

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 
-const { isAnonymous } = useUserDetails();
+const userDetails = useUserDetails();
 const { isAuthModalOpen, checkVendorAccess, closeAuthModal, navigateToSignup, navigateToSignin } = useVendorAuth();
 
 const currentSlide = ref(0);
@@ -10,6 +10,7 @@ const isFooterVisible = ref(false);
 const isModalOpen = ref(false);
 const selectedImage = ref(null);
 const modalCurrentSlide = ref(0);
+const isClient = ref(false);
 
 const route = useRoute();
 const router = useRouter();
@@ -141,9 +142,14 @@ watch(currentSlide, (newSlide) => {
   }
 });
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener("scroll", handleScroll);
-  if (isAnonymous()) {
+  // 클라이언트 사이드임을 표시
+  isClient.value = true;
+  // 로컬스토리지에서 사용자 정보 로드
+  await userDetails.loadUserFromStorage();
+  // 그 후에 권한 체크
+  if (userDetails.isAnonymous()) {
     checkVendorAccess();
   }
 });
@@ -222,7 +228,7 @@ onUnmounted(() => {
         </section>
 
         <section class="vendor-section">
-          <div :class="{ 'blur-section': isAnonymous() }">
+          <div :class="{ 'blur-section': isClient && userDetails.isAnonymous() }">
             <ul class="vendor-list">
               <li v-for="shop in product?.shops" :key="shop.id" class="vendor-card">
                 <div class="background-area" @click="navigateToRoute(`/products/${shop.productId}/single`)"></div>
@@ -240,7 +246,7 @@ onUnmounted(() => {
             </ul>
           </div>
 
-          <div v-if="isAnonymous() && isAuthModalOpen" class="vendor-modal-overlay">
+          <div v-if="isClient && userDetails.isAnonymous() && isAuthModalOpen" class="vendor-modal-overlay">
             <div class="popup flex flex-col items-center gap-lg">
               <div class="flex gap-lg justify-end w-full pr">
                 <button class="icon-sm" @click="closeAuthModal">×</button>

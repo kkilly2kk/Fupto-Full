@@ -30,10 +30,6 @@
   border-left: 2px solid #ddd;
 }
 
-.replies .replies .comment {
-  margin-left: 80px;
-}
-
 .comment-content {
   width: 100%;
 }
@@ -43,6 +39,11 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 12px;
+}
+
+.deleted-comment {
+  color: #999;
+  font-style: italic;
 }
 
 .user-info {
@@ -130,10 +131,6 @@
   .reply-line {
     left: -20px;
     width: 20px;
-  }
-
-  .replies .replies .comment {
-    margin-left: 40px;
   }
 
   .horizontal-line {

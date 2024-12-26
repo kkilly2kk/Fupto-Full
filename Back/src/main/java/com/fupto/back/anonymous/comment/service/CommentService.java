@@ -9,5 +9,6 @@ public interface CommentService {
     Long getCommentCount(Long boardId);
     CommentResponseDto createComment(Long boardId, Long memberId, String content, Long parentId);
     CommentResponseDto updateComment(Long commentId, Long memberId, String content);
+    void softDeleteComment(Long commentId, Long memberId);
     void deleteComment(Long commentId, Long memberId);
 }

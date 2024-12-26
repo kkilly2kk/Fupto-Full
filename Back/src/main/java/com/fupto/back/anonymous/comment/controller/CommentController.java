@@ -52,6 +52,15 @@ public class CommentController {
         ));
     }
 
+    @PatchMapping("/{commentId}/soft-delete")
+    public ResponseEntity<Void> softDeleteComment(
+            @PathVariable Long commentId,
+            @RequestParam Long memberId
+    ) {
+        commentService.softDeleteComment(commentId, memberId);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long commentId,

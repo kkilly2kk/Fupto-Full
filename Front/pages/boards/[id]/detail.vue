@@ -193,35 +193,10 @@ onBeforeUnmount(() => {
         <div class="post-content">{{ board.contents }}</div>
       </section>
 
-      <section class="comments-section">
-        <h5 class="comments-title">댓글</h5>
+      <section class="board-comments-section">
+        <span class="comments-title">댓글</span>
         <Comment :board-id="Number(route.params.id)" />
       </section>
     </article>
   </main>
 </template>
-
-<style scoped>
-.comments-section {
-  margin-top: 40px;
-  border-top: 1px solid #eee;
-}
-
-.comments-title {
-  font-size: 1.2rem;
-  margin: 20px 0;
-  padding: 0 20px;
-}
-
-/* 모바일 대응 */
-@media (max-width: 768px) {
-  .comments-section {
-    margin-top: 20px;
-  }
-
-  .comments-title {
-    font-size: 1.1rem;
-    padding: 0 15px;
-  }
-}
-</style>
