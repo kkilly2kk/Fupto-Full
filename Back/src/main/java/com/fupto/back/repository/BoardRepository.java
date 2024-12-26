@@ -18,7 +18,7 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
     @Query("select b from Board b where b.regMember.id = :id")
     List<Board> findByRegMemberId(Long id);
     List<Board> findAllByActiveIsTrue();
-    List<Board> findAllByOrderByModifiedAtDesc();
+    List<Board> findAllByOrderByUpdateDateDesc();
     List<Board> findAllByRegMemberIdAndActiveIsTrue(Long id);
 
     void deleteById(Long id);
@@ -32,11 +32,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "AND (:active IS NULL OR b.active = :active) " +
             "AND (:boardCategory IS NULL OR b.boardCategory.name = :boardCategory) " +
             "AND (:startDate IS NULL OR " +
-            "(:dateType = 'cre' AND b.createdAt >= :startDate) OR " +
-            "(:dateType = 'mod' AND b.modifiedAt >= :startDate)) " +
+            "(:dateType = 'cre' AND b.createDate >= :startDate) OR " +
+            "(:dateType = 'mod' AND b.updateDate >= :startDate)) " +
             "AND (:endDate IS NULL OR " +
-            "(:dateType = 'cre' AND b.createdAt <= :endDate) OR " +
-            "(:dateType = 'mod' AND b.modifiedAt <= :endDate))")
+            "(:dateType = 'cre' AND b.createDate <= :endDate) OR " +
+            "(:dateType = 'mod' AND b.updateDate <= :endDate))")
     Page<Board> searchBoards(
             @Param("searchKeyWord") String searchKeyWord,
             @Param("searchType") String searchType,
@@ -48,19 +48,6 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             Pageable pageable);
 
     List<Board> findByBoardCategoryId(Long boardCategoryId);
-
-//    @Query("SELECT b FROM Board b WHERE " +
-//            "(:searchType IS NULL OR " +
-//            "(:searchKeyWord IS NULL OR " +
-//            "(:searchType = 'title' AND b.title LIKE %:searchKeyWord%) OR " +
-//            "(:searchType = 'regMemberNickName' AND b.regMember.nickname LIKE %:searchKeyWord%) OR " +
-//            "(:searchType = 'contents' AND b.contents LIKE %:searchKeyWord%))) " +
-//            "AND (:boardCategory IS NULL OR b.boardCategory.name = :boardCategory) ")
-//    Page<Board> userSearchBoards(
-//            @Param("searchKeyWord") String searchKeyWord,
-//            @Param("searchType") String searchType,
-//            @Param("boardCategory") String boardCategory,
-//            Pageable pageable);
 
     @Query("SELECT b FROM Board b WHERE " +
             "(:searchType IS NULL OR " +

@@ -51,8 +51,8 @@ const loadBoardData = async () => {
       boardCategoryName: data.boardCategoryName,
       regMemberNickName: data.regMemberNickName,
       regMemberId: data.regMemberId,
-      createdAt: data.createdAt,
-      modifiedAt: data.modifiedAt,
+      createDate: data.createDate,
+      updateDate: data.updateDate,
       active: data.active,
       img: data.img,
     };
@@ -83,7 +83,7 @@ const formatDate = (dateString) => {
     ":" +
     String(date.getUTCSeconds()).padStart(2, "0");
 
-  return `${ymd} ${time}`;
+  return `${ymd}  ${time}`;
 };
 
 const isMatchUser = computed(() => {
@@ -141,16 +141,11 @@ const handleDelete = async () => {
 const closeModal = () => {
   showModal.value = false;
   window.location.href = "http://localhost:3000/boards/list";
-  // router.go(-1);
 };
 
 onMounted(async () => {
-  await loadBoardData(); // 게시글 데이터 로드
+  await loadBoardData();
   document.addEventListener("click", closeDropdown); // 외부 클릭 시 드롭다운 닫기
-  // watch(() => userDetails.value, () => {
-  //   // 사용자 정보가 업데이트될 때마다 isMatchUser를 재계산
-  //   console.log("User details changed");
-  // });
 });
 
 onBeforeUnmount(() => {
@@ -171,7 +166,7 @@ onBeforeUnmount(() => {
           <div class="user-avatar"></div>
           <div class="user-meta">
             <span class="user-name">{{ board.regMemberNickName }}</span>
-            <span class="post-date">{{ formatDate(board.createdAt) }}</span>
+            <span class="post-date">{{ formatDate(board.updateDate) }}</span>
           </div>
           <div class="actions-menu">
             <button class="menu-trigger" v-show="isMatchUser" @click="toggleDropdown">

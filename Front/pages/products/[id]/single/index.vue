@@ -11,6 +11,7 @@ const isModalOpen = ref(false);
 const selectedImage = ref(null);
 const modalCurrentSlide = ref(0);
 const isClient = ref(false);
+const showContent = ref(false);
 
 const route = useRoute();
 const router = useRouter();
@@ -144,11 +145,24 @@ watch(currentSlide, (newSlide) => {
 
 onMounted(async () => {
   window.addEventListener("scroll", handleScroll);
-  // 클라이언트 사이드임을 표시
-  isClient.value = true;
-  // 로컬스토리지에서 사용자 정보 로드
   await userDetails.loadUserFromStorage();
-  // 그 후에 권한 체크
+  isClient.value = true;
+  showContent.value = true;
+
+  // 새로 고침시 찜 정보 업데이트
+  try {
+    const data = await use$Fetch(`/products/${productId}`);
+
+    if (data) {
+      product.value = {
+        ...product.value,
+        favorite: data.favorite,
+      };
+    }
+  } catch (error) {
+    console.error("Failed to update favorite status:", error);
+  }
+
   if (userDetails.isAnonymous()) {
     checkVendorAccess();
   }
@@ -227,7 +241,7 @@ onUnmounted(() => {
           </div>
         </section>
 
-        <section class="vendor-section">
+        <section v-if="showContent" class="vendor-section">
           <div :class="{ 'blur-section': isClient && userDetails.isAnonymous() }">
             <ul class="vendor-list">
               <li v-for="shop in product?.shops" :key="shop.id" class="vendor-card">
@@ -263,7 +277,7 @@ onUnmounted(() => {
           </div>
         </section>
 
-        <section class="description-section">
+        <section v-if="showContent" class="description-section">
           <div class="section-header" @click="toggleDescription">
             <span>상품 설명</span>
             <svg class="arrow" :class="{ up: isDescriptionOpen }" viewBox="0 0 24 24" fill="none">

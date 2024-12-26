@@ -201,7 +201,7 @@ public class DefaultMemberService implements MemberService {
                 .img(board.getImg())
                 .regMemberId(board.getRegMember().getId())
                 .regMemberNickName(board.getRegMember().getNickname())
-                .createdAt(board.getCreatedAt())
+                .createdAt(board.getCreateDate())
                 .active(board.getActive())
                 .build();
     }

@@ -69,7 +69,7 @@ public class DefaultBoardService implements BoardService {
     public DefaultDto userSearch(SearchDto searchDto) {
         Sort sort = Sort.by(
                 searchDto.getSortOrder().equalsIgnoreCase("asc") ? Sort.Direction.ASC : Sort.Direction.DESC,
-                searchDto.getSortBy() != null ? searchDto.getSortBy() : "createdAt"
+                searchDto.getSortBy() != null ? searchDto.getSortBy() : "createDate"
         );
         Pageable pageable = PageRequest.of(searchDto.getPage() - 1, searchDto.getSize(), sort);
 
@@ -120,8 +120,8 @@ public class DefaultBoardService implements BoardService {
                 .boardCategoryName(board.getBoardCategory().getName())
                 .regMemberId(board.getId())
                 .regMemberNickName(board.getRegMember().getNickname())
-                .createdAt(board.getCreatedAt())
-                .modifiedAt(board.getModifiedAt())
+                .createDate(board.getCreateDate())
+                .updateDate(board.getUpdateDate())
                 .img(board.getImg())
                 .build();
     }
@@ -133,7 +133,7 @@ public class DefaultBoardService implements BoardService {
                 .orElseThrow(() -> new EntityNotFoundException("게시글을 찾을 수 없습니다."));
 
         board.setActive(active);
-        board.setModifiedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
+        board.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
 
         boardRepository.save(board);
 
@@ -184,17 +184,13 @@ public class DefaultBoardService implements BoardService {
         return BoardDto.builder()
                 .title(board.getTitle())
                 .contents(board.getContents())
-                .boardCategoryId(board.getBoardCategory().getId())
-
-                .boardCategoryName(board.getBoardCategory().getName())
-                .createdAt(board.getCreatedAt())
-                .modifiedAt(board.getModifiedAt())
-                .img(board.getImg())
-                .regMemberNickName(board.getRegMember().getNickname())
-                .createdAt(board.getCreatedAt())
-                .modifiedAt(board.getModifiedAt())
                 .img(board.getImg())
                 .regMemberId(board.getRegMember().getId())
+                .regMemberNickName(board.getRegMember().getNickname())
+                .createDate(board.getCreateDate())
+                .updateDate(board.getUpdateDate())
+                .boardCategoryId(board.getBoardCategory().getId())
+                .boardCategoryName(board.getBoardCategory().getName())
                 .build();
     }
 
@@ -219,7 +215,7 @@ public class DefaultBoardService implements BoardService {
             board.setImg(fileName);
         }
 
-        board.setModifiedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
+        board.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
 
         Board updatedBoard = boardRepository.save(board);
 

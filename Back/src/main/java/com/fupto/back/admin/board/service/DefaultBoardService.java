@@ -285,7 +285,7 @@ public class DefaultBoardService implements BoardService {
             board.setImg(fileName);
         }
 
-        board.setModifiedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
+        board.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
 
         Board updatedBoard = boardRepository.save(board);
 
@@ -353,7 +353,7 @@ public class DefaultBoardService implements BoardService {
 
         board.setActive(active);
 //        board.setModifiedAt(Instant.now());
-        board.setModifiedAt(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
+        board.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
 
 
         boardRepository.save(board);

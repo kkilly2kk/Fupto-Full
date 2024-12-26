@@ -18,8 +18,8 @@ public class DetailDto {
     private String img;
     private String regMemberNickName;
     private Long regMemberId;
-    private Instant createdAt;
-    private Instant modifiedAt;
+    private Instant createDate;
+    private Instant updateDate;
     private String boardCategoryName;
 
 }

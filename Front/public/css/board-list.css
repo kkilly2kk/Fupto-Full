@@ -8,14 +8,22 @@
   min-height: 1100px;
 }
 
-.board_ul{
+.board_ul {
   display: flex;
   justify-content: center;
   margin-top: 10px;
 }
 
-.board_ul li{
+.board_ul li {
   margin: 10px 8px;
+}
+
+.board_ul button:focus {
+  outline: none;
+}
+
+.date {
+  white-space: pre;
 }
 
 .board_ul button {
@@ -25,57 +33,58 @@
   border: 1px solid var(--color-ui-backgroundb);
   border-radius: 5px;
   font-size: 14px;
-  transition: background-color 0.2s, color 0.2s;;
+  transition: background-color 0.2s, color 0.2s;
 }
 
-button:hover,
-button.active{
-  border: solid 1px #007bff;
-  /* background-color: var(--color-ui-backgroundb); */
-  color: #007bff;
+button:hover {
+  background-color: #d9d9d9;
+}
+button.active {
+  background-color: #d9d9d9;
+  font-weight: bold;
+  border: 1px solid var(--color-ui-backgroundb);
 }
 
 /* 검색창 */
 .searchBox {
-  display: flex; /* flexbox를 사용하여 수평으로 배치 */
+  display: flex;
+  gap: 10px;
   margin-bottom: 50px;
+  align-items: center;
 }
 
 .type {
   border-radius: 10px;
   width: 80px;
-  height: 25px;
+  height: 35px;
   border: 1px solid var(--color-ui-backgroundb);
-  display: flex;
-  justify-content: center; /* 옵션 텍스트를 가운데 정렬 */
   align-items: center; /* 수직으로 가운데 정렬 */
   text-align: center; /* 옵션 텍스트를 가운데 정렬 */
-} 
+}
 
 .keyword {
   border-radius: 10px;
   padding-left: 5px;
-  height: 23px;
+  height: 35px;
   width: 300px;
   border: 1px solid var(--color-ui-backgroundb);
 }
 
 .searchBtn {
   border-radius: 10px;
-  width: 50px;
-  height: 25px;
+  width: 80px;
+  height: 35px;
   border: 1px solid var(--color-ui-backgroundb);
   padding-bottom: 1px;
 }
-
 
 /* 게시글 간격 */
 .board {
   display: flex;
   flex-direction: column;
-  align-items: center;    
+  align-items: center;
   justify-content: center;
-  width: 100%;            
+  width: 100%;
 }
 
 table {
@@ -109,12 +118,11 @@ small {
 }
 
 .product-img {
-  padding-top:3px; 
+  padding-top: 3px;
   width: 70px;
   height: 70px;
   object-fit: cover;
 }
-
 
 /* 글쓰기 */
 .write {
@@ -124,8 +132,8 @@ small {
 }
 
 .write-btn {
-  width: 70px;
-  height: 30px;
+  width: 80px;
+  height: 35px;
   border-radius: 5px;
   background-color: white;
   border: 1px solid var(--color-ui-backgroundb);
@@ -134,14 +142,13 @@ small {
 }
 
 .write-btn:hover,
-.write-btn.active{
-  border: solid 1px #007bff;
-  background-color: white;
-  color: #007bff;
+.write-btn.active {
+  background-color: #d9d9d9;
+  font-weight: bold;
 }
 
 nuxt-link {
-  display: inline-block;  /* nuxt-link가 inline-block이 되도록 수정 */
+  display: inline-block; /* nuxt-link가 inline-block이 되도록 수정 */
 }
 
 /* 페이징네이션 */
@@ -171,7 +178,7 @@ nuxt-link {
 }
 
 .Page-link:hover {
-  border-bottom: solid 1px #007bff;
+  font-weight: bold;
 }
 
 .Page-item.disabled .Page-link {
@@ -182,21 +189,20 @@ nuxt-link {
 }
 
 .Page-item.active .Page-link {
-  border-bottom: solid 1px #007bff; 
-  /* 활성화된 페이지의 배경색 */
+  border-bottom: solid 1px #49494a;
   color: black; /* 활성화된 페이지의 텍스트 색상 */
+  font-weight: bold;
 }
 
-
 @media (max-width: 768px) {
-  .board_ul{
-    flex-wrap: wrap; 
+  .board_ul {
+    flex-wrap: wrap;
     justify-content: center;
-    width: 100%; 
+    width: 100%;
   }
 
   .board_ul li {
-    flex: 1 1 auto; 
+    flex: 1 1 auto;
     max-width: 120px;
   }
 
@@ -211,18 +217,17 @@ nuxt-link {
     margin-bottom: 10px;
     margin-left: 180px;
   }
-
 }
 
 @media (max-width: 679px) {
   .board_ul {
-    flex-wrap: wrap; 
+    flex-wrap: wrap;
     justify-content: center;
-    width: 100%; 
+    width: 100%;
   }
 
   .board_ul li {
-    flex: 1 1 auto; 
+    flex: 1 1 auto;
     max-width: 100px;
   }
 
@@ -231,19 +236,19 @@ nuxt-link {
   }
 
   @media (max-width: 579px) {
-  .board_ul {
-    flex-wrap: wrap; 
-    justify-content: center;
-    width: 100%; 
-  }
+    .board_ul {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+    }
 
-  .board_ul li {
-    flex: 1 1 auto; 
-    max-width: 70px;
-  }
+    .board_ul li {
+      flex: 1 1 auto;
+      max-width: 70px;
+    }
 
-  .board_ul button {
-    width: 70px;
+    .board_ul button {
+      width: 70px;
+    }
   }
-}
 }

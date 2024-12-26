@@ -1,10 +1,8 @@
 package com.fupto.back.entity;
 
-import com.fupto.back.admin.board.dto.BoardRequestsDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-import org.modelmapper.ModelMapper;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -41,16 +39,12 @@ public class Board {
     private Member regMember;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "created_at", insertable = false, updatable = false)
-//    @ColumnDefault("current_timestamp()")
-//    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+    @Column(name = "create_date", insertable = false, updatable = false)
+    private Instant createDate;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "modified_at", insertable = false)
-//    @ColumnDefault("current_timestamp()")
-//    @Column(name = "modified_at", nullable = false)
-    private Instant modifiedAt;
+    @Column(name = "update_date", insertable = false)
+    private Instant updateDate;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "board_category_id", nullable = false)
@@ -62,7 +56,7 @@ public class Board {
     @PrePersist
     public void onPrePersist() {
         ZonedDateTime nowInKST = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
-        this.modifiedAt = nowInKST.toInstant();
+        this.updateDate = nowInKST.toInstant();
     }
 
 //    public void update(BoardRequestsDto requestsDto) {

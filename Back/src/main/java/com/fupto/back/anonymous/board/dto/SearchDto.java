@@ -13,7 +13,7 @@ public class SearchDto {
 
     private int page = 1;
     private int size = 15;
-    private String sortBy = "createdAt";
+    private String sortBy = "createDate";
     private String sortOrder = "desc";
     private String searchType;
     private String searchKeyWord;
