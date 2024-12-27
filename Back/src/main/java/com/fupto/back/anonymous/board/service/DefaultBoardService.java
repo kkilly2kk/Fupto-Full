@@ -7,6 +7,7 @@ import com.fupto.back.entity.BoardCategory;
 import com.fupto.back.entity.Member;
 import com.fupto.back.repository.BoardCategoryRepository;
 import com.fupto.back.repository.BoardRepository;
+import com.fupto.back.repository.CommentRepository;
 import com.fupto.back.repository.MemberRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
@@ -40,15 +41,18 @@ public class DefaultBoardService implements BoardService {
     private BoardRepository boardRepository;
     private ModelMapper modelMapper;
     private BoardCategoryRepository boardCategoryRepository;
+    private CommentRepository commentRepository;
     private MemberRepository memberRepository;
 
     public DefaultBoardService(BoardRepository boardRepository,
                                ModelMapper modelMapper,
                                BoardCategoryRepository boardCategoryRepository,
+                               CommentRepository commentRepository,
                                MemberRepository memberRepository) {
         this.boardRepository = boardRepository;
         this.modelMapper = modelMapper;
         this.boardCategoryRepository = boardCategoryRepository;
+        this.commentRepository = commentRepository;
         this.memberRepository = memberRepository;
     }
 
@@ -86,6 +90,7 @@ public class DefaultBoardService implements BoardService {
                 .filter(board -> board.getActive() != null && board.getActive())
                 .map(board -> {
                     BoardDto boardDto = modelMapper.map(board, BoardDto.class);
+                    boardDto.setCommentCount(commentRepository.countByBoardId(board.getId()));
                     return boardDto;
                 })
                 .toList();

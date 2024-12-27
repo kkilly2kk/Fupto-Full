@@ -5,6 +5,10 @@ useHead({
 
 import { ref, onMounted } from "vue";
 import { use$Fetch } from "~/composables/use$Fetch";
+import { useRoute, useRouter } from "vue-router";
+
+const route = useRoute();
+const router = useRouter();
 
 const boards = ref([]);
 const totalElements = ref(0);
@@ -16,27 +20,30 @@ const searchForm = ref(null);
 const noDataMessage = ref("");
 const imageUrl = ref("");
 
+const userDetails = useUserDetails();
+const isAdmin = computed(() => {
+  return userDetails.hasRole("ROLE_ADMIN");
+});
+
 const formData = ref({
   searchType: "title",
   searchKeyWord: "",
-  boardCategoryName: "커뮤니티",
+  boardCategoryName: route.query.category || "커뮤니티",
 });
-
-const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("data:")) {
-    // 새로 업로드된 이미지의 경우 (data URL)
-    return url;
-  }
-  // 서버에서 가져온 이미지 URL의 경우
-  return `${config.public.apiBase}${url}`;
-};
 
 const handleCategoryClick = (categoryName) => {
   formData.value.boardCategoryName = categoryName;
   formData.value.searchType = "title";
   formData.value.searchKeyWord = "";
   currentPage.value = 1;
+
+  router.replace({
+    query: {
+      ...route.query,
+      category: categoryName,
+    },
+  });
+
   fetchBoards();
 };
 
@@ -106,7 +113,16 @@ const visiblePages = computed(() => {
 });
 
 onMounted(() => {
-  formData.value.boardCategoryName = "커뮤니티";
+  const categoryFromUrl = route.query.category;
+  if (categoryFromUrl) {
+    formData.value.boardCategoryName = categoryFromUrl;
+  } else {
+    router.replace({
+      query: {
+        category: formData.value.boardCategoryName, // 기본값은 '커뮤니티'라 formData는 업데이트 필요 없음
+      },
+    });
+  }
   fetchBoards();
 });
 </script>
@@ -145,9 +161,12 @@ onMounted(() => {
             </td>
             <td>
               <div>
-                <span clss="title"
-                  ><nuxt-link :to="`/boards/${board.id}/detail`">{{ board.title }}</nuxt-link></span
-                >
+                <span class="title">
+                  <nuxt-link :to="`/boards/${board.id}/detail`">
+                    {{ board.title }}
+                    <span v-if="board.commentCount > 0" class="comment-count">[{{ board.commentCount }}]</span>
+                  </nuxt-link>
+                </span>
                 <div class="smalls">
                   <small class="wirter">{{ board.regMemberNickName }}</small>
                   <small class="date">{{ formatDate(board.updateDate) }}</small>
@@ -167,8 +186,9 @@ onMounted(() => {
       </table>
 
       <div class="write">
-        <button class="write-btn"><nuxt-link :to="`/boards/reg`">글쓰기</nuxt-link></button>
-        <!-- <nuxt-link :to="`/boards/re`">{{ board.title }}[댓글 수]</nuxt-link> -->
+        <button v-if="formData.boardCategoryName !== '공지사항' || isAdmin" class="write-btn">
+          <nuxt-link :to="`/boards/reg?category=${formData.boardCategoryName}`">글쓰기</nuxt-link>
+        </button>
       </div>
 
       <form ref="searchForm" @submit="handleSearch" class="searchBox">

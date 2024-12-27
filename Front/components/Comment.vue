@@ -12,15 +12,34 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["update-comments"]);
+
 const comments = ref([]);
 const newComment = ref("");
 const userDetails = useUserDetails();
+const totalCommentCount = computed(() => {
+  let count = 0;
+
+  // 재귀적으로 모든 댓글을 카운트하는 함수
+  const countComments = (commentList) => {
+    commentList.forEach((comment) => {
+      count++; // 현재 댓글 카운트
+      if (comment.children && comment.children.length > 0) {
+        countComments(comment.children); // 대댓글이 있으면 재귀적으로 카운트
+      }
+    });
+  };
+
+  countComments(comments.value);
+  return count;
+});
 
 // 댓글 목록 조회
 const fetchComments = async () => {
   try {
     const data = await use$Fetch(`/comments/board/${props.boardId}`);
     comments.value = data;
+    emit("update-count", totalCommentCount.value);
   } catch (error) {
     console.error("댓글 조회 실패:", error);
   }
@@ -55,7 +74,7 @@ onMounted(() => {
 <template>
   <div class="comments-inner-section">
     <!-- 댓글 작성 폼 -->
-    <div class="comment-compose" v-if="userDetails.id">
+    <div v-if="userDetails.id" class="comment-compose">
       <textarea v-model="newComment" placeholder="댓글을 입력하세요" class="comment-compose-input"> </textarea>
       <button @click="submitComment" class="comment-submit-btn">댓글 작성</button>
     </div>

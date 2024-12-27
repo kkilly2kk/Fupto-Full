@@ -7,6 +7,9 @@ import com.fupto.back.anonymous.board.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,6 +51,7 @@ public class BoardController {
         return ResponseEntity.ok(boardService.userInActive(id, active));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/post")
     public ResponseEntity<BoardDto> userPost(
             @RequestParam("boardData") String boardDataJson,
@@ -57,8 +61,15 @@ public class BoardController {
             ObjectMapper  objectMapper = new ObjectMapper();
             BoardDto boardDto = objectMapper.readValue(boardDataJson, BoardDto.class);
 
-            BoardDto postBoard = boardService.userPost(boardDto, file);
+            // 공지사항인 경우 ADMIN 권한 체크
+            if (boardDto.getBoardCategoryId() == 1) {
+                Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+                if (!auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+            }
 
+            BoardDto postBoard = boardService.userPost(boardDto, file);
             return ResponseEntity.status(HttpStatus.CREATED).body(postBoard);
         }  catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

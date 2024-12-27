@@ -24,6 +24,12 @@ const userDetails = useUserDetails();
 const imageUrl = ref("");
 const dropdownVisible = ref(false);
 const showModal = ref(false);
+const comments = ref([]);
+const commentCount = ref(0);
+
+const updateCommentCount = (count) => {
+  commentCount.value = count;
+};
 
 const getImageUrl = (url) => {
   if (!url) return "";
@@ -189,8 +195,11 @@ onBeforeUnmount(() => {
       </section>
 
       <section class="board-comments-section">
-        <span class="comments-title">댓글</span>
-        <Comment :board-id="Number(route.params.id)" />
+        <span class="comments-title">
+          댓글
+          <span class="comments-count" v-if="commentCount > 0">{{ commentCount }}</span>
+        </span>
+        <Comment :board-id="Number(route.params.id)" @update-count="updateCommentCount" />
       </section>
     </article>
   </main>

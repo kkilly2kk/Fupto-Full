@@ -21,5 +21,4 @@ public class DetailDto {
     private Instant createDate;
     private Instant updateDate;
     private String boardCategoryName;
-
 }

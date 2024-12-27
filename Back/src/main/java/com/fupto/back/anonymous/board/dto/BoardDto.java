@@ -12,7 +12,6 @@ import java.time.Instant;
 @NoArgsConstructor
 @Builder
 public class BoardDto {
-
     private Long id;
     private String title;
     private String contents;
@@ -24,4 +23,5 @@ public class BoardDto {
     private Long boardCategoryId;
     private String boardCategoryName;
     private Boolean active;
+    private Long commentCount;
 }
