@@ -18,11 +18,9 @@ public class BoardListDto {
     private String img;
     private Long regMemberId;
     private String regMemberNickName;
-    private Instant createdAt;
-    private Instant modifiedAt;
+    private Instant createDate;
+    private Instant updateDate;
     private Long boardCategoryId;
     private String boardCategoryName;
     private Boolean active;
-
-
 }

@@ -251,6 +251,8 @@ onMounted(async () => {
       <ul class="breadcrumbs">
         <li><a href="#">FUPTO</a></li>
         <li class="divider">/</li>
+        <li><a href="#">상품</a></li>
+        <li class="divider">/</li>
         <li><a href="#" class="active">상품 등록</a></li>
       </ul>
       <div class="product-form-container">

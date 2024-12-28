@@ -62,13 +62,7 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**").hasAnyRole("USER","ADMIN")
                         .anyRequest().authenticated())
-//                .formLogin(Customizer.withDefaults())
-//        ;
-//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                ;
-//                .addFilter(new JwtAuthenticationFilter(jwtUtil))
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         System.out.println("------------필터확인완료-------------");
         return http.build();
     }

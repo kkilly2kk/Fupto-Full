@@ -33,6 +33,10 @@
   flex: 1;
 }
 
+.post-content {
+  margin-top: 20px;
+}
+
 .user-section {
   display: flex;
   align-items: center;
@@ -112,6 +116,7 @@
 
 .image-preview {
   position: relative;
+  margin-bottom: 20px;
 }
 
 .image-preview img {

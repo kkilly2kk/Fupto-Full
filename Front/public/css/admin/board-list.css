@@ -26,13 +26,19 @@
   color: #333;
   width: 100px;
 }
-
 .select {
-  width: 90px;
+  width: 80px;
   padding: 6px;
   border: 1px solid #ced4da;
   border-radius: 4px;
   font-size: 12px;
+  text-align: center;
+  text-align-last: center;
+}
+.select option {
+  text-align: center;
+  text-align-last: center;
+  direction: rtl;
 }
 .input-text {
   width: 400px;
@@ -66,6 +72,12 @@
   cursor: pointer;
   font-size: 12px;
   transition: background-color 0.3s;
+}
+.btn-smr {
+  margin-right: 2px;
+}
+.btn-sml {
+  margin-left: 2px;
 }
 .btn-primary {
   background-color: var(--blue);
@@ -141,7 +153,8 @@
   height: calc(1rem - 4px);
   background-color: #adb5bd;
   border-radius: 0.5rem;
-  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 }
 .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
   background-color: #fff;
@@ -258,7 +271,6 @@
   margin-left: 0.5rem;
   height: 31px;
   margin-right: 10px;
-
 }
 .mr-2 {
   margin-right: 0.5rem;
@@ -323,8 +335,8 @@
 }
 
 .product-list-table th:nth-child(6),
-.product-list-table td:nth-child(6){
-width: 5%; /* ACTIVE 열 */
+.product-list-table td:nth-child(6) {
+  width: 5%; /* ACTIVE 열 */
 }
 
 .product-list-table th:nth-child(7),
@@ -357,6 +369,19 @@ nav {
 }
 
 /* 모달창 */
+.modal-body p {
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.modal-label {
+  display: inline-block;
+  font-weight: 600;
+  color: #333;
+  width: 100px;
+  margin-right: 10px;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -372,38 +397,45 @@ nav {
 
 .modal-content {
   background: white;
-  padding: 20px;
+  padding: 30px;
   border-radius: 8px;
   width: 700px;
-  height: 700px;
+  max-height: 80vh;
+  overflow-y: auto;
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #eee;
 }
 
 .modal-title {
-  font-size: 24px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #2c3e50;
 }
 
 .modal-body {
-  flex: 1;
+  padding: 0 10px;
 }
 
-.modal-body img {
-  width: 100%;
-  height: 200px;
-  object-fit: contain;
-  object-position: center;
+.modal-image {
+  margin: 20px 0;
+  text-align: center;
+}
+
+.modal-image img {
+  max-width: 100%;
+  max-height: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .close {

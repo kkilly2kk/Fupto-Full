@@ -29,7 +29,7 @@ const board = ref({
   title: "",
   contents: "",
   regMemberId: "",
-  boardCategoryId: getCategoryId(route.query.category) || 2,
+  boardCategoryId: getCategoryId(sessionStorage.getItem("selectedCategory")) || 2,
   active: true,
   fileUpload: null,
 });
@@ -143,7 +143,7 @@ const resetForm = () => {
                 <th>게시판</th>
                 <td>
                   <select v-model="board.boardCategoryId" class="select">
-                    <option v-if="isAdmin" :value="1">공지사항</option>
+                    <option :value="1" v-show="isAdmin">공지사항</option>
                     <option :value="2">커뮤니티</option>
                     <option :value="3">FAQ</option>
                     <option :value="4">고객센터</option>

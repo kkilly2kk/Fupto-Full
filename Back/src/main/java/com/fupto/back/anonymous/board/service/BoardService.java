@@ -17,6 +17,8 @@ public interface BoardService {
 
     BoardDto userInActive(Long id, Boolean active);
 
+    boolean findBoardHasComments(Long boardId);
+
     BoardDto userPost(BoardDto boardDto, MultipartFile file) throws IOException;
 
     BoardDto show(Long id);

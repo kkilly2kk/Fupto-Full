@@ -10,10 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class BoardSearchDto {
-
     private int page = 1;
     private int size = 3;
-    private String sortBy = "createdAt";
+    private String sortBy = "createDate";
     private String sortOrder = "desc";
     private String searchType;
     private String searchKeyWord;
@@ -23,6 +22,4 @@ public class BoardSearchDto {
     private String startDate;
     private String endDate;
     private String quickDate;
-
-
 }

@@ -132,6 +132,11 @@ public class DefaultBoardService implements BoardService {
     }
 
     @Override
+    public boolean findBoardHasComments(Long boardId) {
+        return boardRepository.existsCommentByBoardId(boardId);
+    }
+
+    @Override
     public BoardDto userInActive(Long id, Boolean active) {
 
         Board board = boardRepository.findById(id)

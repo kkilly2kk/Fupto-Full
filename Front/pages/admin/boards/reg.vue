@@ -96,7 +96,7 @@ const resetForm = () => {
   board.value = {
     title: "",
     contents: "",
-    regMemberId: 7,
+    regMemberId: "",
     boardCategoryId: 1,
     active: true,
     fileUpload: null,
@@ -116,15 +116,13 @@ const handleCancel = () => {
     <ul class="breadcrumbs">
       <li><a href="#">FUPTO</a></li>
       <li class="divider">/</li>
-      <li><a href="#" class="active">USER</a></li>
-      <li class="divider">/</li>
       <li><a href="#" class="active">게시판</a></li>
       <li class="divider">/</li>
       <li><a href="#" class="active">게시판 등록</a></li>
     </ul>
 
-    <div class="card">
-      <div class="card-body">
+    <div class="board-container">
+      <div class="board-detail">
         <form @submit.prevent="handleSubmit" enctype="multipart/form-data">
           <table class="table">
             <tbody>
@@ -132,7 +130,6 @@ const handleCancel = () => {
                 <th>제목</th>
                 <td>
                   <input v-model="board.title" type="text" class="input-text" required />
-                  <!-- <input type="checkbox" class="important" v-model="board.important" /> -->
                 </td>
               </tr>
 

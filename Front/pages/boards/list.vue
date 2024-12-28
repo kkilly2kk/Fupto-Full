@@ -47,6 +47,10 @@ const handleCategoryClick = (categoryName) => {
   fetchBoards();
 };
 
+const handleWriteClick = () => {
+  sessionStorage.setItem("selectedCategory", formData.value.boardCategoryName);
+};
+
 const fetchBoards = async () => {
   try {
     const params = new URLSearchParams({
@@ -186,8 +190,12 @@ onMounted(() => {
       </table>
 
       <div class="write">
-        <button v-if="formData.boardCategoryName !== '공지사항' || isAdmin" class="write-btn">
-          <nuxt-link :to="`/boards/reg?category=${formData.boardCategoryName}`">글쓰기</nuxt-link>
+        <button
+          v-if="(formData.boardCategoryName !== '공지사항' && formData.boardCategoryName !== 'FAQ') || isAdmin"
+          class="write-btn"
+          @click="handleWriteClick"
+        >
+          <nuxt-link to="/boards/reg">글쓰기</nuxt-link>
         </button>
       </div>
 

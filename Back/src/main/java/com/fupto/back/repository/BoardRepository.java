@@ -23,6 +23,12 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
 
     void deleteById(Long id);
 
+    @Query("SELECT DISTINCT b.id FROM Board b JOIN Comment c ON b.id = c.board.id WHERE b.id IN :boardIds")
+    List<Long> findBoardsWithComments(@Param("boardIds") List<Long> boardIds);
+
+    @Query("SELECT EXISTS(SELECT 1 FROM Comment c WHERE c.board.id = :boardId)")
+    boolean existsCommentByBoardId(@Param("boardId") Long boardId);
+
     @Query("SELECT b FROM Board b WHERE " +
             "(:searchType IS NULL OR " +
             "(:searchKeyWord IS NULL OR " +
@@ -32,11 +38,11 @@ public interface BoardRepository extends JpaRepository<Board, Long> {
             "AND (:active IS NULL OR b.active = :active) " +
             "AND (:boardCategory IS NULL OR b.boardCategory.name = :boardCategory) " +
             "AND (:startDate IS NULL OR " +
-            "(:dateType = 'cre' AND b.createDate >= :startDate) OR " +
-            "(:dateType = 'mod' AND b.updateDate >= :startDate)) " +
+            "(:dateType = 'createDate' AND b.createDate >= :startDate) OR " +
+            "(:dateType = 'updateDate' AND b.updateDate >= :startDate)) " +
             "AND (:endDate IS NULL OR " +
-            "(:dateType = 'cre' AND b.createDate <= :endDate) OR " +
-            "(:dateType = 'mod' AND b.updateDate <= :endDate))")
+            "(:dateType = 'createDate' AND b.createDate <= :endDate) OR " +
+            "(:dateType = 'updateDate' AND b.updateDate <= :endDate))")
     Page<Board> searchBoards(
             @Param("searchKeyWord") String searchKeyWord,
             @Param("searchType") String searchType,

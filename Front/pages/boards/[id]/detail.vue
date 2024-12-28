@@ -117,30 +117,33 @@ const handleEdit = () => {
   router.push(`/boards/${boardId}/edit`); // 수정 페이지로 이동
 };
 
-// 삭제 버튼 클릭 시 처리
 const handleDelete = async () => {
-  // 삭제 확인 메시지
-  const isConfirmed = confirm("게시물을 삭제하시겠습니까?");
+  try {
+    const hasComments = await use$Fetch(`/boards/check-comments/${boardId}`);
 
-  // 사용자가 '확인'을 누른 경우에만 삭제 진행
-  if (isConfirmed) {
-    try {
+    if (hasComments) {
+      alert("댓글이 있는 게시글은 삭제할 수 없습니다.");
+      return;
+    }
+
+    // 삭제 확인 메시지
+    const isConfirmed = confirm("게시물을 삭제하시겠습니까?");
+
+    if (isConfirmed) {
       const formData = new FormData();
-      formData.append("active", false); // 게시글을 비활성화 (삭제처럼)
+      formData.append("active", false);
 
       await use$Fetch(`/boards/${boardId}/inactive`, {
         method: "PATCH",
         body: formData,
       });
+
       alert("게시글이 삭제되었습니다!");
       router.push("/boards/list");
-    } catch (error) {
-      console.error("Error:", error);
-      alert(`게시글 삭제에 실패했습니다: ${error.message}`);
     }
-  } else {
-    // 사용자가 취소를 눌렀을 경우
-    console.log("삭제가 취소되었습니다.");
+  } catch (error) {
+    console.error("Error:", error);
+    alert(`게시글 삭제에 실패했습니다: ${error.message}`);
   }
 };
 

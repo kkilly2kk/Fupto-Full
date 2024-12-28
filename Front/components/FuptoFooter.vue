@@ -1,3 +1,7 @@
+<script setup>
+const userDetails = useUserDetails();
+</script>
+
 <template>
   <footer class="main-footer">
     <div class="content-footer-content">
@@ -7,12 +11,14 @@
         <li><a href="#">이용약관</a></li>
         <li><a href="#">개인정보처리방침</a></li>
         <li><a href="#">쇼핑목정보</a></li>
-        <li><nuxt-link to="/admin">관리자페이지</nuxt-link></li>
+        <ClientOnly>
+          <li v-if="userDetails.hasRole('ROLE_ADMIN')">
+            <nuxt-link to="/admin">관리자페이지</nuxt-link>
+          </li>
+        </ClientOnly>
       </ul>
       <span>CONTACT US fupto@gmail.com</span>
       <span>© 2024FUPTO</span>
     </div>
   </footer>
 </template>
-<script setup lang="ts">
-</script>

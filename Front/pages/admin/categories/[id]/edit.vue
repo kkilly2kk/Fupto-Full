@@ -181,6 +181,8 @@ onMounted(async () => {
     <ul class="breadcrumbs">
       <li><a href="#">FUPTO</a></li>
       <li class="divider">/</li>
+      <li><a href="#">카테고리</a></li>
+      <li class="divider">/</li>
       <li><a href="#" class="active">카테고리 수정</a></li>
     </ul>
 

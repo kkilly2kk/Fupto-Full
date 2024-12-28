@@ -1,168 +1,169 @@
-.card {
-  width: 800px;
-  background-color: #fff;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+.board-container {
+  max-width: 1100px;
+  display: flex;
+  justify-content: center;
 }
-.card-body {
+
+.board-detail {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   width: 100%;
-  padding: 15px;
+  padding: 20px;
 }
+
 .table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 10px;
-  margin-bottom: 15px;
+  margin: 20px 0;
 }
+
 .table th,
 .table td {
-  padding: 8px;
-  border: 1px solid #e0e0e0;
+  padding: 15px;
+  border: 1px solid #ddd;
 }
+
 .table th {
-  background-color: #f8f8f8;
-  font-weight: 500;
+  background-color: #f5f5f5;
+  font-weight: bold;
+  width: 120px;
   text-align: center;
-  color: #333;
-  width: 100px;
-}
-.important {
-  margin-left: 15px;
-  accent-color: #dc3545;
 }
 
 .select {
-  width: 90px;
-  padding: 6px;
-  border: 1px solid #ced4da;
+  width: 120px;
+  padding: 8px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 12px;
-  background-color: #fff;
-  margin-right: 5px;
+  font-size: 14px;
+  margin-left: 8px;
 }
 
+.content,
 .input-text {
-  width: 400px;
-  padding: 6px;
-  border: 1px solid #ced4da;
+  width: calc(100% - 30px);
+  padding: 8px;
+  border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 12px;
-}
-
-.btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  transition: background-color 0.3s;
-}
-
-.btn-primary {
-  background-color: white;
-  color: var(--blue);
-  margin-right: 15px;
-  border: solid 1px var(--blue);
-}
-
-.btn-primary:hover {
-  background-color: var(--blue);
-  color: white;
-}
-
-/* .btn-secondary {
-  background-color: gray;
-  color: black;
-  border: solid 1px red;
-} */
-
-
-.text-center {
-  text-align: center;
+  font-size: 14px;
+  margin: 0 7px;
 }
 
 .content {
-  width: 600px;
-  height: 400px;
-  padding: 6px;
-  border: 1px solid #ced4da;
-  border-radius: 4px;
-  font-size: 12px;
+  height: 350px;
+  resize: vertical;
 }
 
-.toggleSwitch {
-  width: 44px;
-  height: 22px;
-  display: block;
-  position: relative;
-  border-radius: 30px;
-  background-color: #fff;
-  border: 1px solid #ced4da;
-  cursor: pointer;
-  margin: 5px;
+.text-center {
+  text-align: right;
+  padding-right: 5px;
 }
-
-.toggleSwitch .toggleButton {
-  width: 23px;
-  height: 20px;
-  position: absolute;
-  top: 50%;
-  left: 22px;
-  transform: translateY(-50%);
-  border-radius: 50%;
-  background: var(--blue);
-}
-
-#toggle:checked ~ .toggleSwitch {
-  background: var(--blue);
-}
-
-#toggle:checked ~ .toggleSwitch .toggleButton {
-  left: calc(100% - 44px);
-  background: #fff;
-}
-
-.toggleSwitch, .toggleButton {
-  transition: all 0.2s ease-in;
-}
-
 
 .image-preview {
-  position: relative;
   margin-top: 15px;
 }
 
 .image-preview img {
-  max-width: 110px;
-  max-height: 150px;
-  border: 1px solid var(--dark-grey);
-  border-radius: 5px;
+  max-width: 200px;
+  max-height: 200px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   object-fit: cover;
-  display: flex;
 }
 
 .remove-img-btn {
   position: absolute;
   top: 5px;
-
+  right: 5px;
   background-color: rgba(0, 0, 0, 0.5);
   color: white;
-  font-size: 13px;
-  border: none;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  width: 19px;
-  height: 19px;
-  text-align: center;
-  line-height: 22px; /* 텍스트가 버튼의 가운데에 오도록 조정 */
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn {
+  padding: 8px 20px;
+  border-radius: 4px;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.btn-primary {
+  border: 1px solid #007bff;
+  color: white;
+  background-color: #007bff;
+  margin-right: 10px;
   cursor: pointer;
-  z-index: 10; /* 다른 요소 위에 버튼이 위치하도록 z-index 값 조정 */
 }
 
-.remove-img-btn:hover {
-  background-color: red;
+.btn-primary:hover {
+  background-color: #0056b3;
 }
 
+.btn-secondary {
+  border: 1px solid #81878d;
+  color: white;
+  background-color: #81878d;
+  cursor: pointer;
+}
 
+.btn-secondary:hover {
+  background-color: #545b62;
+}
 
+/* 추가된 어드민 페이지 관련 스타일 */
+.title {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.breadcrumbs {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin-bottom: 20px;
+}
+
+.breadcrumbs li {
+  font-size: 14px;
+}
+
+.breadcrumbs .divider {
+  color: #666;
+}
+
+.breadcrumbs a {
+  color: #333;
+  text-decoration: none;
+}
+
+.breadcrumbs a.active {
+  color: #007bff;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .board-container {
+    padding: 10px;
+  }
+
+  .table th {
+    width: 80px;
+  }
+
+  .table th,
+  .table td {
+    padding: 10px;
+  }
+
+  .content,
+  .input-text {
+    width: calc(100% - 20px);
+  }
+}

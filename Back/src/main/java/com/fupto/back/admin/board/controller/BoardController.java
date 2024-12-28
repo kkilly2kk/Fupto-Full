@@ -3,23 +3,15 @@ package com.fupto.back.admin.board.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fupto.back.admin.board.dto.*;
 import com.fupto.back.admin.board.service.BoardService;
-import com.fupto.back.admin.brand.dto.BrandCreateDto;
-import com.fupto.back.admin.brand.dto.BrandListDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 @RestController("adminBoardController")
-//@RequiredArgsConstructor
 @RequestMapping("admin/boards")
 public class BoardController {
 
@@ -46,7 +38,13 @@ public class BoardController {
     public ResponseEntity<BoardDefaultDto> searchBoard(
             @ModelAttribute BoardSearchDto boardSearchDto
     ) {
+        System.out.println("Received search parameters: " + boardSearchDto);
         return ResponseEntity.ok(boardService.getSearch(boardSearchDto));
+    }
+
+    @GetMapping("/check-comments")
+    public ResponseEntity<List<Long>> checkBoardsWithComments(@RequestParam List<Long> ids) {
+        return ResponseEntity.ok(boardService.findBoardsWithComments(ids));
     }
 
     // 게시글 등록
@@ -68,15 +66,6 @@ public class BoardController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
-//    // 게시글 등록
-//    @PostMapping("/post")
-//    public ResponseEntity<BoardListDto> createPost( @RequestBody BoardListDto boardListDto){
-//
-//        BoardListDto createBoard = boardService.createPost(boardListDto);
-//
-//        return ResponseEntity.status(HttpStatus.CREATED).body(createBoard);
-//    }
 
     // 선택한 게시글 수정
     @GetMapping("{id}/edit")
@@ -101,26 +90,12 @@ public class BoardController {
         }
     }
 
-
-
-
-//    @PutMapping("/{id}")
-//    public BoardResponseDto updatePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto) throws Exception {
-//        return boardService.updatePost(id, requestsDto);
-//    }
-
-
-
     // 게시글 삭제
 
     @DeleteMapping("{id}")
     public SuccessResponseDto deletePost(@PathVariable Long id) throws Exception {
         return boardService.deletePost(id);
     }
-//    @DeleteMapping("{id}") 비밀번호 추가
-//    public SuccessResponseDto deletePost(@PathVariable Long id, @RequestBody BoardRequestsDto requestsDto) throws Exception {
-//        return boardService.deletePost(id,requestsDto);
-//    }
 
     @DeleteMapping("/selected")
     public ResponseEntity<Void> deleteSelected(@RequestBody List<Long> ids){

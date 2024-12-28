@@ -36,7 +36,7 @@ public class AuthController {
     public String test(@AuthenticationPrincipal UserDetails details) {
         if (details != null) {
             return "username:" + details.getUsername() + ", roles:" + details.getAuthorities() + details;
-        }else {return "유저를 못찾겠즤~";}
+        }else {return "유저를 찾지 못헀습니다.";}
     }
 
 

@@ -43,6 +43,12 @@ public class BoardController {
         return ResponseEntity.ok(boardService.getById(id));
     }
 
+    @GetMapping("/check-comments/{boardId}")
+    public ResponseEntity<Boolean> hasComments(@PathVariable Long boardId) {
+        boolean hasComments = boardService.findBoardHasComments(boardId);
+        return ResponseEntity.ok(hasComments);
+    }
+
 
     @PatchMapping("{id}/inactive")
     public ResponseEntity<BoardDto> userInActive(
@@ -61,8 +67,8 @@ public class BoardController {
             ObjectMapper  objectMapper = new ObjectMapper();
             BoardDto boardDto = objectMapper.readValue(boardDataJson, BoardDto.class);
 
-            // 공지사항인 경우 ADMIN 권한 체크
-            if (boardDto.getBoardCategoryId() == 1) {
+            // 공지사항, FAQ 인 경우 ADMIN 권한 체크
+            if (boardDto.getBoardCategoryId() == 1 || boardDto.getBoardCategoryId() == 3) {
                 Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 if (!auth.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

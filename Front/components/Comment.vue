@@ -12,7 +12,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update-comments"]);
+const emit = defineEmits(["update-comments", "update-count"]);
 
 const comments = ref([]);
 const newComment = ref("");
@@ -75,7 +75,7 @@ onMounted(() => {
   <div class="comments-inner-section">
     <!-- 댓글 작성 폼 -->
     <div v-if="userDetails.id" class="comment-compose">
-      <textarea v-model="newComment" placeholder="댓글을 입력하세요" class="comment-compose-input"> </textarea>
+      <textarea v-model="newComment" placeholder="댓글을 입력하세요" class="comment-compose-input"></textarea>
       <button @click="submitComment" class="comment-submit-btn">댓글 작성</button>
     </div>
 

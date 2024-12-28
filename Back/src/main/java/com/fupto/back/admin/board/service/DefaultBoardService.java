@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Service("adminBoardService")
-//@RequiredArgsConstructor
 public class DefaultBoardService implements BoardService {
 
     @Value("uploads")
@@ -52,7 +51,7 @@ public class DefaultBoardService implements BoardService {
         this.memberRepository = memberRepository;
     }
 
-    // ========== 전체 조회 =========================================================================
+
     @Override
     public List<BoardListDto> getList() {
         List<Board> boards = boardRepository.findAll();
@@ -65,7 +64,7 @@ public class DefaultBoardService implements BoardService {
         return boardListDtos;
     }
 
-    // ========== 검색 조회 =========================================================================
+
     @Override
     public BoardDefaultDto getSearch(BoardSearchDto boardSearchDto) {
         Sort sort = Sort.by(
@@ -134,7 +133,6 @@ public class DefaultBoardService implements BoardService {
                 .build();
     }
 
-    // ========== id 조회 =========================================================================
     @Override
     public BoardDetailDto getBoardById(Long id) {
         Board board = boardRepository.findById(id).orElse(null);
@@ -146,35 +144,10 @@ public class DefaultBoardService implements BoardService {
         return boardDetailDto;
     }
 
-// ========== 등록 =========================================================================
-
-//    @Override
-//    public BoardListDto createPost(BoardListDto boardListDto) {
-//        // BoardListDto -> Board Entity 변환
-//        Board newBoard = modelMapper.map(boardListDto, Board.class);
-//
-//        // 카테고리
-//        Long boardCategoryId = boardListDto.getBoardCategoryId();  // BoardListDto에서 category ID를 가져옴
-//        BoardCategory boardCategory = boardCategoryRepository.findById(boardCategoryId)
-//                .orElseThrow(() -> new RuntimeException("BoardCategory not found"));
-//
-//        newBoard.setBoardCategory(boardCategory);
-//
-//        // 멤버
-//
-//        Long regMemberId = boardListDto.getRegMemberId();
-//        Member member = memberRepository.findById(regMemberId).orElseThrow(() -> new RuntimeException("RegMember not found"));
-//
-//        newBoard.setRegMember(member);
-//        newBoard.setCreatedAt(Instant.now());
-//
-//
-//        // DB에 게시글 저장
-//        Board savedBoard = boardRepository.save(newBoard);
-//
-//        // 저장된 게시글을 BoardListDto로 변환하여 반환
-//        return modelMapper.map(savedBoard, BoardListDto.class);
-//    }
+    @Override
+    public List<Long> findBoardsWithComments(List<Long> boardIds) {
+        return boardRepository.findBoardsWithComments(boardIds);
+    }
 
     @Override
     public BoardListDto createPost(BoardListDto boardListDto, MultipartFile file) throws IOException {
@@ -217,39 +190,6 @@ public class DefaultBoardService implements BoardService {
 
         return savedBoardDto;
     }
-
-//    private String saveFile(MultipartFile file, Long id) throws IOException {
-//        // 파일 이름에 UUID 추가
-//        String fileName = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-//
-//        // 브랜드 ID를 포함한 디렉토리 생성
-//        Path boardUploadDir = Paths.get("uploads", "boards", id.toString());
-//        if (!Files.exists(boardUploadDir)) {
-//            Files.createDirectories(boardUploadDir);
-//        }
-//
-//        // 최종 파일 경로 설정
-//        Path filePath = boardUploadDir.resolve(fileName);
-//        Files.copy(file.getInputStream(), filePath);
-//
-//        // 경로가 포함된 파일명을 반환 (백슬래시를 포워드 슬래시로 변경)
-////        return fileName;
-//        return filePath.toString().replace("\\", "/");
-//    }
-
-    // ========== 수정 =========================================================================
-
-//    @Override
-//    public BoardResponseDto updatePost(Long id, BoardRequestsDto requestsDto) throws Exception {
-//        Board board = boardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("아이디가 존재하지 않습니다."));
-////        if (!requestsDto.getPassword().equals(board.getPassword()))
-////            throw new Exception("비밀번호가 일치하지 않습니다.");
-//
-//        board.update(requestsDto);
-//        boardRepository.save(board);
-//
-//        return new BoardResponseDto(board);
-//    }
 
     @Override
     public BoardListDto show(Long id) {
@@ -311,18 +251,6 @@ public class DefaultBoardService implements BoardService {
     }
 
 
-    // ========== 삭제 =========================================================================
-//    @Override
-//    public SuccessResponseDto deletePost(Long id, BoardRequestsDto requestsDto) throws Exception {
-//        Board board = boardRepository.findById(id).orElseThrow(
-//                () -> new IllegalArgumentException("아이디가 존재하지 않습니다.")
-//        );
-////        if (!requestsDto.getPassword().equals(board.getPassword()))
-////            throw new Exception("비밀번호가 일치하지 않습니다.");
-//
-//        boardRepository.deleteById(id);
-//        return new SuccessResponseDto(true);
-//    }
     @Override
     public SuccessResponseDto deletePost(Long id) throws Exception {
         Board board = boardRepository.findById(id).orElseThrow(

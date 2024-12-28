@@ -21,6 +21,4 @@ public class FuptoUserDetails implements UserDetails {
     private String email;
 
     private Collection<? extends GrantedAuthority> authorities;
-
-
 }
