@@ -1,6 +1,7 @@
 export function useVendorAuth() {
   const { isAnonymous } = useUserDetails();
   const router = useRouter();
+  const route = useRoute();
   const isAuthModalOpen = ref(false);
 
   const checkVendorAccess = () => {
@@ -20,7 +21,11 @@ export function useVendorAuth() {
   };
 
   const navigateToSignin = () => {
-    router.push("/user/signin");
+    // 현재 경로를 returnURL로 포함
+    return navigateTo(`/user/signin?returnURL=${encodeURIComponent(route.fullPath)}`, {
+      replace: true,
+      external: true,
+    });
   };
 
   return {

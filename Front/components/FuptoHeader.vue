@@ -45,10 +45,12 @@ const redirect = () => {
         <li class="utility-nav-list">
           <!-- 클라이언트 사이드에서만 렌더링 -->
           <template v-if="isClient">
-            <nuxt-link v-if="!userDetails.isAnonymous()" to="/myPage" :class="{ 'active-link': isActiveLink('myPage') }"
-              >my</nuxt-link
-            >
-            <NuxtLink v-if="userDetails.isAnonymous()" to="/user/signin">로그인</NuxtLink>
+            <nuxt-link v-if="!userDetails.isAnonymous()" to="/myPage" :class="{ 'active-link': isActiveLink('myPage') }">
+              my
+            </nuxt-link>
+            <NuxtLink v-if="userDetails.isAnonymous()" :to="`/user/signin?returnURL=${encodeURIComponent(route.fullPath)}`">
+              로그인
+            </NuxtLink>
             <nuxt-link v-else @click="logoutHandler" to="#">로그아웃</nuxt-link>
           </template>
         </li>
