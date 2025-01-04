@@ -19,4 +19,5 @@ public class BoardListDto {
     private String regMemberNickName;
     private Instant createdAt;
     private Boolean active;
+    private Long commentCount;
 }

@@ -33,11 +33,10 @@ import java.util.stream.Collectors;
 @Transactional
 public class DefaultMemberService implements MemberService {
 
-
-    private final BoardRepository boardRepository;
     @Value("uploads")
     private String uploadPath;
 
+    private final BoardRepository boardRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final EmitterService emitterService;
     private final ProductRepository productRepository;
@@ -46,6 +45,7 @@ public class DefaultMemberService implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
+    private final CommentRepository commentRepository;
 
     public DefaultMemberService(MemberRepository memberRepository,
                                 ModelMapper modelMapper,
@@ -54,7 +54,9 @@ public class DefaultMemberService implements MemberService {
                                 FavoriteRepository favoriteRepository,
                                 ProductRepository productRepository,
                                 EmitterService emitterService,
-                                PriceHistoryRepository priceHistoryRepository, BoardRepository boardRepository) {
+                                PriceHistoryRepository priceHistoryRepository,
+                                BoardRepository boardRepository,
+                                CommentRepository commentRepository) {
         this.memberRepository = memberRepository;
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
@@ -64,6 +66,7 @@ public class DefaultMemberService implements MemberService {
         this.emitterService = emitterService;
         this.priceHistoryRepository = priceHistoryRepository;
         this.boardRepository = boardRepository;
+        this.commentRepository = commentRepository;
     }
 
 
@@ -203,6 +206,7 @@ public class DefaultMemberService implements MemberService {
                 .regMemberNickName(board.getRegMember().getNickname())
                 .createdAt(board.getCreateDate())
                 .active(board.getActive())
+                .commentCount(commentRepository.countByBoardId(board.getId()))
                 .build();
     }
 
