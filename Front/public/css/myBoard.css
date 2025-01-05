@@ -40,6 +40,7 @@ small {
 .board-item {
   display: flex;
   align-items: center;
+  height: 60px;
   padding: 1rem;
   border-bottom: 1px solid #eee;
   gap: 1rem;

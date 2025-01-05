@@ -47,19 +47,19 @@ onMounted(() => {
       <nav class="profileNav">
         <ul>
           <li>
-            <nuxt-link to="/myPage">
+            <nuxt-link to="/myPage" exact-active-class="router-link-active">
               <span><img src="/imgs/icon/board.svg" /></span>
               <span>내 활동</span>
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="/myPage/favorite">
+            <nuxt-link to="/myPage/favorite" exact-active-class="router-link-active">
               <span><img src="/imgs/icon/favorite.svg" /></span>
               <span>찜 목록</span>
             </nuxt-link>
           </li>
           <li>
-            <nuxt-link to="/myPage/alert">
+            <nuxt-link to="/myPage/alert" exact-active-class="router-link-active">
               <span><img src="/imgs/icon/alerts.svg" /></span>
               <span>알림</span>
             </nuxt-link>

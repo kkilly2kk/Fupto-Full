@@ -2,17 +2,18 @@ main {
   min-height: 650px;
 }
 
+.mainLayout {
+  display: flex;
+  overflow: hidden;
+}
+
 aside.profileContainer {
   background-color: var(--color-ui-white);
   border-right: 1px solid var(--color-ui-backgroundb);
+  min-width: 300px;
 }
 
-.profileContainer {
-  /*box-sizing: border-box;*/
-  /*vertical-align: baseline;*/
-  /*display: block;*/
-}
-
+/* 프로필 영역 */
 div.profile {
   display: flex;
   flex-direction: column;
@@ -31,21 +32,11 @@ div.profile img {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-div.icon {
-  display: flex;
-  margin-left: auto;
-  width: 20px;
-  height: 32px;
-  padding: 0px 20px;
-}
-div.icon#extend {
-  display: none;
-}
 ul.info {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 5px;
   width: 100%;
 }
 
@@ -53,13 +44,12 @@ li.info-name {
   color: var(--color-text-title);
   font-size: var(--font-regular-h3);
   font-weight: 600;
-  margin-bottom: 4px;
 }
 
 li.info-email {
   color: var(--color-text-unselected);
   font-size: var(--font-regular-notion);
-  margin-bottom: 16px;
+  margin-bottom: 10px;
 }
 
 li.info button {
@@ -79,6 +69,7 @@ li.info button:hover {
   color: var(--color-ui-white);
 }
 
+/* 네비게이션 영역 */
 nav.profileNav {
   padding: 20px 0;
   border-bottom: 1px solid var(--color-text-caption);
@@ -93,24 +84,6 @@ nav.profileNav ul {
 
 nav.profileNav li {
   cursor: pointer;
-}
-nav.profileNav li img {
-  cursor: pointer;
-}
-nav.profileNav li:hover {
-  color: var(--color-text-unselected);
-}
-
-nav.profileNav li.active {
-  color: var(--color-text-unselected);
-}
-nav.profileNav li:hover img {
-  filter: brightness(0) saturate(100%);
-  opacity: 0.5;
-}
-nav.profileNav li:active img {
-  filter: brightness(0) saturate(100%);
-  opacity: 0.5;
 }
 
 nav.profileNav li a {
@@ -149,72 +122,13 @@ nav.profileNav li a.router-link-active img {
   opacity: 1;
 }
 
-nav.profileNav li span:nth-child(1) {
-  width: 30px;
-  height: 30px;
-  object-fit: contain;
-}
-
-/*-------아이콘 영역---------*/
-button.icon\:close {
-  align-self: flex-start;
-}
-.icon\:close {
-  --icon-width: 30px;
-  --icon-color: black;
-  display: inline-flex;
-  align-items: center;
-  height: var(--icon-width);
-  width: var(--icon-width);
-  overflow: visible;
-  color: var(--color-text-unselected);
-  margin: 10px;
-  padding: 0;
-  border: none;
-  background-color: transparent;
-  flex-wrap: nowrap;
-}
-:is(.icon\:close)::before {
-  flex-shrink: 0;
-  content: "";
-  width: var(--icon-width);
-  height: var(--icon-width);
-  display: inline-flex;
-  overflow: hidden;
-  background-color: var(--color-text-unselected);
-  background-repeat: no-repeat;
-  mask-size: var(--icon-width);
-}
-.icon\:close::before {
-  mask-image: url("../imgs/icon/cancel.svg");
-}
-.icon\:close span {
-  overflow: hidden;
-}
-
-@media (max-width: 768px) {
-  /*!* 아이콘 이미지에 대한 hover 효과도 필요한 경우 *!*/
-  /*nav.profileNav li a:hover img {*/
-  /*    filter: brightness(0) saturate(100%) invert(var(--color-ui-backgroundb));*/
-  /*}*/
-
-  /*nav.profileNav li a.router-link-active img {*/
-  /*    filter: brightness(0) saturate(100%) invert(var(--color-text-caption));*/
-  /*}*/
-}
-
+/* 반응형 스타일 */
 @media (min-width: 769px) {
-  .mainLayout {
-    display: flex;
-    /*background-color: #58ccff;*/
-    overflow: hidden;
-  }
   aside.profileContainer {
-    min-width: 300px;
-    border-right: 1px solid var(--color-text-caption);
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
     margin-right: 20px;
   }
+
   nav.profileNav {
     border-bottom: none;
   }
@@ -222,6 +136,7 @@ button.icon\:close {
   nav.profileNav ul {
     display: inline-block;
   }
+
   nav.profileNav li a {
     flex-direction: row;
     padding: 15px 20px;
@@ -230,16 +145,7 @@ button.icon\:close {
   nav.profileNav li a span:last-child {
     margin-left: 12px;
   }
-  div.profile {
-    display: flex;
-    flex-direction: column;
-  }
-  div.icon#reduce {
-    display: none;
-  }
-  div.icon#extend {
-    display: flex;
-  }
+
   @media (min-width: 1400px) {
     aside.profileContainer {
       margin-left: calc(max(15px, 1vw));

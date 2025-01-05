@@ -49,7 +49,6 @@ public class MemberController {
     }
 //  board 영역 ---------------------
     @GetMapping("{id}/boards")
-//    @PreAuthorize("isAuthenticated() and (hasRole('USER') or hasRole('ADMIN'))")
     public ResponseEntity<List<BoardListDto>> getBoards(@PathVariable Long id){
 
         return ResponseEntity.ok(memberService.getBoards(id));
