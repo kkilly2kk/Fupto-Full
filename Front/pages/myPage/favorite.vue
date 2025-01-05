@@ -28,6 +28,7 @@ const fetchMember = async () => {
           ...product,
           showAlert: false,
           image: imgObjectUrl,
+          alertPrice: formatPrice(product.alertPrice),
         };
       })
     );
@@ -38,10 +39,16 @@ const fetchMember = async () => {
 
 const updateAlertPrice = async (memberId, productId, alertPrice) => {
   try {
+    if (!alertPrice) {
+      alert("알림받을 가격을 입력해주세요.");
+      return;
+    }
+
+    const numericPrice = unformatPrice(alertPrice);
     await use$Fetch(`/user/member/${memberId}/fav/${productId}/alertPrice`, {
       method: "POST",
       body: {
-        alertPrice: alertPrice,
+        alertPrice: numericPrice,
       },
     });
 
@@ -52,13 +59,25 @@ const updateAlertPrice = async (memberId, productId, alertPrice) => {
     const item = products.value.find((item) => item.productId === productId);
     if (item) {
       item.showAlert = false;
+      item.alertPrice = formatPrice(numericPrice);
     }
 
-    console.log("알림 가격이 업데이트 되었습니다.");
     alert("알림 가격이 업데이트 되었습니다.");
   } catch (error) {
     console.error("업데이트 실패 : " + error);
   }
+};
+
+// 가격 포맷팅 메서드
+const formatPrice = (price) => {
+  if (!price) return "";
+  return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
+// 반대로 콤마 제거하는 메서드
+const unformatPrice = (price) => {
+  if (!price) return "";
+  return price.toString().replace(/,/g, "");
 };
 
 const toggleAlert = (id) => {
@@ -95,14 +114,16 @@ onMounted(() => {
             <span class="price-icon">
               <img :src="getTrendingIcon(item)" alt="price trend" />
             </span>
-            <span>{{ Number(item.productPrice).toLocaleString() }} ₩</span>
+            <span>{{ formatPrice(item.productPrice) }} ₩</span>
           </div>
           <div class="web-only">
             <input
-              type="number"
+              type="text"
               v-model="item.alertPrice"
               :alt="item.alertPrice"
-              :placeholder="item.alertPrice ? Number(item.alertPrice).toLocaleString() : '알림 받을 가격'"
+              :placeholder="item.alertPrice ? formatPrice(item.alertPrice) : '알림받을 가격'"
+              @input="(e) => (item.alertPrice = formatPrice(unformatPrice(e.target.value)))"
+              @blur="(e) => (item.alertPrice = formatPrice(unformatPrice(e.target.value)))"
             />
           </div>
         </div>
@@ -111,7 +132,7 @@ onMounted(() => {
             <button class="save-btn">이동</button>
           </nuxt-link>
           <button class="save-btn web-only" @click="updateAlertPrice(userDetails.id.value, item.productId, item.alertPrice)">
-            변경
+            {{ item.alertPrice ? "변경" : "설정" }}
           </button>
         </div>
       </div>
@@ -127,7 +148,9 @@ onMounted(() => {
             :alt="item.alertPrice"
             :placeholder="item.alertPrice ? item.alertPrice.toString() : '알림 받을 가격'"
           />
-          <button class="save-btn" @click="updateAlertPrice(userDetails.id.value, item.productId, item.alertPrice)">변경</button>
+          <button class="save-btn" @click="updateAlertPrice(userDetails.id.value, item.productId, item.alertPrice)">
+            {{ item.alertPrice ? "변경" : "설정" }}
+          </button>
         </div>
       </div>
       <!--      드롭 다운 버튼-->

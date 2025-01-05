@@ -7,7 +7,7 @@
 .product-item {
   border: 1px solid #e0e0e0;
   border-radius: 8px;
-  margin-bottom: 15px;
+  margin-bottom: 10px;
   overflow: hidden;
 }
 
@@ -107,6 +107,25 @@ input {
   cursor: pointer;
 }
 
+.dropdown {
+  display: flex;
+  justify-content: center;
+  padding: 5px 0;
+}
+
+.dropdown-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.dropdown-btn img {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
 /* 데스크톱 뷰 (769px 이상) */
 @media screen and (min-width: 769px) {
   .favorites-container {
@@ -127,7 +146,7 @@ input {
 
   @media screen and (max-width: 900px) {
     .favorites-container {
-      grid-template-columns: repeat(1, minmax(230px, 235px)); /* 상품 너비 줄임 */
+      grid-template-columns: repeat(1, minmax(230px, 235px));
       justify-content: center;
     }
   }
@@ -224,6 +243,30 @@ input {
 
 /* 모바일 뷰 (768px 이하) */
 @media screen and (max-width: 768px) {
+  .mainLayout {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* 프로필 영역 */
+  aside.profileContainer {
+    width: 100%;
+    min-width: unset;
+  }
+  /* 찜 목록 영역 */
+  .favorites-container {
+    width: 100%;
+    margin: 10px;
+  }
+
+  .profileNav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0;
+  }
+
   .product-info {
     flex-direction: row;
   }
@@ -249,5 +292,11 @@ input {
 
   .web-only {
     display: none !important;
+  }
+
+  .dropdown {
+    justify-content: flex-start;
+    margin-left: 30px;
+    margin-top: 5px;
   }
 }

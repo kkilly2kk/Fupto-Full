@@ -20,7 +20,7 @@ div.profile {
   align-items: center;
   background-color: var(--color-ui-white);
   padding: 40px 30px;
-  border-bottom: 1px solid var(--color-ui-backgroundb);
+  border-bottom: 1px solid var(--color-text-caption);
 }
 
 div.profile img {
