@@ -15,9 +15,10 @@ public class MemberResponseDto {
     private Long id;
     private String username; //userId에 해당하는 격
     private String password;
-
     private String nickname;
     private Instant birthDate;
     private String email;
-
+    private String tel;
+    private String gender;
+    private String profileImg;
 }

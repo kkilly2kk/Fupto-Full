@@ -24,6 +24,7 @@ const errors = reactive({
   confirmPassword: "",
   gender: "",
   agreement: "",
+  birthDate: "",
 });
 
 const validateEmail = () => {
@@ -90,6 +91,23 @@ const validateConfirmPassword = () => {
   }
 };
 
+const validateBirthDate = () => {
+  if (!birthDate.value) {
+    errors.birthDate = "생년월일을 선택해주세요.";
+  } else {
+    const selectedDate = new Date(birthDate.value);
+    const today = new Date();
+
+    if (selectedDate > today) {
+      errors.birthDate = "미래의 날짜는 선택할 수 없습니다.";
+    } else if (selectedDate.getFullYear() < 1900) {
+      errors.birthDate = "유효하지 않은 생년월일입니다.";
+    } else {
+      errors.birthDate = "";
+    }
+  }
+};
+
 const handleSubmit = async () => {
   validateEmail();
   validateName();
@@ -97,6 +115,7 @@ const handleSubmit = async () => {
   validatePhone();
   validatePassword();
   validateConfirmPassword();
+  validateBirthDate();
 
   if (!gender.value) {
     errors.gender = "성별을 선택해주세요.";
@@ -118,7 +137,8 @@ const handleSubmit = async () => {
     !errors.password &&
     !errors.confirmPassword &&
     !errors.gender &&
-    !errors.agreement
+    !errors.agreement &&
+    !errors.birthDate
   ) {
     try {
       const requestBody = {
@@ -234,6 +254,12 @@ const handleSubmit = async () => {
           placeholder="비밀번호를 다시 입력해주세요"
         />
         <p class="validation-error" v-if="errors.confirmPassword">{{ errors.confirmPassword }}</p>
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">*생년월일</label>
+        <input type="date" id="birthDate" v-model="birthDate" @input="validateBirthDate" @blur="validateBirthDate" required />
+        <p class="validation-error" v-if="errors.birthDate">{{ errors.birthDate }}</p>
       </div>
 
       <div class="form-group">

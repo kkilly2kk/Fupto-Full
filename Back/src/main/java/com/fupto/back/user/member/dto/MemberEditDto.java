@@ -12,21 +12,12 @@ import java.time.Instant;
 @AllArgsConstructor
 @Data
 public class MemberEditDto {
-//    private Long id; //전역에서 받아옴
-//    private String userId; //전역에서 받아옴
-
-
-
-//    private String gender; //변경 불가
     private String password;
-
     private String newPassword;
     private String confirmPassword;
-
     private String nickname;
     private String birthDate;
     private String email;
-    private Instant updateDate = Instant.now().plusSeconds(32400);
-//    private String tel;
-//    private String role = "ROLE_USER";
+    private String tel;
+    private Instant updateDate;
 }

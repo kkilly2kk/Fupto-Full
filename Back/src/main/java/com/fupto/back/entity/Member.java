@@ -12,11 +12,11 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "member")
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
+@Table(name = "member")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,6 +59,9 @@ public class Member {
     @Column(name = "birth_date")
     private Instant birthDate;
 
+    @Column(name = "profile_img")
+    private String profileImg;
+
     @ToString.Exclude
     @OneToMany(mappedBy = "regMember", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -71,5 +74,6 @@ public class Member {
     @OneToMany(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Alert> alert;
+
 
 }

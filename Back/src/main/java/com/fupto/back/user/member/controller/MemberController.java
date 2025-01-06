@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -96,6 +97,23 @@ public class MemberController {
                                                           @RequestBody AlertPriceDto alertPriceDto){
 //        Long memberId = userDetails.getId();
         memberService.updateAlertPrice(member, mappingId, alertPriceDto.getAlertPrice());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("{id}/profile-image")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> uploadProfileImage(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        memberService.updateProfileImage(id, file);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("{id}/profile-image")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<Void> deleteProfileImage(@PathVariable Long id) {
+        memberService.deleteProfileImage(id);
         return ResponseEntity.ok().build();
     }
 

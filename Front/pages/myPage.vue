@@ -4,18 +4,62 @@ useHead({
 });
 
 const userDetails = useUserDetails();
+const config = useRuntimeConfig();
 const member = ref({
   id: null,
   email: null,
   username: null,
+  profileImg: null,
 });
 
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useAlerts } from "~/composables/useAlerts";
 import { useSSE } from "~/composables/useSSE";
 
 const { fetchUnreadAlerts } = useAlerts();
 const { connectSSE } = useSSE();
+
+const profileImageUrl = computed(() => {
+  if (member.value.profileImg) {
+    return `${config.public.imageBase}/uploads/user/${member.value.id}/${member.value.profileImg}`;
+  }
+  return `${config.public.imageBase}/imgs/default-profile.png`;
+});
+
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    await use$Fetch(`/user/member/${member.value.id}/profile-image`, {
+      method: "POST",
+      body: formData,
+    });
+    // 프로필 정보 다시 불러오기
+    const response = await use$Fetch(`/user/member/${member.value.id}`);
+    if (response && response.profileImg) {
+      member.value.profileImg = response.profileImg;
+    }
+  } catch (error) {
+    console.error("Image upload failed:", error);
+    alert("이미지 업로드에 실패했습니다.");
+  }
+};
+
+const deleteImage = async () => {
+  try {
+    await use$Fetch(`/user/member/${member.value.id}/profile-image`, {
+      method: "DELETE",
+    });
+    member.value.profileImg = null;
+  } catch (error) {
+    console.error("Image delete failed:", error);
+    alert("이미지 삭제에 실패했습니다.");
+  }
+};
 
 onMounted(() => {
   // 클라이언트에서 member 데이터 설정
@@ -23,6 +67,7 @@ onMounted(() => {
     id: userDetails.id.value,
     email: userDetails.email.value,
     username: userDetails.username.value,
+    profileImg: userDetails.profileImg?.value,
   };
   fetchUnreadAlerts();
   connectSSE();
@@ -33,8 +78,15 @@ onMounted(() => {
   <main class="mainLayout">
     <aside class="profileContainer">
       <div class="profile">
-        <div>
-          <img src="" alt="" />
+        <div class="profile-image-container">
+          <img :src="profileImageUrl" :alt="member.username" />
+          <div class="profile-image-controls">
+            <label for="imageUpload" class="edit-btn">
+              <span>편집</span>
+              <input type="file" id="imageUpload" accept="image/*" @change="handleImageUpload" class="hidden" />
+            </label>
+            <button v-if="member.profileImg" @click="deleteImage" class="delete-btn">삭제</button>
+          </div>
         </div>
         <ul class="info">
           <li class="info-name">{{ member.username }}</li>

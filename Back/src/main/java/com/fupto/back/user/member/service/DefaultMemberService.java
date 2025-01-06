@@ -18,14 +18,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneId;
+import java.nio.file.StandardCopyOption;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -79,6 +81,7 @@ public class DefaultMemberService implements MemberService {
 
         Member member = memberRepository.findOptionalByUserId(userId).orElseThrow(()->
                 new EntityNotFoundException(userId+"가 존재하지 않습니다."));
+
         if (!passwordEncoder.matches(dto.getPassword(),member.getPassword())){
             throw new InvalidPasswordException("입력하신 비밀번호가 일치하지 않습니다.");
         }
@@ -93,10 +96,15 @@ public class DefaultMemberService implements MemberService {
         if (StringUtils.hasText(dto.getNickname())){
         member.setNickname(dto.getNickname());
         }
+
         if (StringUtils.hasText(dto.getEmail())) {
             member.setEmail(dto.getEmail());
         }
-//        if (dto.getBirthDate() == null){
+
+        if (StringUtils.hasText(dto.getTel())) {
+            member.setTel(dto.getTel());
+        }
+
         if (StringUtils.hasText(dto.getBirthDate())) {
             try{
                 LocalDate localDate = LocalDate.parse(dto.getBirthDate());
@@ -111,9 +119,8 @@ public class DefaultMemberService implements MemberService {
                 }
             }
         }
-//            member.setUpdateDate(Instant.now().plusSeconds(32400));
 
-        member.setUpdateDate(dto.getUpdateDate());
+        member.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
         Member savedMember = memberRepository.save(member);
         return modelMapper.map(savedMember, MemberResponseDto.class);
     }
@@ -280,6 +287,49 @@ public class DefaultMemberService implements MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("No price found for mapping id: " + mappingId));
     }
 
+    @Transactional
+    public void updateProfileImage(Long memberId, MultipartFile file) throws IOException {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
+        String uploadDir = String.format("uploads/user/%d", memberId);
+        File directory = new File(uploadDir);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        String filename = UUID.randomUUID().toString() + getExtension(file.getOriginalFilename());
+        File targetFile = new File(directory, filename);
+
+        // 기존 이미지가 있다면 삭제
+        if (member.getProfileImg() != null) {
+            new File(uploadDir, member.getProfileImg()).delete();
+        }
+
+        file.transferTo(targetFile);
+        member.setProfileImg(filename);
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void deleteProfileImage(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
+
+        if (member.getProfileImg() != null) {
+            String uploadDir = String.format("uploads/user/%d", memberId);
+            try {
+                Files.deleteIfExists(Paths.get(uploadDir, member.getProfileImg()));
+            } catch (IOException e) {
+                throw new RuntimeException("이미지 삭제 실패", e);
+            }
+            member.setProfileImg(null);
+            memberRepository.save(member);
+        }
+    }
+
+    private String getExtension(String filename) {
+        return filename.substring(filename.lastIndexOf("."));
+    }
 
 }

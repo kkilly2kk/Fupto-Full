@@ -58,6 +58,8 @@ public class SecurityConfig {
                         .requestMatchers("/admin/products/*/image/*").permitAll()
                         .requestMatchers("/products/*/image/*").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
+                        .requestMatchers("/imgs/**").permitAll()     // 정적 리소스 접근 허용
+                        .requestMatchers("/user/member/{id}/profile-image").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/comments/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**").hasAnyRole("USER","ADMIN")
