@@ -91,6 +91,7 @@ public class DefaultBoardService implements BoardService {
                 .map(board -> {
                     BoardDto boardDto = modelMapper.map(board, BoardDto.class);
                     boardDto.setCommentCount(commentRepository.countByBoardId(board.getId()));
+                    boardDto.setRegMemberProfileImg(board.getRegMember().getProfileImg());
                     return boardDto;
                 })
                 .toList();

@@ -7,6 +7,7 @@ useHead({
 
 const userDetails = useUserDetails();
 const boards = ref([]);
+const config = useRuntimeConfig();
 
 const formatDate = (dateString) => {
   if (!dateString) return "";
@@ -43,6 +44,9 @@ const fetchBoards = async () => {
       ...board,
       showAlert: false,
       image: null,
+      writerProfileImg: board.regMemberProfileImg
+        ? `${config.public.apiBase}/${board.regMemberProfileImg}`
+        : "/imgs/user/default-profile.jpg",
     }));
 
     await Promise.all(
@@ -89,7 +93,14 @@ onMounted(async () => {
               </span>
             </nuxt-link>
             <div class="content-info">
-              <span class="writer">{{ item.regMemberNickName }}</span>
+              <div class="user-info">
+                <img
+                  :src="item.writerProfileImg || '/imgs/user/default-profile.jpg'"
+                  :alt="item.regMemberNickName"
+                  class="writer-profile-img"
+                />
+                <span class="writer">{{ item.regMemberNickName }}</span>
+              </div>
               <span class="date">{{ formatDate(item.createdAt) }}</span>
             </div>
           </div>

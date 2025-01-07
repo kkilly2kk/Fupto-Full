@@ -1,3 +1,22 @@
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.writer-profile-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #989ca2;
+}
+
+.writer {
+  font-size: 0.875rem;
+  color: #666;
+}
+
 .title {
   font-size: 1rem;
   margin: 0;
@@ -26,7 +45,6 @@ small {
   object-fit: cover;
 }
 
-/* 기존 스타일 유지 */
 .board-container {
   width: 100%;
   max-width: 1200px;
@@ -77,9 +95,8 @@ small {
 
 .content-info {
   display: flex;
+  align-items: center;
   gap: 1rem;
-  font-size: 0.875rem;
-  color: #666;
 }
 
 @media screen and (min-width: 769px) {

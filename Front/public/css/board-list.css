@@ -81,6 +81,27 @@ button.active {
   border: 1px solid var(--color-ui-backgroundb);
   padding-bottom: 1px;
 }
+/* 회원 이미지*/
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.writer-profile-img {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #989ca2;
+}
+
+.smalls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: var(--font-bold-caption);
+}
 
 /* 게시글 간격 */
 .board {
@@ -90,6 +111,13 @@ button.active {
   justify-content: center;
   width: 100%;
   padding-top: 20px;
+}
+
+.board-item {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  gap: 8px;
 }
 
 table {
@@ -105,16 +133,11 @@ td {
   text-align: center;
 }
 
-.title,
-.title a {
-  font-size: 18px;
-  width: 60%;
+.board-title {
+  font-size: 17px;
+  width: 100%;
   font-weight: normal; /* 명시적으로 normal 설정 */
-}
-
-small {
-  padding-right: 20px;
-  font-size: var(--font-bold-caption);
+  display: block;
 }
 
 .image {

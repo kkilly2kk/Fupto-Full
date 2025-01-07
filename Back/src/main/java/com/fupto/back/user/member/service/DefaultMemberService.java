@@ -211,6 +211,7 @@ public class DefaultMemberService implements MemberService {
                 .img(board.getImg())
                 .regMemberId(board.getRegMember().getId())
                 .regMemberNickName(board.getRegMember().getNickname())
+                .regMemberProfileImg(board.getRegMember().getProfileImg())
                 .createdAt(board.getCreateDate())
                 .active(board.getActive())
                 .commentCount(commentRepository.countByBoardId(board.getId()))
@@ -306,7 +307,7 @@ public class DefaultMemberService implements MemberService {
 
         // 기존 이미지가 있다면 삭제
         if (member.getProfileImg() != null) {
-            File oldFile = new File(directory, member.getProfileImg());
+            File oldFile = new File(uploadPath, member.getProfileImg());
             if (oldFile.exists()) {
                 oldFile.delete();
             }
@@ -314,7 +315,9 @@ public class DefaultMemberService implements MemberService {
 
         // 새 이미지 저장
         file.transferTo(targetFile);
-        member.setProfileImg(filename);
+        // DB에 상대 경로 저장
+        String relativePath = String.format("uploads/user/%d/%s", memberId, filename);
+        member.setProfileImg(relativePath);
         memberRepository.save(member);
     }
 
@@ -324,9 +327,8 @@ public class DefaultMemberService implements MemberService {
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
         if (member.getProfileImg() != null) {
-            String uploadDir = String.format("uploads/user/%d", memberId);
             try {
-                Files.deleteIfExists(Paths.get(uploadDir, member.getProfileImg()));
+                Files.deleteIfExists(Paths.get(uploadPath, member.getProfileImg()));
             } catch (IOException e) {
                 throw new RuntimeException("이미지 삭제 실패", e);
             }

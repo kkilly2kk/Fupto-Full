@@ -20,6 +20,7 @@ const searchForm = ref(null);
 const noDataMessage = ref("");
 const imageUrl = ref("");
 
+const config = useRuntimeConfig();
 const userDetails = useUserDetails();
 const isAdmin = computed(() => {
   return userDetails.hasRole("ROLE_ADMIN");
@@ -164,16 +165,27 @@ onMounted(() => {
               <span>{{ board.id }}</span>
             </td>
             <td>
-              <div>
-                <span class="title">
+              <div class="board-item">
+                <span class="board-title">
                   <nuxt-link :to="`/boards/${board.id}/detail`">
                     {{ board.title }}
                     <span v-if="board.commentCount > 0" class="comment-count">[{{ board.commentCount }}]</span>
                   </nuxt-link>
                 </span>
                 <div class="smalls">
-                  <small class="wirter">{{ board.regMemberNickName }}</small>
-                  <small class="date">{{ formatDate(board.updateDate) }}</small>
+                  <div class="user-info">
+                    <img
+                      :src="
+                        board.regMemberProfileImg
+                          ? `${config.public.apiBase}/${board.regMemberProfileImg}`
+                          : '/imgs/user/default-profile.jpg'
+                      "
+                      :alt="board.regMemberNickName"
+                      class="writer-profile-img"
+                    />
+                    <span class="writer">{{ board.regMemberNickName }}</span>
+                  </div>
+                  <span class="date">{{ formatDate(board.updateDate) }}</span>
                 </div>
               </div>
             </td>

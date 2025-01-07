@@ -17,6 +17,7 @@ public class BoardListDto {
     private String img;
     private Long regMemberId;
     private String regMemberNickName;
+    private String regMemberProfileImg;
     private Instant createdAt;
     private Boolean active;
     private Long commentCount;

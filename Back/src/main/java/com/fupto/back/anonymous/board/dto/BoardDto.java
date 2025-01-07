@@ -18,6 +18,7 @@ public class BoardDto {
     private String img;
     private Long regMemberId;
     private String regMemberNickName;
+    private String regMemberProfileImg;
     private Instant createDate;
     private Instant updateDate;
     private Long boardCategoryId;

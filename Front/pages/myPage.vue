@@ -21,7 +21,7 @@ const { connectSSE } = useSSE();
 
 const profileImageUrl = computed(() => {
   if (member.value.profileImg) {
-    return `${config.public.apiBase}/uploads/user/${member.value.id}/${member.value.profileImg}`;
+    return `${config.public.apiBase}/${member.value.profileImg}`;
   }
   return "/imgs/user/default-profile.jpg";
 });
