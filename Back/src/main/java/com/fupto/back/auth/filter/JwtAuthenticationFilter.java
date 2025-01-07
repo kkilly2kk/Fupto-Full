@@ -30,8 +30,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println("=== JWT Filter Debug ===");
+        System.out.println("Request URI: " + request.getRequestURI());
+        System.out.println("Method: " + request.getMethod());
+        System.out.println("Content-Type: " + request.getContentType());
+        System.out.println("Authorization header: " + request.getHeader("Authorization"));
+        System.out.println("ServletPath: " + request.getServletPath());
+
+
         boolean isProductsPath = request.getServletPath().startsWith("/products") &&
                 !request.getServletPath().contains("/favorite");
+
+        boolean isProtectedPath = request.getServletPath().startsWith("/myPage") ||
+                request.getServletPath().startsWith("/user/member");
 
         boolean isAuthenticated = SecurityContextHolder.getContext().getAuthentication() != null &&
                 SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
@@ -48,14 +59,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (request.getServletPath().startsWith("/auth/") ||
                 request.getServletPath().matches(".*/products/.*/image/.*") ||
                 request.getServletPath().matches("/products/.*/image/.*") ||
-                request.getServletPath().startsWith("/uploads/")) {
+                request.getServletPath().startsWith("/uploads/")
+        ) {
             filterChain.doFilter(request, response);
-//            return;
+            return;
         }
 
         String authHeader = request.getHeader("Authorization");
         String token2 = request.getParameter("token");
         String token = null;
+
         System.out.println("authHeader : " + authHeader);
         System.out.println("request : " + request); // 확인됨
 
@@ -73,6 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String email = jwtUtil.extractEmail(token);
                 List<String> roles = jwtUtil.extractRoles(token);
 
+                System.out.println("Extracted from token - ");
                 System.out.println("id : " + id);
                 System.out.println("username : " + username);
                 System.out.println("email : " + email);
@@ -80,11 +94,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 if (username != null && !username.isEmpty()) {
                     List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-                    authorities.add(new SimpleGrantedAuthority(username));
+//                    authorities.add(new SimpleGrantedAuthority(username));
 
                     for (String role : roles) {
-                        authorities.add(new SimpleGrantedAuthority(role));
+                        String roleWithPrefix = role.startsWith("ROLE_") ? role : "ROLE_" + role;
+                        authorities.add(new SimpleGrantedAuthority(roleWithPrefix));
+                        System.out.println("Added authority: " + roleWithPrefix);
                     }
+
                     FuptoUserDetails userDetails = FuptoUserDetails.builder()
                             .id(id)
                             .username(username)
@@ -95,13 +112,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+
                     System.out.println("dofilter---------------------" + authToken);
                 }
 
-        } else if (!isProductsPath) {
-            System.out.println("jwt 토큰 검증 실패");
-            // jwtUtil.generateToken(request);
-            return;
+        }  else if (!isProductsPath) {  // 상품 페이지가 아닐 때
+            if (isProtectedPath) {     // 보호된 경로이면서
+                System.out.println("인증이 필요한 경로 접근");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            }
         }
 
         // else {filterChain.doFilter(request, response);

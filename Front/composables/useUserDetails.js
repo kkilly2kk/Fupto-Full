@@ -57,13 +57,6 @@ export default () => {
 
   const hasRole = (role) => roles.value.includes(role);
 
-  //마운트시 로컬스토리지에서 데이터 입력
-  // if (process.client){
-  //     onMounted(()=>{
-  //         loadUserFromStorage();
-  //     })
-  // }
-
   return {
     id,
     username,

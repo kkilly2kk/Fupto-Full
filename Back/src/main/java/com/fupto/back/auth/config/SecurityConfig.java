@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -18,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
@@ -58,11 +61,11 @@ public class SecurityConfig {
                         .requestMatchers("/admin/products/*/image/*").permitAll()
                         .requestMatchers("/products/*/image/*").permitAll()
                         .requestMatchers("/uploads/**").permitAll()
-                        .requestMatchers("/imgs/**").permitAll()     // 정적 리소스 접근 허용
-                        .requestMatchers("/user/member/{id}/profile-image").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/user/member/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/myPage/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/comments/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/member/**").hasAnyRole("USER","ADMIN")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         System.out.println("------------필터확인완료-------------");

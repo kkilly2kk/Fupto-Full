@@ -30,13 +30,25 @@ export default defineNuxtRouteMiddleware(async (to) => {
       }
     }
 
+    // boards 페이지 접근 제어
     if (to.path.startsWith("/boards")) {
       if (to.path !== "/user/signin" && to.path !== "/user/signup") {
         if (userDetails.isAnonymous()) {
-          // 강제로 페이지 새로고침을 발생시키는 방식으로 변경
           return navigateTo(`/user/signin?returnURL=${encodeURIComponent(to.fullPath)}`, {
             replace: true,
-            external: true, // 외부 네비게이션으로 처리하여 전체 페이지 리로드
+            external: true,
+          });
+        }
+      }
+    }
+
+    // myPage 접근 제어
+    if (to.path.startsWith("/myPage")) {
+      if (to.path !== "/user/signin" && to.path !== "/user/signup") {
+        if (userDetails.isAnonymous()) {
+          return navigateTo(`/user/signin?returnURL=${encodeURIComponent(to.fullPath)}`, {
+            replace: true,
+            external: true,
           });
         }
       }

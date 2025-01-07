@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class DefaultMemberService implements MemberService {
 
-    @Value("uploads")
+    @Value("${file.upload.path}")
     private String uploadPath;
 
     private final BoardRepository boardRepository;
@@ -292,20 +292,27 @@ public class DefaultMemberService implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."));
 
-        String uploadDir = String.format("uploads/user/%d", memberId);
+        // 기본 경로 설정 (절대 경로)
+        Path basePath = Paths.get(uploadPath).toAbsolutePath();
+        String uploadDir = basePath.resolve("user").resolve(memberId.toString()).toString();
         File directory = new File(uploadDir);
         if (!directory.exists()) {
             directory.mkdirs();
         }
 
+        // 파일명 생성
         String filename = UUID.randomUUID().toString() + getExtension(file.getOriginalFilename());
         File targetFile = new File(directory, filename);
 
         // 기존 이미지가 있다면 삭제
         if (member.getProfileImg() != null) {
-            new File(uploadDir, member.getProfileImg()).delete();
+            File oldFile = new File(directory, member.getProfileImg());
+            if (oldFile.exists()) {
+                oldFile.delete();
+            }
         }
 
+        // 새 이미지 저장
         file.transferTo(targetFile);
         member.setProfileImg(filename);
         memberRepository.save(member);

@@ -1,4 +1,8 @@
 <script setup>
+import { onMounted, ref } from "vue";
+import { useAlerts } from "~/composables/useAlerts";
+import { useSSE } from "~/composables/useSSE";
+
 useHead({
   link: [{ rel: "stylesheet", href: "/css/myLayout.css" }],
 });
@@ -12,18 +16,14 @@ const member = ref({
   profileImg: null,
 });
 
-import { onMounted, ref } from "vue";
-import { useAlerts } from "~/composables/useAlerts";
-import { useSSE } from "~/composables/useSSE";
-
 const { fetchUnreadAlerts } = useAlerts();
 const { connectSSE } = useSSE();
 
 const profileImageUrl = computed(() => {
   if (member.value.profileImg) {
-    return `${config.public.imageBase}/uploads/user/${member.value.id}/${member.value.profileImg}`;
+    return `${config.public.apiBase}/uploads/user/${member.value.id}/${member.value.profileImg}`;
   }
-  return `${config.public.imageBase}/imgs/default-profile.png`;
+  return "/imgs/user/default-profile.jpg";
 });
 
 const handleImageUpload = async (event) => {
@@ -61,14 +61,24 @@ const deleteImage = async () => {
   }
 };
 
-onMounted(() => {
+onMounted(async () => {
   // 클라이언트에서 member 데이터 설정
   member.value = {
     id: userDetails.id.value,
     email: userDetails.email.value,
     username: userDetails.username.value,
-    profileImg: userDetails.profileImg?.value,
   };
+
+  //프로필 정보 (이미지 포함) 가져오기
+  try {
+    const response = await use$Fetch(`/user/member/${member.value.id}`);
+    if (response && response.profileImg) {
+      member.value.profileImg = response.profileImg;
+    }
+  } catch (error) {
+    console.error("Failed to fetch profile info:", error);
+  }
+
   fetchUnreadAlerts();
   connectSSE();
 });
