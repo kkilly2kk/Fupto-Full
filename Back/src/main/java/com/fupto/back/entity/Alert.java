@@ -2,8 +2,7 @@ package com.fupto.back.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
@@ -11,6 +10,9 @@ import java.time.Instant;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Table(name = "alert", schema = "fuptodb")
 public class Alert {
     @Id
@@ -33,12 +35,15 @@ public class Alert {
     @Column(name = "message")
     private String message;
 
-    @ColumnDefault("b'0'")
+    @ColumnDefault("false")
     @Column(name = "is_read")
     private Boolean isRead;
+
+    @ColumnDefault("false")
+    @Column(name = "is_deleted")
+    private Boolean isDeleted;
 
     @ColumnDefault("current_timestamp()")
     @Column(name = "create_date", nullable = false)
     private Instant createDate;
-
 }

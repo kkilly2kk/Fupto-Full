@@ -5,8 +5,11 @@ import com.fupto.back.user.emitter.dto.AlertDto;
 import com.fupto.back.user.emitter.dto.AlertEventDto;
 import com.fupto.back.user.emitter.service.EmitterService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -42,19 +45,34 @@ public class EmitterController {
     }
 
     @GetMapping("/unreadAlerts")
-    public ResponseEntity<List<AlertDto>> getUnreadAlerts(@AuthenticationPrincipal FuptoUserDetails userDetails) {
-        return ResponseEntity.ok(emitterService.getUnreadAlerts(userDetails.getId()));
+    public ResponseEntity<Page<AlertDto>> getUnreadAlerts(
+            @AuthenticationPrincipal FuptoUserDetails userDetails,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return ResponseEntity.ok(emitterService.getUnreadAlerts(
+                userDetails.getId(),
+                PageRequest.of(page, size)
+        ));
     }
-
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PatchMapping("/alerts/{alertId}/read")
     public ResponseEntity<?> markAsRead(@PathVariable Long alertId) {
         emitterService.markAlertAsRead(alertId);
         System.out.println("-------작동확인-------"+alertId);
         return ResponseEntity.ok().build();
     }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @PatchMapping("/readAll")
     public ResponseEntity<?> markAsReadAll(@AuthenticationPrincipal FuptoUserDetails userDetails) {
         emitterService.markAllAlertsAsRead(userDetails.getId());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/alerts/{alertId}/delete")
+    public ResponseEntity<?> softDeleteAlert(@PathVariable Long alertId) {
+        emitterService.softDeleteAlert(alertId);
         return ResponseEntity.ok().build();
     }
 

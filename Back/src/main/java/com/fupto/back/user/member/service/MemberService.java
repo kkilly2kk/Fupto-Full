@@ -20,18 +20,7 @@ public interface MemberService {
     List<FavoriteListDto> getFavorites (Long id);
     List<BoardListDto> getBoards (Long memberId);
     Resource getBoardImage(Long id) throws IOException;
-
     void updateAlertPrice( Long favoriteId, Long memberID, Integer alertPrice);
-
-    //알림 전송 및 알림 생성
-
-    String createAlertMessage(Long mappingId, Integer newPrice, Integer alertPrice);
-    void checkAlertCondition(Favorite favorite, Integer oldAlertPrice);
-//    private boolean isPriceDropped(Favorite favorite) 가격떨어졌는 지 현재와 alert비교
-    Integer findLowestPriceByMappingId(Long mappingId);
-
-
-    void checkerforfavPrice(Long productId, Integer newPrice);
     void updateProfileImage(Long memberId, MultipartFile file) throws IOException;
     void deleteProfileImage(Long memberId);
 }

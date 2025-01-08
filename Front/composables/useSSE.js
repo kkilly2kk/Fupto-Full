@@ -1,77 +1,83 @@
-// composables/useSSE.js
-import { onUnmounted } from 'vue'
-import { useAlerts } from '~/composables/useAlerts'
-
 export const useSSE = () => {
-    const { addAlert } = useAlerts()
-    let eventSource = null
-    const baseUrl = 'http://localhost:8085/api/v1'
-    const userDetails = useUserDetails()
+  const userDetails = useUserDetails();
+  const config = useRuntimeConfig();
+  const { addAlert, fetchUnreadAlerts } = useAlerts();
+  let eventSource = null;
+  let reconnectTimeout = null;
+  const maxReconnectAttempts = 5;
+  let reconnectAttempts = 0;
 
+  const connectSSE = () => {
+    if (eventSource) return;
 
-    const connectSSE = () => {
-        if (eventSource) return
-        const token = userDetails.token.value
-        const url = `${baseUrl}/user/member/subscribe?token=${token}`
+    const token = userDetails.token.value;
+    const url = `${config.public.apiBase}/user/member/subscribe?token=${token}`;
+    console.log("Connecting to SSE with URL:", url); // 디버깅용
 
-        eventSource = new EventSource(url, {
-            withCredentials: true
-        })
-        console.log(eventSource)
-        eventSource.onopen = () => {
-            console.log('SSE connection established')
-        }
+    eventSource = new EventSource(url, { withCredentials: true });
 
-        eventSource.onmessage = async (event) => {
-            // 받은 데이터 로깅
-            console.log('Received SSE event:', {
-                name: event.name,
-                data: event.data,
-                type: event.type,
-                lastEventId: event.lastEventId
-            })
+    // 일반 메시지
+    eventSource.onmessage = async (event) => {
+      console.log("Received message:", event.data); // 디버깅용
+      try {
+        const newAlert = JSON.parse(event.data);
+        addAlert(newAlert);
+      } catch (error) {
+        console.error("Error parsing SSE message:", error);
+      }
+    };
 
-            try {
-                const newAlert = JSON.parse(event.data)
-                addAlert(newAlert)
-                await fetchUnreadAlerts();
-            } catch (error) {
-                console.error('Error parsing SSE message:', error)
-            }
-        }
+    // 특정 이벤트 타입 리스너 추가
+    eventSource.addEventListener("PRICE_ALERT", async (event) => {
+      console.log("Received price alert:", event.data); // 디버깅용
+      try {
+        const newAlert = JSON.parse(event.data);
+        addAlert(newAlert);
+      } catch (error) {
+        console.error("Error parsing price alert:", error);
+      }
+    });
 
-            // 특정 이벤트 이름으로 전송된 데이터 확인
-            eventSource.addEventListener('connect', (event) => {
-                console.log('Received connect event:', event.data)
-            })
+    // 연결 성공
+    eventSource.onopen = () => {
+      console.log("SSE connection established");
+      reconnectAttempts = 0; // 연결 성공시 카운트 리셋
+    };
 
-        eventSource.onerror = (error) => {
-            console.error('SSE error:', error)
-            eventSource?.close()
-            eventSource = null
+    // 에러 처리
+    eventSource.onerror = (error) => {
+      console.error("SSE error:", error);
+      eventSource?.close();
+      eventSource = null;
 
-            // // 연결 실패 시 재시도 로직
-            // setTimeout(() => {
-            //     console.log('Attempting to reconnect SSE...')
-            //     connectSSE()
-            // }, 5000)
-        }
+      // 재연결 로직
+      if (reconnectAttempts < maxReconnectAttempts) {
+        reconnectTimeout = setTimeout(() => {
+          console.log(`Attempting to reconnect SSE... (${reconnectAttempts + 1}/${maxReconnectAttempts})`);
+          reconnectAttempts++;
+          connectSSE();
+        }, 5000 * Math.pow(2, reconnectAttempts)); // 지수 백오프
+      }
+    };
+  };
+
+  const disconnectSSE = () => {
+    if (eventSource) {
+      eventSource.close();
+      eventSource = null;
     }
-
-    const disconnectSSE = () => {
-        if (eventSource) {
-            eventSource.close()
-            eventSource = null
-            console.log('SSE connection closed')
-        }
+    if (reconnectTimeout) {
+      clearTimeout(reconnectTimeout);
     }
+    console.log("SSE connection closed");
+  };
 
-    onUnmounted(() => {
-        disconnectSSE()
-    })
+  onUnmounted(() => {
+    disconnectSSE();
+  });
 
-    return {
-        connectSSE,
-        disconnectSSE
-    }
-}
+  return {
+    connectSSE,
+    disconnectSSE,
+  };
+};

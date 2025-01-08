@@ -1,7 +1,6 @@
 <script setup>
 import { ref, computed } from "vue";
 import { use$Fetch } from "@/composables/use$Fetch";
-import useUserDetails from "~/composables/useUserDetails";
 
 useHead({
   link: [{ rel: "stylesheet", href: "/css/myAccount.css" }],

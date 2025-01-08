@@ -198,6 +198,7 @@ public class DefaultBoardService implements BoardService {
                 .img(board.getImg())
                 .regMemberId(board.getRegMember().getId())
                 .regMemberNickName(board.getRegMember().getNickname())
+                .regMemberProfileImg(board.getRegMember().getProfileImg())
                 .createDate(board.getCreateDate())
                 .updateDate(board.getUpdateDate())
                 .boardCategoryId(board.getBoardCategory().getId())

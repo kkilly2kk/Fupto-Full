@@ -13,18 +13,12 @@ import java.time.Instant;
 @Data
 public class FavoriteListDto {
     private Long id;
-
     private Long productId;
     private String productName;
     private Integer productPrice;
-
     private Long memberId;
     private String memberName;
-
     private Instant createDate;
-
     private String productBrandName;
-
-
     private Integer alertPrice;
 }

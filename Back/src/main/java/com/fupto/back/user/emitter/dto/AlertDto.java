@@ -18,5 +18,6 @@ public class AlertDto {
     private String memberName;
     private String referName;
     private Instant createDate;
-    private boolean isRead;
+    private Boolean isRead;
+    private Boolean isDeleted;
 }

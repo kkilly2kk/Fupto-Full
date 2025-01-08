@@ -1,56 +1,73 @@
 <script setup>
+import { onMounted } from "vue";
+import { useAlerts } from "~/composables/useAlerts";
+
 useHead({
   link: [{ rel: "stylesheet", href: "/css/myAlert.css" }],
 });
 
-const alerts =ref([])
+const { alerts, isLoading, error, fetchUnreadAlerts, markAsRead, markAllAsRead } = useAlerts();
 
-const fetchAlert = async ()=> {
-  try {
-    const response = await use$Fetch('/user/member/unreadAlerts');
-    if (!response) {
-      throw new Error('데이터 조회 실패');
-    }
-    console.log(response)
-    alerts.value = response;
-    console.log(alerts.value);
-  } catch (error) {
-    console.error("데이터 조회 오류:", error);
-  }
-}
-// const filteredAlerts = computed(() => {
-//   return alerts.value.filter(alert => alert.isRead === 0)
-// })
+// 날짜 포맷팅
+const formatDate = (dateString) => {
+  if (!dateString) return "";
 
-const markAsRead = async (alertId) => {
-  try {
-    const response = await use$Fetch(`/user/member/alerts/${alertId}/read`, {
-      method: 'PATCH'
-      // body: JSON.stringify({ isRead: 1 })
-    })
-    console.log(response)
-  } catch (error) {
-    console.error('알림 상태 업데이트 실패:', error)
-  }
-}
-onMounted(()=>{
-  fetchAlert()
-  markAsRead()
-})
+  const date = new Date(dateString);
+  const ymd =
+    date.getUTCFullYear() +
+    "-" +
+    String(date.getUTCMonth() + 1).padStart(2, "0") +
+    "-" +
+    String(date.getUTCDate()).padStart(2, "0");
+
+  const time = String(date.getUTCHours()).padStart(2, "0") + ":" + String(date.getUTCMinutes()).padStart(2, "0");
+
+  return `${ymd} ${time}`;
+};
+
+const handleReadAlert = async (alertId) => {
+  await markAsRead(alertId);
+};
+
+const handleReadAllAlerts = async () => {
+  await markAllAsRead();
+};
+
+onMounted(() => {
+  fetchUnreadAlerts(); // 초기 알림 로드
+});
 </script>
 
 <template>
   <div class="alert-container">
-    <div class="alert" v-for="(alert, index) in alerts" :key="index">
-      <div class="alert-profile">
-       <div class="profile-image"></div>
+    <div class="alert-header">
+      <h2>알림 목록</h2>
+      <button class="read-all-btn" @click="handleReadAllAlerts">모두 읽음</button>
+    </div>
+
+    <div v-if="isLoading" class="loading">로딩 중...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else-if="alerts.length === 0" class="no-alerts">알림이 없습니다.</div>
+    <div v-else class="alert-list">
+      <div
+        v-for="alert in alerts"
+        :key="alert.id"
+        class="alert-item"
+        :class="{ 'is-read': alert.isRead }"
+        @click="handleReadAlert(alert.id)"
+      >
         <div class="alert-content">
-          <div class="alert-title">{{ alert.message }}</div>
-          <div class="alert-info">Fupto : {{ alert.createDate }}</div>
+          <div class="alert-info">
+            <span class="alert-type">{{ alert.alertType === "PRICE_ALERT" ? "가격 알림" : "알림" }}</span>
+            <span class="alert-date">{{ formatDate(alert.createDate) }}</span>
+          </div>
+          <p class="alert-message">{{ alert.message }}</p>
+          <div class="alert-details">
+            <span class="product-name">{{ alert.referName }}</span>
+          </div>
         </div>
-        <button class="close-btn" @click="markAsRead(alert.id)"><img src="/public/imgs/icon/cancel.svg"></button>
+        <div class="alert-status" v-if="!alert.isRead"></div>
       </div>
     </div>
   </div>
 </template>
-

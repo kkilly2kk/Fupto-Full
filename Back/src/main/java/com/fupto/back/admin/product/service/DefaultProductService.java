@@ -4,6 +4,7 @@ import com.fupto.back.admin.product.dto.*;
 import com.fupto.back.entity.PriceHistory;
 import com.fupto.back.entity.ProductImage;
 import com.fupto.back.repository.*;
+import com.fupto.back.user.emitter.service.EmitterService;
 import com.fupto.back.user.member.service.DefaultMemberService;
 import jakarta.persistence.EntityNotFoundException;
 import com.fupto.back.entity.Category;
@@ -27,13 +28,13 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service("adminProductService")
 @Transactional
 public class DefaultProductService implements ProductService {
 
-    private final DefaultMemberService userMemberService;
     @Value("${file.upload.path}")
     private String uploadPath;
 
@@ -45,6 +46,7 @@ public class DefaultProductService implements ProductService {
     private ProductImageRepository productImageRepository;
     private ModelMapper modelMapper;
     private FileService fileService;
+    private EmitterService emitterService;
 
     public DefaultProductService(ProductRepository productRepository,
                                  CategoryRepository categoryRepository,
@@ -53,7 +55,8 @@ public class DefaultProductService implements ProductService {
                                  PriceHistoryRepository priceHistoryRepository,
                                  ProductImageRepository productImageRepository,
                                  ModelMapper modelMapper,
-                                 FileService fileService, DefaultMemberService userMemberService) {
+                                 FileService fileService,
+                                 EmitterService emitterService) {
         this.productRepository = productRepository;
         this.categoryRepository = categoryRepository;
         this.brandRepository = brandRepository;
@@ -62,7 +65,7 @@ public class DefaultProductService implements ProductService {
         this.productImageRepository = productImageRepository;
         this.modelMapper = modelMapper;
         this.fileService = fileService;
-        this.userMemberService = userMemberService;
+        this.emitterService = emitterService;
     }
 
     @Override
@@ -513,8 +516,21 @@ public class DefaultProductService implements ProductService {
                     .build();
             priceHistoryRepository.save(priceHistory);
 
-            //가격 변경후 favprice 검토
-            userMemberService.checkerforfavPrice(product.getMappingId(), updateDto.getSalePrice());
+            // 매핑된 상품들의 최저가와 비교하여 알림 발송
+            List<Product> mappingProducts = productRepository.findAllByMappingIdAndStateTrue(
+                    product.getMappingId() != null ? product.getMappingId() : product.getId()
+            );
+            List<Long> productIds = mappingProducts.stream()
+                    .map(Product::getId)
+                    .collect(Collectors.toList());
+
+            // 매핑된 상품들 중 최저가 확인
+            Integer lowestPrice = priceHistoryRepository
+                    .findLowestPriceByProductIdsAndLatestDate(productIds)
+                    .orElse(updateDto.getSalePrice());
+
+            // 알림 발송 로직 호출
+            emitterService.checkerforfavPrice(product.getMappingId(), lowestPrice);
         }
 
         // 3. 이미지 처리

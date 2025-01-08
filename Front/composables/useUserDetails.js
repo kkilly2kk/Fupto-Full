@@ -1,5 +1,5 @@
 export default () => {
-  const id = useState("id", () => null);
+  const id = useState("id", () => null); // Vue의 ref 객체를 반환
   const username = useState("username", () => null);
   const email = useState("email", () => null);
   const roles = useState("roles", () => []);

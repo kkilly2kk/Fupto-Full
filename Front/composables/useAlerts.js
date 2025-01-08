@@ -1,34 +1,82 @@
-// composables/useAlerts.js
-import { ref } from 'vue'
-import { useRuntimeConfig } from '#app'
-import { useSSE } from '~/composables/useSSE'
-
 export const useAlerts = () => {
-    const alerts = ref([])
-    // const baseUrl = 'http://localhost:8085/api/v1'
+  const alerts = ref([]);
+  const isLoading = ref(false);
+  const error = ref(null);
+  const config = useRuntimeConfig();
 
-    // 기존 알림 데이터를 가져오는 함수
-    const fetchUnreadAlerts = async () => {
-        try {
-            const { data } = await useAuthFetch(`/user/member/unreadAlerts`)
-            alerts.value = data.value
-        } catch (error) {
-            console.error('Failed to fetch unread alerts:', error)
-        }
-        console.log("알림 가져오기 완료")
+  const fetchUnreadAlerts = async () => {
+    isLoading.value = true;
+    error.value = null;
+    try {
+      // useAuthFetch 대신 use$Fetch 사용
+      const response = await use$Fetch(`/user/member/unreadAlerts`);
+      console.log("Raw response:", response);
+
+      // response.content가 배열인지 확인
+      if (response && Array.isArray(response.content)) {
+        alerts.value = response.content;
+      } else {
+        alerts.value = Array.isArray(response) ? response : [];
+      }
+
+      console.log("Final alerts value:", alerts.value);
+    } catch (err) {
+      error.value = "알림을 불러오는데 실패했습니다.";
+      console.error("Failed to fetch unread alerts:", err);
+    } finally {
+      isLoading.value = false;
     }
+  };
 
-    // 새로운 알림 추가
-    const addAlert = (newAlert) => {
-        alerts.value.push(newAlert)
-
-        console.log('New alert added:', newAlert) // 새로운 알림 출력
-        // fetchUnreadAlerts() // 새로운 알림이 추가될 때마다 전체 알림 목록 갱신
+  const addAlert = (newAlert) => {
+    if (Array.isArray(alerts.value) && !alerts.value.some((alert) => alert.id === newAlert.id)) {
+      alerts.value = [newAlert, ...alerts.value];
+      console.log("New alert added:", newAlert);
     }
+  };
 
-    return {
-        alerts,
-        fetchUnreadAlerts,
-        addAlert
+  const markAsRead = async (alertId) => {
+    console.log("Attempting to mark as read:", alertId);
+    console.log("Current alerts:", alerts.value);
+
+    if (!alertId) {
+      console.error("Invalid alert ID:", alertId);
+      return;
     }
-}
+    try {
+      await use$Fetch(`/user/member/alerts/${alertId}/read`, {
+        method: "PATCH",
+      });
+      if (Array.isArray(alerts.value)) {
+        const alert = alerts.value.find((a) => a.id === alertId);
+        console.log("Found alert:", alert);
+        if (alert) alert.isRead = true;
+      }
+    } catch (err) {
+      console.error("Failed to mark alert as read:", err);
+    }
+  };
+
+  const markAllAsRead = async () => {
+    try {
+      await use$Fetch(`/user/member/readAll`, {
+        method: "PATCH",
+      });
+      if (Array.isArray(alerts.value)) {
+        alerts.value.forEach((alert) => (alert.isRead = true));
+      }
+    } catch (err) {
+      console.error("Failed to mark all alerts as read:", err);
+    }
+  };
+
+  return {
+    alerts,
+    isLoading,
+    error,
+    addAlert,
+    fetchUnreadAlerts,
+    markAsRead,
+    markAllAsRead,
+  };
+};

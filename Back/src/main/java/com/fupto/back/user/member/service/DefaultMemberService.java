@@ -40,7 +40,6 @@ public class DefaultMemberService implements MemberService {
 
     private final BoardRepository boardRepository;
     private final PriceHistoryRepository priceHistoryRepository;
-    private final EmitterService emitterService;
     private final ProductRepository productRepository;
     private final FavoriteRepository favoriteRepository;
     private final ProductImageRepository productImageRepository;
@@ -55,7 +54,6 @@ public class DefaultMemberService implements MemberService {
                                 ProductImageRepository productImageRepository,
                                 FavoriteRepository favoriteRepository,
                                 ProductRepository productRepository,
-                                EmitterService emitterService,
                                 PriceHistoryRepository priceHistoryRepository,
                                 BoardRepository boardRepository,
                                 CommentRepository commentRepository) {
@@ -65,7 +63,6 @@ public class DefaultMemberService implements MemberService {
         this.productImageRepository = productImageRepository;
         this.favoriteRepository = favoriteRepository;
         this.productRepository = productRepository;
-        this.emitterService = emitterService;
         this.priceHistoryRepository = priceHistoryRepository;
         this.boardRepository = boardRepository;
         this.commentRepository = commentRepository;
@@ -218,18 +215,6 @@ public class DefaultMemberService implements MemberService {
                 .build();
     }
 
-
-
-    //--------------alert 영역--------------------
-    @Override
-    public String createAlertMessage(Long mappingId, Integer newPrice, Integer alertPrice) {
-        if (alertPrice != null) {
-            return String.format("관심 상품(ID: %d)의 가격이 설정하신 %d원 이하로 떨어져 %d원으로 변경되었습니다.", mappingId, alertPrice, newPrice);
-        } else {
-            return String.format("관심 상품(ID: %d)의 가격이 %d원으로 변경되었습니다.", mappingId, newPrice);
-    }
-        }
-
     @Transactional
     @Override
     public void updateAlertPrice(Long memberId, Long mappingId, Integer alertPrice) {
@@ -240,53 +225,8 @@ public class DefaultMemberService implements MemberService {
         Integer oldAlertPrice = favorite.getAlertPrice();
         favorite.setAlertPrice(alertPrice);
         favoriteRepository.save(favorite);
-
-        // 새로 설정한 알림 가격에 대해 즉시 체크
-        checkAlertCondition(favorite, oldAlertPrice);
     }
 
-    @Override
-    public void checkAlertCondition(Favorite favorite, Integer oldAlertPrice){
-        Integer lowestPrice = findLowestPriceByMappingId(favorite.getMappingId());
-//        System.out.println("checkAlertCondition lowestPrice : "+ lowestPrice);
-
-        if ((oldAlertPrice == null && favorite.getAlertPrice() != null)
-                || (favorite.getAlertPrice() != null && lowestPrice <= favorite.getAlertPrice())){
-            String message = createAlertMessage(favorite.getMappingId(), lowestPrice, favorite.getAlertPrice());
-            System.out.println("checkAlertCondition message : "+message);
-        }
-    }
-
-    @Transactional
-    @Override
-    public void checkerforfavPrice(Long productId, Integer newPrice){
-        List<Favorite> favorites = favoriteRepository.findByMappingId(productId);
-        Integer lowestPrice = findLowestPriceByMappingId(productId);
-        String alertType = "PRICE_ALERT";
-        for (Favorite favorite : favorites){
-            Integer alertPrice = favorite.getAlertPrice();
-            if (alertPrice == null || lowestPrice <= alertPrice){
-                String message = createAlertMessage(productId, newPrice, alertPrice);
-                emitterService.sendToEmitter(favorite.getMember().getId(), alertType, message);
-            }
-        }
-    }
-
-    //최저가 찾는 로직
-    @Override
-    public Integer findLowestPriceByMappingId(Long mappingId) {
-        List<Product> products = productRepository.findAllByMappingId(mappingId);
-        //mappingid가 변경 된 경우 찾아가는 로직
-        if (products == null || products.isEmpty()){
-            Product findProduct = productRepository.findById(mappingId).orElse(null);
-            Long findProductId = findProduct.getMappingId().longValue();
-            products = productRepository.findAllByMappingId(findProductId);
-        }
-        List<Long> productIds = products.stream().map(Product::getId).collect(Collectors.toList());
-
-        return priceHistoryRepository.findLowestPriceByProductIdsAndLatestDate(productIds)
-                .orElseThrow(() -> new EntityNotFoundException("No price found for mapping id: " + mappingId));
-    }
 
     @Transactional
     public void updateProfileImage(Long memberId, MultipartFile file) throws IOException {

@@ -56,6 +56,7 @@ const loadBoardData = async () => {
       contents: data.contents,
       boardCategoryName: data.boardCategoryName,
       regMemberNickName: data.regMemberNickName,
+      regMemberProfileImg: data.regMemberProfileImg,
       regMemberId: data.regMemberId,
       createDate: data.createDate,
       updateDate: data.updateDate,
@@ -172,7 +173,16 @@ onBeforeUnmount(() => {
         <h1 class="post-title">{{ board.title }}</h1>
 
         <div class="user-section">
-          <div class="user-avatar"></div>
+          <div class="user-avatar">
+            <img
+              :src="
+                board.regMemberProfileImg
+                  ? `${config.public.apiBase}/${board.regMemberProfileImg}`
+                  : '/imgs/user/default-profile.jpg'
+              "
+              :alt="board.regMemberNickName"
+            />
+          </div>
           <div class="user-meta">
             <span class="user-name">{{ board.regMemberNickName }}</span>
             <span class="post-date">{{ formatDate(board.updateDate) }}</span>

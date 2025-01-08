@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,13 +89,11 @@ public class MemberController {
     }
 
 
-        @PostMapping("{member}/fav/{mappingId}/alertPrice")
+    @PostMapping("{member}/fav/{mappingId}/alertPrice")
     public ResponseEntity<AlertPriceDto> updateAlertPrice(
-//            @AuthenticationPrincipal FuptoUserDetails userDetails,
               @PathVariable Long member,
               @PathVariable Long mappingId,
               @RequestBody AlertPriceDto alertPriceDto){
-//        Long memberId = userDetails.getId();
         memberService.updateAlertPrice(member, mappingId, alertPriceDto.getAlertPrice());
         return ResponseEntity.ok().build();
     }

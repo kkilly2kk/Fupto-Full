@@ -1,21 +1,21 @@
 package com.fupto.back.user.emitter.service;
 
 import com.fupto.back.entity.Alert;
+import com.fupto.back.entity.Favorite;
 import com.fupto.back.entity.Product;
-import com.fupto.back.repository.AlertRepository;
-import com.fupto.back.repository.MemberRepository;
-import com.fupto.back.repository.ProductRepository;
+import com.fupto.back.repository.*;
 import com.fupto.back.user.emitter.dto.AlertDto;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -29,12 +29,19 @@ public class DefaultEmitterService implements EmitterService {
     private final AlertRepository alertRepository;
     private final MemberRepository memberRepository;
     private final ProductRepository productRepository;
+    private final FavoriteRepository favoriteRepository;
+    private final PriceHistoryRepository priceHistoryRepository;
 
     public DefaultEmitterService(AlertRepository alertRepository,
-                                 MemberRepository memberRepository, ProductRepository productRepository) {
+                                 MemberRepository memberRepository,
+                                 ProductRepository productRepository,
+                                 FavoriteRepository favoriteRepository,
+                                 PriceHistoryRepository priceHistoryRepository) {
         this.alertRepository = alertRepository;
         this.memberRepository = memberRepository;
         this.productRepository = productRepository;
+        this.favoriteRepository = favoriteRepository;
+        this.priceHistoryRepository = priceHistoryRepository;
     }
 
     @Override
@@ -62,6 +69,37 @@ public class DefaultEmitterService implements EmitterService {
     }
 
     @Override
+    public void createAndSaveAlert(Long memberId, String alertType, String message, Long referenceId) {
+        Alert alert = Alert.builder()
+                .member(memberRepository.getReferenceById(memberId))
+                .alertType(alertType)
+                .message(message)
+                .referenceId(referenceId)
+                .isRead(false)
+                .isDeleted(false)
+                .createDate(Instant.now())
+                .build();
+
+        alertRepository.save(alert);
+    }
+
+    @Override
+    public void notifyPriceAlert(Long memberId, Long productId, Integer newPrice, Integer alertPrice) {
+        String message = createAlertMessage(productId, newPrice, alertPrice);
+        createAndSaveAlert(memberId, "PRICE_ALERT", message, productId);
+        sendToEmitter(memberId, "PRICE_ALERT", message);
+    }
+
+    private String createAlertMessage(Long productId, Integer newPrice, Integer alertPrice) {
+        if (alertPrice != null) {
+            return String.format("관심 상품(ID: %d)의 가격이 설정하신 %d원 이하로 떨어져 %d원으로 변경되었습니다.",
+                    productId, alertPrice, newPrice);
+        }
+        return String.format("관심 상품(ID: %d)의 가격이 %d원으로 변경되었습니다.",
+                productId, newPrice);
+    }
+
+    @Override
     public void sendToEmitter(Long memberId, String alertType, Object data) {
         // 이벤트 캐시에 저장
         String eventId = memberId + "_" + System.currentTimeMillis();
@@ -82,6 +120,35 @@ public class DefaultEmitterService implements EmitterService {
         }
     }
 
+    @Override
+    public void checkAlertCondition(Favorite favorite, Integer oldAlertPrice){
+        Integer lowestPrice = findLowestPriceByMappingId(favorite.getMappingId());
+//        System.out.println("checkAlertCondition lowestPrice : "+ lowestPrice);
+
+        if ((oldAlertPrice == null && favorite.getAlertPrice() != null)
+                || (favorite.getAlertPrice() != null && lowestPrice <= favorite.getAlertPrice())){
+            String message = createAlertMessage(favorite.getMappingId(), lowestPrice, favorite.getAlertPrice());
+            System.out.println("checkAlertCondition message : "+message);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void checkerforfavPrice(Long productId, Integer newPrice){
+        List<Favorite> favorites = favoriteRepository.findByMappingId(productId);
+        Integer lowestPrice = findLowestPriceByMappingId(productId);
+        String alertType = "PRICE_ALERT";
+        for (Favorite favorite : favorites){
+            Integer alertPrice = favorite.getAlertPrice();
+            if (alertPrice == null || lowestPrice <= alertPrice){
+                String message = createAlertMessage(productId, newPrice, alertPrice);
+                sendToEmitter(favorite.getMember().getId(), alertType, message);
+
+                createAndSaveAlert(favorite.getMember().getId(), alertType, message, productId);
+            }
+        }
+    }
+
     // 캐시 정리 (주기적으로 호출)
     public void cleanEventCache(Long memberId) {
         eventCache.remove(memberId);
@@ -89,10 +156,10 @@ public class DefaultEmitterService implements EmitterService {
 
 
     @Override
-    public List<AlertDto> getUnreadAlerts(Long memberId) {
-
-        return alertRepository.findByMemberIdAndIsReadFalseOrderByCreateDateDesc(memberId)
-                .stream().map(alert -> {
+    public Page<AlertDto> getUnreadAlerts(Long memberId, Pageable pageable) {
+        return alertRepository
+                .findByMemberIdAndIsReadFalseAndIsDeletedFalseOrderByCreateDateDesc(memberId, pageable)
+                .map(alert -> {
                     String productName = productRepository
                             .findById(alert.getReferenceId())
                             .map(Product::getProductName)
@@ -104,11 +171,11 @@ public class DefaultEmitterService implements EmitterService {
                             .createDate(alert.getCreateDate())
                             .alertType(alert.getAlertType())
                             .isRead(alert.getIsRead())
+                            .isDeleted(alert.getIsDeleted())
                             .referName(productName)
                             .memberName(alert.getMember().getNickname())
                             .build();
-                })
-                .collect(Collectors.toList());
+                });
     }
 
     @Override
@@ -127,7 +194,31 @@ public class DefaultEmitterService implements EmitterService {
     }
 
     @Override
+    public void softDeleteAlert(Long alertId) {
+        Alert alert = alertRepository.findById(alertId)
+                .orElseThrow(() -> new EntityNotFoundException("알림을 찾을 수 없습니다"));
+        alert.setIsDeleted(true);
+        alertRepository.save(alert);
+    }
+
+    @Override
     public void removeEmitter(Long memberId) {
         emitters.remove(memberId);
+    }
+
+    //최저가 찾는 로직
+    @Override
+    public Integer findLowestPriceByMappingId(Long mappingId) {
+        List<Product> products = productRepository.findAllByMappingId(mappingId);
+        //mappingid가 변경 된 경우 찾아가는 로직
+        if (products == null || products.isEmpty()){
+            Product findProduct = productRepository.findById(mappingId).orElse(null);
+            Long findProductId = findProduct.getMappingId().longValue();
+            products = productRepository.findAllByMappingId(findProductId);
+        }
+        List<Long> productIds = products.stream().map(Product::getId).collect(Collectors.toList());
+
+        return priceHistoryRepository.findLowestPriceByProductIdsAndLatestDate(productIds)
+                .orElseThrow(() -> new EntityNotFoundException("No price found for mapping id: " + mappingId));
     }
 }
