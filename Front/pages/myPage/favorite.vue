@@ -87,9 +87,6 @@ const toggleAlert = (id) => {
   }
 };
 
-const getTrendingIcon = (item) => {
-  return item.price < item.alertPrice ? "/imgs/icon/fallchart.svg" : "/imgs/icon/basicchart.svg";
-};
 //-------lifecycle hooks--------
 onMounted(() => {
   fetchMember();
@@ -112,7 +109,7 @@ onMounted(() => {
           <p>{{ item.productName }}</p>
           <div class="price-info">
             <span class="price-icon">
-              <img :src="getTrendingIcon(item)" alt="price trend" />
+              <img src="/imgs/icon/favorite-fill.svg" alt="price trend" />
             </span>
             <span>{{ formatPrice(item.productPrice) }} ₩</span>
           </div>

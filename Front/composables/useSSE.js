@@ -12,13 +12,13 @@ export const useSSE = () => {
 
     const token = userDetails.token.value;
     const url = `${config.public.apiBase}/user/member/subscribe?token=${token}`;
-    console.log("Connecting to SSE with URL:", url); // 디버깅용
+    // console.log("Connecting to SSE with URL:", url);
 
     eventSource = new EventSource(url, { withCredentials: true });
 
     // 일반 메시지
     eventSource.onmessage = async (event) => {
-      console.log("Received message:", event.data); // 디버깅용
+      // console.log("Received message:", event.data);
       try {
         const newAlert = JSON.parse(event.data);
         addAlert(newAlert);
@@ -29,7 +29,7 @@ export const useSSE = () => {
 
     // 특정 이벤트 타입 리스너 추가
     eventSource.addEventListener("PRICE_ALERT", async (event) => {
-      console.log("Received price alert:", event.data); // 디버깅용
+      // console.log("Received price alert:", event.data);
       try {
         const newAlert = JSON.parse(event.data);
         addAlert(newAlert);

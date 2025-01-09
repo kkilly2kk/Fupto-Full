@@ -15,5 +15,5 @@ public interface AlertRepository  extends JpaRepository<Alert, Long> {
     Optional<Alert> findByMemberIdAndAlertType(Long memberId, String alertType);
     Optional<Alert> findByMemberId(Long memberId);
     List<Alert> findAllByMemberId(Long longs);
-    Page<Alert> findByMemberIdAndIsReadFalseAndIsDeletedFalseOrderByCreateDateDesc(Long memberId, Pageable pageable);
+    Page<Alert> findByMemberIdAndIsDeletedFalseOrderByCreateDateDesc(Long memberId, Pageable pageable);
 }

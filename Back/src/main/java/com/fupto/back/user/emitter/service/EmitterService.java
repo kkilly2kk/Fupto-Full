@@ -12,13 +12,10 @@ import java.util.List;
 public interface EmitterService {
     SseEmitter createEmitter(Long memberId);
     void createAndSaveAlert(Long memberId, String alertType, String message, Long referenceId);
-    void notifyPriceAlert(Long memberId, Long productId, Integer newPrice, Integer alertPrice);
-    void checkAlertCondition(Favorite favorite, Integer oldAlertPrice);
     void checkerforfavPrice(Long productId, Integer newPrice);
     void softDeleteAlert(Long alertId);
-    void removeEmitter(Long memberId);
     void sendToEmitter(Long memberId, String alertType, Object data);
-    Page<AlertDto> getUnreadAlerts(Long memberId, Pageable pageable);
+    Page<AlertDto> getAlerts(Long memberId, Pageable pageable);
     void markAlertAsRead(Long alertId);
     void markAllAlertsAsRead(Long alertId);
     Integer findLowestPriceByMappingId(Long mappingId);

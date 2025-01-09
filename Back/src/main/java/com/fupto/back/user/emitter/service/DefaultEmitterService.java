@@ -77,26 +77,21 @@ public class DefaultEmitterService implements EmitterService {
                 .referenceId(referenceId)
                 .isRead(false)
                 .isDeleted(false)
-                .createDate(Instant.now())
                 .build();
 
         alertRepository.save(alert);
     }
 
-    @Override
-    public void notifyPriceAlert(Long memberId, Long productId, Integer newPrice, Integer alertPrice) {
-        String message = createAlertMessage(productId, newPrice, alertPrice);
-        createAndSaveAlert(memberId, "PRICE_ALERT", message, productId);
-        sendToEmitter(memberId, "PRICE_ALERT", message);
-    }
-
     private String createAlertMessage(Long productId, Integer newPrice, Integer alertPrice) {
-        if (alertPrice != null) {
-            return String.format("관심 상품(ID: %d)의 가격이 설정하신 %d원 이하로 떨어져 %d원으로 변경되었습니다.",
-                    productId, alertPrice, newPrice);
+        if (alertPrice == null) {
+            return null;
         }
-        return String.format("관심 상품(ID: %d)의 가격이 %d원으로 변경되었습니다.",
-                productId, newPrice);
+        
+        return String.format(
+                "찜 상품의 가격이 설정하신 가격(%,d원) 이하로 떨어져 %,d원으로 변경 되었습니다.",
+                alertPrice,
+                newPrice
+        );
     }
 
     @Override
@@ -120,18 +115,6 @@ public class DefaultEmitterService implements EmitterService {
         }
     }
 
-    @Override
-    public void checkAlertCondition(Favorite favorite, Integer oldAlertPrice){
-        Integer lowestPrice = findLowestPriceByMappingId(favorite.getMappingId());
-//        System.out.println("checkAlertCondition lowestPrice : "+ lowestPrice);
-
-        if ((oldAlertPrice == null && favorite.getAlertPrice() != null)
-                || (favorite.getAlertPrice() != null && lowestPrice <= favorite.getAlertPrice())){
-            String message = createAlertMessage(favorite.getMappingId(), lowestPrice, favorite.getAlertPrice());
-            System.out.println("checkAlertCondition message : "+message);
-        }
-    }
-
     @Transactional
     @Override
     public void checkerforfavPrice(Long productId, Integer newPrice){
@@ -140,11 +123,10 @@ public class DefaultEmitterService implements EmitterService {
         String alertType = "PRICE_ALERT";
         for (Favorite favorite : favorites){
             Integer alertPrice = favorite.getAlertPrice();
-            if (alertPrice == null || lowestPrice <= alertPrice){
+            if (alertPrice != null && lowestPrice <= alertPrice){
                 String message = createAlertMessage(productId, newPrice, alertPrice);
                 sendToEmitter(favorite.getMember().getId(), alertType, message);
-
-                createAndSaveAlert(favorite.getMember().getId(), alertType, message, productId);
+                createAndSaveAlert(favorite.getMember().getId(), alertType, message, productId);  // DB에도 저장
             }
         }
     }
@@ -156,14 +138,17 @@ public class DefaultEmitterService implements EmitterService {
 
 
     @Override
-    public Page<AlertDto> getUnreadAlerts(Long memberId, Pageable pageable) {
+    public Page<AlertDto> getAlerts(Long memberId, Pageable pageable) {
         return alertRepository
-                .findByMemberIdAndIsReadFalseAndIsDeletedFalseOrderByCreateDateDesc(memberId, pageable)
+                .findByMemberIdAndIsDeletedFalseOrderByCreateDateDesc(memberId, pageable)
                 .map(alert -> {
-                    String productName = productRepository
+                    Product product = productRepository
                             .findById(alert.getReferenceId())
-                            .map(Product::getProductName)
-                            .orElse(""); // 상품이 없는 경우 빈 문자열 반환
+                            .orElse(null);
+
+                    String productName = (product != null) ? product.getProductName() : "";
+                    String brandEngName = (product != null && product.getBrand() != null)
+                            ? product.getBrand().getEngName() : "";
 
                     return AlertDto.builder()
                             .id(alert.getId())
@@ -173,6 +158,7 @@ public class DefaultEmitterService implements EmitterService {
                             .isRead(alert.getIsRead())
                             .isDeleted(alert.getIsDeleted())
                             .referName(productName)
+                            .referBrandName(brandEngName)
                             .memberName(alert.getMember().getNickname())
                             .build();
                 });
@@ -201,10 +187,6 @@ public class DefaultEmitterService implements EmitterService {
         alertRepository.save(alert);
     }
 
-    @Override
-    public void removeEmitter(Long memberId) {
-        emitters.remove(memberId);
-    }
 
     //최저가 찾는 로직
     @Override

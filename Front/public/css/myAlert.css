@@ -12,6 +12,10 @@
   margin-bottom: 1rem;
 }
 
+.alert-title {
+  visibility: hidden;
+}
+
 .read-all-btn {
   padding: 8px 16px;
   background-color: var(--color-main-deep);
@@ -20,6 +24,8 @@
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s ease;
+  position: relative; /* 버튼 위치 고정 */
+  top: 0; /* h2의 위치와 관계없이 고정 */
 }
 
 .read-all-btn:hover {
@@ -58,9 +64,15 @@
 
 .alert-info {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.alert-info-left {
+  display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 0.5rem;
 }
 
 .alert-type {
@@ -83,8 +95,9 @@
 }
 
 .product-name {
-  color: #666;
+  color: black;
   font-size: 0.875rem;
+  font-weight: bold;
 }
 
 .alert-status {
@@ -101,6 +114,20 @@
   text-align: center;
   padding: 2rem;
   color: #666;
+}
+
+.delete-alert-btn {
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  color: #666;
+  transition: all 0.2s ease;
+}
+
+.delete-alert-btn:hover {
+  color: #000;
 }
 
 @media screen and (max-width: 768px) {

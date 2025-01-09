@@ -44,6 +44,6 @@ public class Alert {
     private Boolean isDeleted;
 
     @ColumnDefault("current_timestamp()")
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date", insertable = false, updatable = false)
     private Instant createDate;
 }

@@ -17,6 +17,7 @@ public class AlertDto {
     private String alertType;
     private String memberName;
     private String referName;
+    private String referBrandName;
     private Instant createDate;
     private Boolean isRead;
     private Boolean isDeleted;

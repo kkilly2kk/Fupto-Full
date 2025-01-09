@@ -2,9 +2,7 @@ package com.fupto.back.user.emitter.controller;
 
 import com.fupto.back.auth.entity.FuptoUserDetails;
 import com.fupto.back.user.emitter.dto.AlertDto;
-import com.fupto.back.user.emitter.dto.AlertEventDto;
 import com.fupto.back.user.emitter.service.EmitterService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.io.IOException;
-import java.util.List;
 
 @RestController("userEmitterController")
 @RequestMapping("/user/member")
@@ -40,17 +37,16 @@ public class EmitterController {
             emitter.completeWithError(e);
         }
 
-
         return emitter;
     }
 
-    @GetMapping("/unreadAlerts")
-    public ResponseEntity<Page<AlertDto>> getUnreadAlerts(
+    @GetMapping("/alerts")
+    public ResponseEntity<Page<AlertDto>> getAlerts(
             @AuthenticationPrincipal FuptoUserDetails userDetails,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(emitterService.getUnreadAlerts(
+        return ResponseEntity.ok(emitterService.getAlerts(
                 userDetails.getId(),
                 PageRequest.of(page, size)
         ));
@@ -73,16 +69,6 @@ public class EmitterController {
     @PatchMapping("/alerts/{alertId}/delete")
     public ResponseEntity<?> softDeleteAlert(@PathVariable Long alertId) {
         emitterService.softDeleteAlert(alertId);
-        return ResponseEntity.ok().build();
-    }
-
-
-
-    // 테스트용 엔드포인트 (실제 운영에서는 제거하세요)
-    @PostMapping("/test-alert")
-    public ResponseEntity<?> sendTestAlert(@AuthenticationPrincipal FuptoUserDetails userDetails,
-                                           @RequestBody AlertEventDto alertEventDto) {
-        emitterService.sendToEmitter(userDetails.getId(), "alert", alertEventDto);
         return ResponseEntity.ok().build();
     }
 }

@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
-import { useAlerts } from "~/composables/useAlerts";
-import { useSSE } from "~/composables/useSSE";
+const { connectSSE } = useSSE();
+const { hasUnreadAlerts, fetchAlerts } = useAlerts();
 
 useHead({
   link: [{ rel: "stylesheet", href: "/css/myLayout.css" }],
@@ -15,9 +15,6 @@ const member = ref({
   username: null,
   profileImg: null,
 });
-
-const { fetchUnreadAlerts } = useAlerts();
-const { connectSSE } = useSSE();
 
 const profileImageUrl = computed(() => {
   if (member.value.profileImg) {
@@ -78,8 +75,7 @@ onMounted(async () => {
   } catch (error) {
     console.error("Failed to fetch profile info:", error);
   }
-
-  fetchUnreadAlerts();
+  await fetchAlerts();
   connectSSE();
 });
 </script>
@@ -122,7 +118,10 @@ onMounted(async () => {
           </li>
           <li>
             <nuxt-link to="/myPage/alert" exact-active-class="router-link-active">
-              <span><img src="/imgs/icon/alerts.svg" /></span>
+              <span class="alert-menu">
+                <img src="/imgs/icon/alerts.svg" />
+                <div v-if="hasUnreadAlerts" class="unread-dot"></div>
+              </span>
               <span>알림</span>
             </nuxt-link>
           </li>
