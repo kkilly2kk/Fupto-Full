@@ -1,3 +1,5 @@
+const hasUnreadAlerts = ref(false);
+
 export const useAlerts = () => {
   const alerts = ref([]);
   const isLoading = ref(false);
@@ -10,6 +12,8 @@ export const useAlerts = () => {
       const response = await use$Fetch(`/user/member/alerts`);
       if (response && Array.isArray(response.content)) {
         alerts.value = response.content;
+        // 읽지 않은 알림 여부 업데이트
+        hasUnreadAlerts.value = alerts.value.some((alert) => !alert.isRead);
       } else {
         alerts.value = Array.isArray(response) ? response : [];
       }
@@ -34,7 +38,11 @@ export const useAlerts = () => {
         method: "PATCH",
       });
       const alert = alerts.value.find((a) => a.id === alertId);
-      if (alert) alert.isRead = true;
+      if (alert) {
+        alert.isRead = true;
+        // 읽지 않은 알림 여부 업데이트
+        hasUnreadAlerts.value = alerts.value.some((alert) => !alert.isRead);
+      }
     } catch (err) {
       console.error("Failed to mark alert as read:", err);
     }
@@ -45,25 +53,21 @@ export const useAlerts = () => {
       await use$Fetch(`/user/member/readAll`, {
         method: "PATCH",
       });
-
       alerts.value.forEach((alert) => (alert.isRead = true));
+      hasUnreadAlerts.value = false; // 모두 읽음으로 설정
     } catch (err) {
       console.error("Failed to mark all alerts as read:", err);
     }
   };
 
-  const hasUnreadAlerts = computed(() => {
-    return alerts.value.some((alert) => !alert.isRead);
-  });
-
   return {
     alerts,
     isLoading,
     error,
+    hasUnreadAlerts,
     addAlert,
     fetchAlerts,
     markAsRead,
     markAllAsRead,
-    hasUnreadAlerts,
   };
 };

@@ -25,8 +25,10 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     private JwtUtil jwtUtil;
     private FuptoUserDetailService fuptoUserDetailService;
-    public AuthController(AuthenticationManager authenticationManager, JwtUtil jwtUtil
-    ,FuptoUserDetailService fuptoUserDetailService) {
+
+    public AuthController(AuthenticationManager authenticationManager,
+                          JwtUtil jwtUtil,
+                          FuptoUserDetailService fuptoUserDetailService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.fuptoUserDetailService = fuptoUserDetailService;
@@ -39,16 +41,6 @@ public class AuthController {
         }else {return "유저를 찾지 못헀습니다.";}
     }
 
-
-//    @PostMapping("sginin")
-//    public ResponseEntity<?> signin (@RequestBody AuthRequestDto requestDto){
-//
-//        System.out.println(requestDto.getUsername());
-//        System.out.println(requestDto.getPassword());
-//
-//        return ResponseEntity.ok("로그인 확인");
-//
-//        }
     @PostMapping("signin")
     public ResponseEntity<?> signin (@RequestBody AuthRequestDto requestDto){
         System.out.println(requestDto);

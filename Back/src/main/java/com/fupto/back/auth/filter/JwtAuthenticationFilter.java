@@ -116,16 +116,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     System.out.println("dofilter---------------------" + authToken);
                 }
 
-        }  else if (!isProductsPath) {  // 상품 페이지가 아닐 때
-            if (isProtectedPath) {     // 보호된 경로이면서
+        }  else if (!isProductsPath) {  // 상품 페이지도 아니고
+            if (isProtectedPath) {     // 보호된 경로일때
                 System.out.println("인증이 필요한 경로 접근");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
         }
 
-        // else {filterChain.doFilter(request, response);
-        // return;}
         filterChain.doFilter(request, response);
     }
 }

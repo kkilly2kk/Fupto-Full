@@ -70,8 +70,7 @@ public class JwtUtil {
         claims.put("password",userDetails.getPassword());
         claims.put("email",userDetails.getEmail());
         claims.put("roles",userDetails.getAuthorities());
-
-
+        
       return Jwts.builder()
               .setClaims(claims)
               .setSubject(userDetails.getUsername())
@@ -80,6 +79,4 @@ public class JwtUtil {
               .signWith(secretKey, SignatureAlgorithm.HS512)
               .compact();
     };
-
-
 }

@@ -88,7 +88,7 @@ public class DefaultEmitterService implements EmitterService {
         }
         
         return String.format(
-                "찜 상품의 가격이 설정하신 가격(%,d원) 이하로 떨어져 %,d원으로 변경 되었습니다.",
+                "찜 상품의 최저 가격이 설정하신 가격(%,d원) 이하로 떨어져 %,d원으로 변경 되었습니다.",
                 alertPrice,
                 newPrice
         );
