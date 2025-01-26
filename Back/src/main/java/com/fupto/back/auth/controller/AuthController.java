@@ -42,14 +42,16 @@ public class AuthController {
     }
 
     @PostMapping("signin")
-    public ResponseEntity<?> signin (@RequestBody AuthRequestDto requestDto){
+    public ResponseEntity<?> signIn (@RequestBody AuthRequestDto requestDto){
         System.out.println(requestDto);
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(username, password);
+
         System.out.println(authenticationToken);
+
         try{
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             FuptoUserDetails userDetails = (FuptoUserDetails) authentication.getPrincipal();
@@ -58,20 +60,23 @@ public class AuthController {
 
             String token = jwtUtil.generateToken(userDetails);
             fuptoUserDetailService.updateLoginDate(username);
+
             System.out.println("인증완료");
+
             return ResponseEntity.ok(AuthResponseDto
                     .builder()
                     .userId(userDetails.getId())
-                    .token(token)
+                    .token(token) // 토큰 발급 (응답 본문에)
                     .build());
         }
         catch (AuthenticationException e){
+
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
         }
     }
 
     @PostMapping("signup")
-    public ResponseEntity<?> signup (@RequestBody SignUpRequestDto requestDto){
+    public ResponseEntity<?> signUp (@RequestBody SignUpRequestDto requestDto){
         try {
             System.out.println("dto 매개변수 입력 :"+ requestDto);
             FuptoUserDetails userDetails = fuptoUserDetailService.regNewUser(requestDto);
@@ -82,10 +87,14 @@ public class AuthController {
                     .userId(userDetails.getId())
                     .token(token)
                     .build());
+
         } catch (UserAlreadyExistsException e) {
+
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
+
         } catch (Exception e) {
             e.printStackTrace();
+
             return ResponseEntity.status(HttpStatus
                     .INTERNAL_SERVER_ERROR)
                     .body("Error during signup"+e.getMessage());

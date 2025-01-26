@@ -75,5 +75,11 @@ public class Member {
     @JsonManagedReference
     private List<Alert> alert;
 
+    @Column(name = "provider", length = 10)
+    private String provider;
 
+    public Member update(String name) {
+        this.nickname = name;
+        return this;
+    }
 }

@@ -1,13 +1,14 @@
 package com.fupto.back.auth.config;
 
 import com.fupto.back.auth.filter.JwtAuthenticationFilter;
+import com.fupto.back.auth.handler.OAuth2SuccessHandler;
+import com.fupto.back.auth.service.CustomOAuth2UserService;
 import com.fupto.back.auth.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,8 +20,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.Arrays;
 
@@ -28,10 +27,17 @@ import java.util.Arrays;
 public class SecurityConfig {
     private JwtUtil jwtUtil;
     private AuthenticationConfiguration authenticationConfiguration;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oauth2SuccessHandler;
 
-    public SecurityConfig(JwtUtil jwtUtil, AuthenticationConfiguration authenticationConfiguration){
+    public SecurityConfig(JwtUtil jwtUtil,
+                          AuthenticationConfiguration authenticationConfiguration,
+                          CustomOAuth2UserService customOAuth2UserService,
+                          OAuth2SuccessHandler oauth2SuccessHandler) {
         this.jwtUtil = jwtUtil;
         this.authenticationConfiguration = authenticationConfiguration;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.oauth2SuccessHandler = oauth2SuccessHandler;
     }
 
     @Bean
@@ -47,10 +53,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-                                                   CorsConfigurationSource corsConfSource)
-        throws Exception{
+                                                   CorsConfigurationSource corsConfSource) throws Exception {
+
         http.cors(cors-> cors.configurationSource(corsConfSource))
                 .csrf(csrf->csrf.disable())
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService))
+                        .successHandler(oauth2SuccessHandler))
                 .authorizeHttpRequests(authorize-> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**").permitAll()
@@ -68,18 +78,21 @@ public class SecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
         System.out.println("------------필터확인완료-------------");
+
         return http.build();
     }
+
     @Bean
     public CorsConfigurationSource corsConfSource(){
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.asList("http://localhost","http://localhost:3000","http://localhost:3001"));
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
 //        config.setAllowedHeaders(Arrays.asList("*"));
+        config.addAllowedHeader("*");
         config.setAllowCredentials(true);
 //        config.setExposedHeaders(Arrays.asList("Authorization"));
-        config.addAllowedHeader("*");
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**",config);
         return source;
