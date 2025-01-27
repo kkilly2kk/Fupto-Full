@@ -96,33 +96,31 @@ main {
 }
 
 .divider {
-  position: relative;
+  display: flex;
+  align-items: center;
   text-align: center;
   margin: 20px 0;
+  gap: 10px; /* 텍스트와 선 사이의 간격 */
 }
 
 .divider span {
-  background-color: white;
-  padding: 0 10px;
   color: var(--color-text-caption);
   font-size: var(--font-regular-caption);
+  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
 }
 
-.divider::before {
+.divider::before,
+.divider::after {
   content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
+  flex: 1; /* 남은 공간을 균등하게 차지 */
   height: 1px;
   background-color: var(--color-text-caption);
-  z-index: -1;
 }
 
 .social-buttons {
   display: flex;
   justify-content: center;
-  gap: 20px;
+  gap: 40px;
   margin-top: 20px;
 }
 

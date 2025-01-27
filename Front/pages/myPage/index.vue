@@ -79,6 +79,8 @@ onMounted(async () => {
 <template>
   <div class="board-container">
     <div class="board-list">
+      <div v-if="!boards.length" class="no-boards-message">내가 쓴 글이 없습니다.</div>
+
       <div class="board-item" v-for="item in boards" :key="item.id">
         <!-- 좌측 번호 영역 -->
         <div class="item-number">{{ item.id }}</div>

@@ -99,6 +99,14 @@ small {
   gap: 1rem;
 }
 
+.no-boards-message {
+  text-align: center;
+  padding: 50px 0;
+  color: #666;
+  font-size: var(--font-medium-body);
+  width: 100%;
+}
+
 @media screen and (min-width: 769px) {
   .board-container {
     padding: 1rem;

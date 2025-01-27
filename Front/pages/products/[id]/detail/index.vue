@@ -290,7 +290,7 @@ onUnmounted(() => {
                 <span class="text-white text-bold text-md">FUPTO로 가입하기</span>
               </button>
               <div class="flex items-center gap-sm">
-                <span class="text-default text-regular text-sm">소셜 로그인 또는 이미 회원이신가요?</span>
+                <span class="text-default text-regular text-sm">소셜 로그인 또는 이미 회원이시라면</span>
                 <a href="#" class="text-default text-bold text-md" @click.prevent="navigateToSignin">로그인하기 ></a>
               </div>
             </div>

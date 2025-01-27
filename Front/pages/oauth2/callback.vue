@@ -6,12 +6,14 @@ import { jwtDecode } from "jwt-decode";
 const route = useRoute();
 const router = useRouter();
 const userDetails = useUserDetails();
-const returnURL = route.query.returnURL || "/";
 
 onMounted(() => {
   try {
     const token = route.query.token;
     const userId = route.query.userId;
+
+    // 세션 스토리지에서 returnURL 가져오기
+    const savedReturnURL = process.client ? sessionStorage.getItem("oauth2_return_url") || "/" : "/";
 
     if (token) {
       const userInfo = jwtDecode(token);
@@ -24,7 +26,12 @@ onMounted(() => {
         token: token,
       });
 
-      router.push(returnURL);
+      // 저장된 returnURL로 이동
+      router.push(savedReturnURL);
+      // 사용 후 삭제
+      if (process.client) {
+        sessionStorage.removeItem("oauth2_return_url");
+      }
     } else {
       console.error("토큰이 없습니다.");
       router.push("/signin");

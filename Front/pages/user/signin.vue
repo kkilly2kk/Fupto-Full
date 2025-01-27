@@ -9,6 +9,13 @@ const returnURL = route.query.returnURL || "/";
 const username = ref("");
 const password = ref("");
 
+// returnURL을 저장하는 함수
+const saveReturnUrl = () => {
+  if (process.client) {
+    sessionStorage.setItem("oauth2_return_url", returnURL);
+  }
+};
+
 const localLoginHandler = async () => {
   try {
     let { data } = await useAuthFetch("/auth/signin", {
@@ -72,13 +79,13 @@ const localLoginHandler = async () => {
             <span>SNS 계정으로 로그인하기</span>
           </div>
           <div class="social-buttons">
-            <a :href="`${config.public.apiBase}/oauth2/authorization/google`" class="social-button">
+            <a @click="saveReturnUrl" :href="`${config.public.apiBase}/oauth2/authorization/google`" class="social-button">
               <img src="/imgs/icon/google.png" alt="Google" />
             </a>
-            <a :href="`${config.public.apiBase}/oauth2/authorization/kakao`" class="social-button">
+            <a @click="saveReturnUrl" :href="`${config.public.apiBase}/oauth2/authorization/kakao`" class="social-button">
               <img src="/imgs/icon/kakao.png" alt="Kakao" />
             </a>
-            <a :href="`${config.public.apiBase}/oauth2/authorization/naver`" class="social-button">
+            <a @click="saveReturnUrl" :href="`${config.public.apiBase}/oauth2/authorization/naver`" class="social-button">
               <img src="/imgs/icon/naver.png" alt="Naver" />
             </a>
           </div>

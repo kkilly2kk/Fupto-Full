@@ -126,6 +126,14 @@ input {
   transition: transform 0.2s ease;
 }
 
+.no-favorites {
+  text-align: center;
+  padding: 50px 0;
+  color: #666;
+  font-size: var(--font-medium-body);
+  width: 100%;
+}
+
 /* 데스크톱 뷰 (769px 이상) */
 @media screen and (min-width: 769px) {
   .favorites-container {
@@ -142,6 +150,10 @@ input {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
+  }
+
+  .no-favorites {
+    grid-column: 1 / -1; /* grid 전체 너비를 차지 */
   }
 
   @media screen and (max-width: 900px) {

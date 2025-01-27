@@ -54,7 +54,7 @@ onMounted(() => {
   <div class="alert-container">
     <div class="alert-header">
       <h2 class="alert-title">알림 목록</h2>
-      <button class="read-all-btn" @click="handleReadAllAlerts">모두 읽음</button>
+      <button v-if="alerts.length > 0" class="read-all-btn" @click="handleReadAllAlerts">모두 읽음</button>
     </div>
 
     <div v-if="isLoading" class="loading">로딩 중...</div>

@@ -112,8 +112,10 @@
 .error,
 .no-alerts {
   text-align: center;
-  padding: 2rem;
+  padding: 50px 0;
   color: #666;
+  font-size: var(--font-medium-body);
+  width: 100%;
 }
 
 .delete-alert-btn {

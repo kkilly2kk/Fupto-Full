@@ -96,6 +96,8 @@ onMounted(() => {
 <!-- templates -->
 <template>
   <div class="favorites-container">
+    <div v-if="products.length === 0" class="no-favorites">찜한 상품이 없습니다.</div>
+
     <div class="product-item" v-for="item in products" :key="item.id">
       <!-- Product Info Section -->
       <div class="product-info">

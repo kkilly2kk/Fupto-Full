@@ -28,12 +28,12 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         FuptoUserDetails userDetails = (FuptoUserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
 
-//        AuthResponseDto authResponse = AuthResponseDto.builder()
-//                .userId(userDetails.getId())
-//                .token(token)
-//                .build();
+        String returnURL = request.getParameter("returnURL");
+        if (returnURL == null || returnURL.isEmpty()) {
+            returnURL = "/";
+        }
 
-        // JSON 응답을 보내는 대신 프론트엔드로 리다이렉트
+        // 프론트엔드로 리다이렉트
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/callback")
                 .queryParam("token", token)
