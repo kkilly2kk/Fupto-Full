@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 
@@ -20,18 +21,26 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     private final ObjectMapper objectMapper;
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
                                         Authentication authentication) throws IOException {
+
         FuptoUserDetails userDetails = (FuptoUserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
 
-        AuthResponseDto authResponse = AuthResponseDto.builder()
-                .userId(userDetails.getId())
-                .token(token)
-                .build();
+//        AuthResponseDto authResponse = AuthResponseDto.builder()
+//                .userId(userDetails.getId())
+//                .token(token)
+//                .build();
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(objectMapper.writeValueAsString(authResponse));
+        // JSON 응답을 보내는 대신 프론트엔드로 리다이렉트
+        String targetUrl = UriComponentsBuilder
+                .fromUriString("http://localhost:3000/oauth2/callback")
+                .queryParam("token", token)
+                .queryParam("userId", userDetails.getId())
+                .build()
+                .toUriString();
+
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 }

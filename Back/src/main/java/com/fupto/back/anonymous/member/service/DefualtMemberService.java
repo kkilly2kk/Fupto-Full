@@ -11,7 +11,6 @@ public class DefualtMemberService implements MemberService {
 
     private MemberRepository memberRepository;
     private ModelMapper modelMapper;
-//    private Passwor
 
     public DefualtMemberService(MemberRepository memberRepository, ModelMapper modelMapper) {
         this.memberRepository = memberRepository;

@@ -1,11 +1,10 @@
 <script setup>
 import { jwtDecode } from "jwt-decode";
-import { useRouter } from "vue-router";
 
-const userDetails = useUserDetails();
 const route = useRoute();
+const config = useRuntimeConfig();
+const userDetails = useUserDetails();
 const returnURL = route.query.returnURL || "/";
-const router = useRouter();
 
 const username = ref("");
 const password = ref("");
@@ -67,6 +66,24 @@ const localLoginHandler = async () => {
           </div>
           <button type="submit" class="login-button">로그인</button>
         </form>
+
+        <div class="social-login-section">
+          <div class="divider">
+            <span>SNS 계정으로 로그인하기</span>
+          </div>
+          <div class="social-buttons">
+            <a :href="`${config.public.apiBase}/oauth2/authorization/google`" class="social-button">
+              <img src="/imgs/icon/google.png" alt="Google" />
+            </a>
+            <a :href="`${config.public.apiBase}/oauth2/authorization/kakao`" class="social-button">
+              <img src="/imgs/icon/kakao.png" alt="Kakao" />
+            </a>
+            <a :href="`${config.public.apiBase}/oauth2/authorization/naver`" class="social-button">
+              <img src="/imgs/icon/naver.png" alt="Naver" />
+            </a>
+          </div>
+        </div>
+
         <div class="login-links">
           <a href="#">아이디/비밀번호 찾기</a>
           <nuxt-link to="signup">회원가입</nuxt-link>

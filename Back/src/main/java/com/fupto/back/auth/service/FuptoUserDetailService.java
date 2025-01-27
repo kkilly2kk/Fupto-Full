@@ -78,6 +78,7 @@ public class FuptoUserDetailService implements UserDetailsService {
 
         //dto를 entity로 변환 후 저장
         Member member = modelMapper.map(requestDto, Member.class);
+        member.setProvider("FUPTO");
         Member savemember = memberRepository.save(member);
         System.out.println("entity 확인 : "+member.getRole());;
 

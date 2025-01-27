@@ -29,12 +29,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-        System.out.println("=== JWT Filter Debug ===");
-        System.out.println("Request URI: " + request.getRequestURI());
-        System.out.println("Method: " + request.getMethod());
-        System.out.println("Content-Type: " + request.getContentType());
-        System.out.println("Authorization header: " + request.getHeader("Authorization"));
-        System.out.println("ServletPath: " + request.getServletPath());
+//        System.out.println("=== JWT Filter Debug ===");
+//        System.out.println("Request URI: " + request.getRequestURI());
+//        System.out.println("Method: " + request.getMethod());
+//        System.out.println("Content-Type: " + request.getContentType());
+//        System.out.println("Authorization header: " + request.getHeader("Authorization"));
+//        System.out.println("ServletPath: " + request.getServletPath());
 
 
         boolean isProductsPath = request.getServletPath().startsWith("/products") &&

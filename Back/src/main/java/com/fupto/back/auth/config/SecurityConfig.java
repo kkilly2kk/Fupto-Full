@@ -6,6 +6,7 @@ import com.fupto.back.auth.service.CustomOAuth2UserService;
 import com.fupto.back.auth.util.JwtUtil;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,22 +28,21 @@ import java.util.Arrays;
 public class SecurityConfig {
     private JwtUtil jwtUtil;
     private AuthenticationConfiguration authenticationConfiguration;
-    private final CustomOAuth2UserService customOAuth2UserService;
-    private final OAuth2SuccessHandler oauth2SuccessHandler;
+    private CustomOAuth2UserService customOAuth2UserService;
+    private OAuth2SuccessHandler oauth2SuccessHandler;
+    private PasswordEncoder passwordEncoder;
+
 
     public SecurityConfig(JwtUtil jwtUtil,
                           AuthenticationConfiguration authenticationConfiguration,
                           CustomOAuth2UserService customOAuth2UserService,
-                          OAuth2SuccessHandler oauth2SuccessHandler) {
+                          OAuth2SuccessHandler oauth2SuccessHandler,
+                          PasswordEncoder passwordEncoder) {
         this.jwtUtil = jwtUtil;
         this.authenticationConfiguration = authenticationConfiguration;
         this.customOAuth2UserService = customOAuth2UserService;
         this.oauth2SuccessHandler = oauth2SuccessHandler;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Bean
@@ -57,6 +57,7 @@ public class SecurityConfig {
 
         http.cors(cors-> cors.configurationSource(corsConfSource))
                 .csrf(csrf->csrf.disable())
+                .formLogin(form -> form.disable())
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
@@ -101,7 +102,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         UserDetails user1 = User.builder()
                 .username("newlec")
-                .password(passwordEncoder().encode("111"))
+                .password(passwordEncoder.encode("111"))
                 .roles("MEMBER", "ADMIN")
                 .build();
 

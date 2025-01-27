@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByProviderAndEmail(dto.getProvider(), dto.getEmail())
                 .map(entity -> entity.update(dto.getName()))
                 .orElseGet(() -> createMember(dto));
+        member.setLoginDate(Instant.now().plusSeconds(32400));
 
         return memberRepository.save(member);
     }

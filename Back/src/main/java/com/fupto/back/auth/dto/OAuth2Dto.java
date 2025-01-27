@@ -41,9 +41,12 @@ public class OAuth2Dto {
 
     private static OAuth2Dto ofNaver(String provider, Map<String, Object> attributes) {
         Map<String, Object> response = (Map<String, Object>) attributes.get("response");
+        String originalId = (String) response.get("id");
+        String providerId = originalId.length() > 16 ? originalId.substring(0, 16) : originalId;
+
         return OAuth2Dto.builder()
                 .provider(provider.toUpperCase())
-                .providerId((String) response.get("id"))
+                .providerId(providerId)
                 .email((String) response.get("email"))
                 .name((String) response.get("name"))
                 .build();
