@@ -93,7 +93,6 @@
   text-shadow: 0 0 0.5px currentColor;
 }
 
-
 /*유틸리티 추가 css*/
 .nav-container {
   display: flex;
@@ -113,13 +112,12 @@
 
 .utility-nav-list {
   display: flex;
-  gap: 10px; /* 유틸리티 메뉴 간의 간격 */
+  gap: 15px; /* 유틸리티 메뉴 간의 간격 */
   margin-right: 10px;
 
   font-weight: 600;
   font-size: var(--font-regular-caption);
 }
-
 
 @media screen and (max-width: 765px) {
   .utility-nav-list {

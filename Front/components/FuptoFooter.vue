@@ -10,7 +10,7 @@ const userDetails = useUserDetails();
         <li><a href="#">소개</a></li>
         <li><a href="#">이용약관</a></li>
         <li><a href="#">개인정보처리방침</a></li>
-        <li><a href="#">쇼핑목정보</a></li>
+        <li><a href="#">쇼핑몰정보</a></li>
         <ClientOnly>
           <li v-if="userDetails.hasRole('ROLE_ADMIN')">
             <nuxt-link to="/admin">관리자페이지</nuxt-link>

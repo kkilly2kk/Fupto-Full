@@ -7,4 +7,9 @@ export default defineNuxtConfig({
       apiBase: "http://localhost:8085/api/v1",
     },
   },
+  routeRules: {
+    "/oauth2/callback": {
+      ssr: false,
+    },
+  },
 });

@@ -31,9 +31,12 @@ public class OAuth2Dto {
     }
 
     private static OAuth2Dto ofGoogle(String provider, Map<String, Object> attributes) {
+        String originalId = String.valueOf(attributes.get("sub"));
+        String providerId = originalId.length() > 16 ? originalId.substring(0, 16) : originalId;
+
         return OAuth2Dto.builder()
                 .provider(provider.toUpperCase())
-                .providerId(String.valueOf(attributes.get("sub")))
+                .providerId(providerId)
                 .email((String) attributes.get("email"))
                 .name((String) attributes.get("name"))
                 .build();
