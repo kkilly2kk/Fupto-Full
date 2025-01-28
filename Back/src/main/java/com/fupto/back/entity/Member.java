@@ -7,6 +7,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -57,7 +58,7 @@ public class Member {
     private Instant loginDate;
 
     @Column(name = "birth_date")
-    private Instant birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "profile_img")
     private String profileImg;

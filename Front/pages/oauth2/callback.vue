@@ -28,7 +28,7 @@ onMounted(() => {
 
       // 저장된 returnURL로 이동
       router.push(savedReturnURL);
-      // 사용 후 삭제
+      // 사용 후 바로 삭제
       if (process.client) {
         sessionStorage.removeItem("oauth2_return_url");
       }

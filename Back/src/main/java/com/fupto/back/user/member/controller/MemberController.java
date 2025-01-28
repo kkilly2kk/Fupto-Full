@@ -1,6 +1,7 @@
 package com.fupto.back.user.member.controller;
 
 import com.fupto.back.auth.entity.FuptoUserDetails;
+import com.fupto.back.entity.Member;
 import com.fupto.back.user.emitter.dto.AlertPriceDto;
 import com.fupto.back.user.member.dto.BoardListDto;
 import com.fupto.back.user.member.dto.MemberEditDto;
@@ -32,13 +33,16 @@ public class MemberController {
 
     @PutMapping("edit")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MemberResponseDto> signUp(@AuthenticationPrincipal FuptoUserDetails userDetails,
-                                                    @RequestBody MemberEditDto requestDto) {
+    public ResponseEntity<MemberResponseDto> editMember(@AuthenticationPrincipal FuptoUserDetails userDetails,
+                                                        @RequestBody MemberEditDto requestDto) {
         try {
-            MemberResponseDto editMember = memberService.editMember(userDetails.getUsername(), requestDto);
-            System.out.println(editMember);
+            Member member = memberService.findByUserId(userDetails.getUsername());
+            MemberResponseDto editMember = member.getProvider() != null
+                    ? memberService.editSocialMember(member, requestDto)
+                    : memberService.editMember(member, requestDto);
+
             return ResponseEntity.ok(editMember);
-        }catch (InvalidPasswordException e){
+        } catch (InvalidPasswordException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

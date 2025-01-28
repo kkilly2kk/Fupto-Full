@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -16,9 +17,10 @@ public class MemberResponseDto {
     private String username; //userId에 해당하는 격
     private String password;
     private String nickname;
-    private Instant birthDate;
+    private LocalDate birthDate;
     private String email;
     private String tel;
     private String gender;
+    private String provider;
     private String profileImg;
 }

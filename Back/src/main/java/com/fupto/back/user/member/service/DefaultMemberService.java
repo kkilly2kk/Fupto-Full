@@ -2,7 +2,6 @@ package com.fupto.back.user.member.service;
 
 import com.fupto.back.entity.*;
 import com.fupto.back.repository.*;
-import com.fupto.back.user.emitter.service.EmitterService;
 import com.fupto.back.user.member.dto.BoardListDto;
 import com.fupto.back.user.member.dto.FavoriteListDto;
 import com.fupto.back.user.member.dto.MemberEditDto;
@@ -69,28 +68,41 @@ public class DefaultMemberService implements MemberService {
 
 
     @Transactional
-    public MemberResponseDto editMember (String userId, MemberEditDto dto){
+    public MemberResponseDto editSocialMember(Member member, MemberEditDto dto) {
+        updateMemberInfo(member, dto);
+        Member savedMember = memberRepository.save(member);
+        return modelMapper.map(savedMember, MemberResponseDto.class);
+    }
 
-        if (!memberRepository.existsByUserId(userId)){
+    // 일반 사용자 정보 수정
+    @Transactional
+    public MemberResponseDto editMember(Member member, MemberEditDto dto) {
+        // 비밀번호 검증
+        validatePassword(member, dto.getPassword());
+
+        // 새 비밀번호가 있는 경우 처리
+        updatePasswordIfProvided(member, dto);
+
+        // 나머지 정보 업데이트
+        updateMemberInfo(member, dto);
+
+        Member savedMember = memberRepository.save(member);
+        return modelMapper.map(savedMember, MemberResponseDto.class);
+    }
+
+    // 회원 조회 메서드
+    public Member findByUserId(String userId) {
+        if (!memberRepository.existsByUserId(userId)) {
             throw new EntityNotFoundException("회원이 존재하지 않습니다.");
         }
+        return memberRepository.findOptionalByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException(userId + "가 존재하지 않습니다."));
+    }
 
-        Member member = memberRepository.findOptionalByUserId(userId).orElseThrow(()->
-                new EntityNotFoundException(userId+"가 존재하지 않습니다."));
-
-        if (!passwordEncoder.matches(dto.getPassword(),member.getPassword())){
-            throw new InvalidPasswordException("입력하신 비밀번호가 일치하지 않습니다.");
-        }
-
-        if (StringUtils.hasText(dto.getNewPassword())){
-            if (!dto.getNewPassword().equals(dto.getConfirmPassword())){
-                throw new PasswordMismatchException("새 비밀번호가 일치하지 않습니다.");
-            }
-            member.setPassword(passwordEncoder.encode(dto.getNewPassword()));
-        }
-
-        if (StringUtils.hasText(dto.getNickname())){
-        member.setNickname(dto.getNickname());
+    // 회원 정보 업데이트 공통 메서드
+    private void updateMemberInfo(Member member, MemberEditDto dto) {
+        if (StringUtils.hasText(dto.getNickname())) {
+            member.setNickname(dto.getNickname());
         }
 
         if (StringUtils.hasText(dto.getEmail())) {
@@ -101,24 +113,42 @@ public class DefaultMemberService implements MemberService {
             member.setTel(dto.getTel());
         }
 
+        if (StringUtils.hasText(dto.getGender())) {
+            member.setGender(dto.getGender());
+        }
+
         if (StringUtils.hasText(dto.getBirthDate())) {
-            try{
-                LocalDate localDate = LocalDate.parse(dto.getBirthDate());
-                Instant instant = localDate.atStartOfDay(ZoneId.systemDefault()).toInstant().plusSeconds(32400);
-            member.setBirthDate(instant);
-            } catch (Exception e){
-                try {
-                    Instant instant = Instant.parse(dto.getBirthDate()).plusSeconds(32400);
-                    member.setBirthDate(instant);
-                } catch (Exception e2) {
-                    throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
-                }
-            }
+            updateBirthDate(member, dto.getBirthDate());
         }
 
         member.setUpdateDate(LocalDateTime.now(ZoneId.of("Asia/Seoul")).toInstant(ZoneOffset.UTC));
-        Member savedMember = memberRepository.save(member);
-        return modelMapper.map(savedMember, MemberResponseDto.class);
+    }
+
+    // 비밀번호 검증
+    private void validatePassword(Member member, String password) {
+        if (!passwordEncoder.matches(password, member.getPassword())) {
+            throw new InvalidPasswordException("입력하신 비밀번호가 일치하지 않습니다.");
+        }
+    }
+
+    // 새 비밀번호 업데이트
+    private void updatePasswordIfProvided(Member member, MemberEditDto dto) {
+        if (StringUtils.hasText(dto.getNewPassword())) {
+            if (!dto.getNewPassword().equals(dto.getConfirmPassword())) {
+                throw new PasswordMismatchException("새 비밀번호가 일치하지 않습니다.");
+            }
+            member.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+        }
+    }
+
+    // 생년월일 업데이트
+    private void updateBirthDate(Member member, String birthDate) {
+        try {
+            LocalDate localDate = LocalDate.parse(birthDate);
+            member.setBirthDate(localDate);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("잘못된 날짜 형식입니다.");
+        }
     }
 
     @Override
@@ -178,7 +208,7 @@ public class DefaultMemberService implements MemberService {
         return dtoList;
     }
 
-    //------board 관련 매서드
+    //------board 관련 매서드-------------------------
     @Override
     public List<BoardListDto> getBoards(Long memberId) {
         List<Board> boards = boardRepository.findAllByRegMemberIdAndActiveIsTrue(memberId);

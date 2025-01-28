@@ -22,7 +22,7 @@ public class FuptoUserDetails implements UserDetails, OAuth2User {
     private String password;
     private String email;
     private Collection<? extends GrantedAuthority> authorities;
-    private Map<String, Object> attributes;
+    private Map<String, Object> attributes; //OAuth2User의 attributes
 
     @Override
     public Map<String, Object> getAttributes() {

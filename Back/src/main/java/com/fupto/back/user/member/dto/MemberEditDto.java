@@ -20,4 +20,5 @@ public class MemberEditDto {
     private String email;
     private String tel;
     private Instant updateDate;
+    private String gender;
 }
