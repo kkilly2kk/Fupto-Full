@@ -39,7 +39,6 @@ const fetchBoards = async () => {
     if (!response) {
       throw new Error("데이터 조회 실패");
     }
-    console.log(response);
     boards.value = response.map((board) => ({
       ...board,
       showAlert: false,
@@ -65,7 +64,6 @@ const fetchBoards = async () => {
         }
       })
     );
-    console.log(boards);
   } catch (error) {
     console.error(error);
   }

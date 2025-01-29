@@ -37,6 +37,7 @@ const localLoginHandler = async () => {
       id: response.userId,
       username: userInfo.username,
       email: userInfo.email,
+      provider: response.provider,
       roles: userInfo.roles.map((role) => role.authority),
       token: response.token,
     });

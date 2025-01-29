@@ -36,6 +36,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .id(member.getId())
                 .username(member.getUserId())
                 .email(member.getEmail())
+                .provider(member.getProvider())
                 .authorities(Collections.singletonList(new SimpleGrantedAuthority(member.getRole())))
                 .build();
     }

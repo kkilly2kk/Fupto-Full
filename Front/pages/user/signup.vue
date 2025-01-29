@@ -266,10 +266,10 @@ const handleSubmit = async () => {
         <label>*성별</label>
         <div class="gender-group">
           <input type="radio" id="male" name="gender" value="male" v-model="gender" />
-          <label for="male" class="gender-label male">남자</label>
+          <label for="male" class="gender-label male">남성</label>
 
           <input type="radio" id="female" name="gender" value="female" v-model="gender" />
-          <label for="female" class="gender-label female">여자</label>
+          <label for="female" class="gender-label female">여성</label>
         </div>
         <p class="validation-error" v-if="errors.gender">{{ errors.gender }}</p>
       </div>

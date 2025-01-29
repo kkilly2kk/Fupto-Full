@@ -38,6 +38,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
                 .fromUriString("http://localhost:3000/oauth2/callback")
                 .queryParam("token", token)
                 .queryParam("userId", userDetails.getId())
+                .queryParam("provider", userDetails.getProvider())
                 .build()
                 .toUriString();
 

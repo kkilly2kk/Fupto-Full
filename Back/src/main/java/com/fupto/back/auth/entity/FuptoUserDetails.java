@@ -21,6 +21,7 @@ public class FuptoUserDetails implements UserDetails, OAuth2User {
     private String username; //userId에 해당하는 격
     private String password;
     private String email;
+    private String provider;
     private Collection<? extends GrantedAuthority> authorities;
     private Map<String, Object> attributes; //OAuth2User의 attributes
 

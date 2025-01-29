@@ -1,7 +1,7 @@
 package com.fupto.back.auth.controller;
 
-import com.fupto.back.anonymous.member.dto.SignUpRequestDto;
-import com.fupto.back.auth.dto.AuthRequestDto;
+import com.fupto.back.auth.dto.SignUpRequestDto;
+import com.fupto.back.auth.dto.SignInRequestDto;
 import com.fupto.back.auth.dto.AuthResponseDto;
 import com.fupto.back.auth.entity.FuptoUserDetails;
 import com.fupto.back.auth.exception.UserAlreadyExistsException;
@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("signin")
-    public ResponseEntity<?> signIn (@RequestBody AuthRequestDto requestDto){
+    public ResponseEntity<?> signIn (@RequestBody SignInRequestDto requestDto){
         System.out.println(requestDto);
         String username = requestDto.getUsername();
         String password = requestDto.getPassword();
@@ -66,7 +66,8 @@ public class AuthController {
             return ResponseEntity.ok(AuthResponseDto
                     .builder()
                     .userId(userDetails.getId())
-                    .token(token) // 토큰 발급 (응답 본문에)
+                    .provider(userDetails.getProvider())
+                    .token(token) // 토큰 발급 (응답 본문에 담아서)
                     .build());
         }
         catch (AuthenticationException e){
