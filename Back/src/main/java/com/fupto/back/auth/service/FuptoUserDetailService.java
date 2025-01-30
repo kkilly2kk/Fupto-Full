@@ -67,11 +67,15 @@ public class FuptoUserDetailService implements UserDetailsService {
 
     public FuptoUserDetails regNewUser(SignUpRequestDto requestDto) throws UserAlreadyExistsException {
 
-        if (memberRepository.existsByUserId(requestDto.getUserId())) {
+        if (existsByUserId(requestDto.getUserId())) {
             throw new UserAlreadyExistsException("your Id is already exists");
         }
 
-        if (memberRepository.existsByEmail(requestDto.getEmail())) {
+        if (existsByNickname(requestDto.getNickname())) {
+            throw new UserAlreadyExistsException("your Nickname is already exists");
+        }
+
+        if (existsByEmail(requestDto.getEmail())) {
             throw new UserAlreadyExistsException("your Email is already exists");
         }
 
@@ -98,5 +102,17 @@ public class FuptoUserDetailService implements UserDetailsService {
         System.out.println("권한 확인:"+userDetails.getAuthorities());
 
         return userDetails;
+    }
+
+    public boolean existsByUserId(String userId) {
+        return memberRepository.existsByUserId(userId);
+    }
+
+    public boolean existsByNickname(String nickname) {
+        return memberRepository.existsByNickname(nickname);
+    }
+
+    public boolean existsByEmail(String email) {
+        return memberRepository.existsByEmail(email);
     }
 }

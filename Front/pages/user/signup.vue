@@ -2,11 +2,12 @@
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
 import { useAuthFetch } from "~/composables/useAuthFetch.js";
+import debounce from "lodash/debounce";
 
 const router = useRouter();
 
 const email = ref("");
-const name = ref("");
+const nickname = ref("");
 const userId = ref("");
 const phone = ref("");
 const password = ref("");
@@ -15,9 +16,21 @@ const gender = ref("");
 const agreement = ref(false);
 const birthDate = ref("");
 
+const validationStates = reactive({
+  userId: null,
+  nickname: null,
+  email: null,
+});
+
+const validationMessages = reactive({
+  userId: "",
+  nickname: "",
+  email: "",
+});
+
 const errors = reactive({
   email: "",
-  name: "",
+  nickname: "",
   userId: "",
   phone: "",
   password: "",
@@ -27,37 +40,91 @@ const errors = reactive({
   birthDate: "",
 });
 
-const validateEmail = () => {
-  if (!email.value) return;
+const checking = reactive({
+  userId: false,
+  nickname: false,
+  email: false,
+});
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email.value)) {
-    errors.email = "유효한 이메일 주소를 입력해주세요.";
-  } else {
-    errors.email = "";
+const checkDuplicate = async (field, value) => {
+  if (!value) return;
+
+  checking[field] = true;
+  try {
+    const { data, error } = await useAuthFetch(`/auth/check/${field}/${value}`);
+
+    if (error.value) {
+      validationStates[field] = "invalid";
+      validationMessages[field] = "확인 중 오류가 발생했습니다.";
+    } else if (data.value.exists) {
+      validationStates[field] = "invalid";
+      validationMessages[field] = `이미 사용 중인 ${
+        field === "userId" ? "아이디" : field === "nickname" ? "닉네임" : "이메일"
+      }입니다.`;
+    } else {
+      validationStates[field] = "valid";
+      validationMessages[field] = `사용 가능한 ${
+        field === "userId" ? "아이디" : field === "nickname" ? "닉네임" : "이메일"
+      }입니다.`;
+    }
+  } catch (error) {
+    validationStates[field] = "invalid";
+    validationMessages[field] = "서버 오류가 발생했습니다.";
+  } finally {
+    checking[field] = false;
   }
 };
 
-const validateName = () => {
-  if (!name.value) return;
-
-  const nameRegex = /^[가-힣a-zA-Z]{2,20}$/;
-  if (!nameRegex.test(name.value)) {
-    errors.name = "이름은 2~20자의 한글 또는 영문만 가능합니다.";
-  } else {
-    errors.name = "";
-  }
-};
+const debouncedCheckUserId = debounce(() => checkDuplicate("userId", userId.value), 500);
+const debouncedCheckNickname = debounce(() => {
+  console.log("Checking nickname:", nickname.value);
+  checkDuplicate("nickname", nickname.value);
+}, 500);
+const debouncedCheckEmail = debounce(() => checkDuplicate("email", email.value), 500);
 
 const validateUserId = () => {
   if (!userId.value) return;
 
   const userIdRegex = /^[a-z0-9]{4,20}$/;
   if (!userIdRegex.test(userId.value)) {
-    errors.userId = "아이디는 4~20자의 영문 소문자, 숫자만 가능합니다.";
+    validationStates.userId = "invalid";
+    validationMessages.userId = "아이디는 4~20자의 영문 소문자, 숫자만 가능합니다.";
   } else {
-    errors.userId = "";
+    debouncedCheckUserId();
   }
+};
+
+const validateNickname = () => {
+  if (!nickname.value) return;
+
+  const nicknameRegex = /^[가-힣a-zA-Z]{2,20}$/;
+  if (!nicknameRegex.test(nickname.value)) {
+    validationStates.nickname = "invalid";
+    validationMessages.nickname = "닉네임은 2~20자의 한글 또는 영문만 가능합니다.";
+  } else {
+    debouncedCheckNickname();
+  }
+};
+
+const validateEmail = () => {
+  if (!email.value) return;
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!emailRegex.test(email.value)) {
+    validationStates.email = "invalid";
+    validationMessages.email = "유효한 이메일 주소를 입력해주세요.";
+    return;
+  }
+
+  // 도메인 부분 확인
+  const domain = email.value.split("@")[1];
+  if (!domain.includes(".") || domain.split(".").pop().length < 2) {
+    validationStates.email = "invalid";
+    validationMessages.email = "유효한 이메일 주소를 입력해주세요.";
+    return;
+  }
+
+  debouncedCheckEmail();
 };
 
 const validatePhone = () => {
@@ -110,7 +177,7 @@ const validateBirthDate = () => {
 
 const handleSubmit = async () => {
   validateEmail();
-  validateName();
+  validateNickname();
   validateUserId();
   validatePhone();
   validatePassword();
@@ -131,7 +198,7 @@ const handleSubmit = async () => {
 
   if (
     !errors.email &&
-    !errors.name &&
+    !errors.nickname &&
     !errors.userId &&
     !errors.phone &&
     !errors.password &&
@@ -143,7 +210,7 @@ const handleSubmit = async () => {
     try {
       const requestBody = {
         userId: userId.value,
-        nickname: name.value,
+        nickname: nickname.value,
         password: password.value,
         birthDate: birthDate.value,
         gender: gender.value === "male" ? "남성" : "여성",
@@ -185,20 +252,32 @@ const handleSubmit = async () => {
           @blur="validateUserId"
           placeholder="영문 소문자, 숫자 4~20자"
         />
-        <p class="validation-error" v-if="errors.userId">{{ errors.userId }}</p>
+        <p v-if="checking.userId" class="validation-checking">확인 중...</p>
+        <p
+          v-else-if="validationStates.userId"
+          :class="['validation-message', validationStates.userId === 'valid' ? 'success' : 'error']"
+        >
+          {{ validationMessages.userId }}
+        </p>
       </div>
 
       <div class="form-group">
-        <label for="name">*이름</label>
+        <label for="nickname">*닉네임</label>
         <input
           type="text"
-          id="name"
-          v-model="name"
-          @input="validateName"
-          @blur="validateName"
+          id="nickname"
+          v-model="nickname"
+          @input="validateNickname"
+          @blur="validateNickname"
           placeholder="한글 또는 영문 2~20자"
         />
-        <p class="validation-error" v-if="errors.name">{{ errors.name }}</p>
+        <p v-if="checking.nickname" class="validation-checking">확인 중...</p>
+        <p
+          v-else-if="validationStates.nickname"
+          :class="['validation-message', validationStates.nickname === 'valid' ? 'success' : 'error']"
+        >
+          {{ validationMessages.nickname }}
+        </p>
       </div>
 
       <div class="form-group">
@@ -211,7 +290,13 @@ const handleSubmit = async () => {
           @blur="validateEmail"
           placeholder="예: email@example.com"
         />
-        <p class="validation-error" v-if="errors.email">{{ errors.email }}</p>
+        <p v-if="checking.email" class="validation-checking">확인 중...</p>
+        <p
+          v-else-if="validationStates.email"
+          :class="['validation-message', validationStates.email === 'valid' ? 'success' : 'error']"
+        >
+          {{ validationMessages.email }}
+        </p>
       </div>
 
       <div class="form-group phone-group">

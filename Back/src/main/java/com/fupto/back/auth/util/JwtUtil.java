@@ -18,8 +18,8 @@ public class JwtUtil {
     private final Key secretKey;
 
     public JwtUtil(@Value("${fupto.jwt.secret}")String secret){
-        byte[] keyBytes = Decoders.BASE64.decode(secret); //base64로 디코딩
-        this.secretKey = Keys.hmacShaKeyFor(keyBytes); //거기에 hmac로 암호화
+        byte[] keyBytes = Decoders.BASE64.decode(secret); // base64로 디코딩
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes); // 거기에 hmac로 암호화
     }
 
     public boolean vaildateToken(String token){
@@ -78,5 +78,5 @@ public class JwtUtil {
               .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
               .signWith(secretKey, SignatureAlgorithm.HS512)
               .compact();
-    };
+    }
 }

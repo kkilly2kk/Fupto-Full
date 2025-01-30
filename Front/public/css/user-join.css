@@ -56,6 +56,25 @@
   box-shadow: 0 0 0 3px rgba(29, 112, 245, 0.1);
 }
 
+.validation-checking {
+  color: var(--color-main-deep);
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.validation-message {
+  font-size: 13px;
+  margin-top: 6px;
+}
+
+.validation-message.success {
+  color: var(--color-main-deep);
+}
+
+.validation-message.error {
+  color: #ff4d4f;
+}
+
 /* 전화번호 인증 영역 */
 .phone-input-group {
   display: flex;

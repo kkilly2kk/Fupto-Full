@@ -18,6 +18,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+
 @RestController
 @RequestMapping("auth")
 public class AuthController {
@@ -39,6 +41,24 @@ public class AuthController {
         if (details != null) {
             return "username:" + details.getUsername() + ", roles:" + details.getAuthorities() + details;
         }else {return "유저를 찾지 못헀습니다.";}
+    }
+
+    @GetMapping("/check/userId/{userId}")
+    public ResponseEntity<?> checkUserId(@PathVariable String userId) {
+        boolean exists = fuptoUserDetailService.existsByUserId(userId);
+        return ResponseEntity.ok().body(Collections.singletonMap("exists", exists));
+    }
+
+    @GetMapping("/check/nickname/{nickname}")
+    public ResponseEntity<?> checkNickname(@PathVariable String nickname) {
+        boolean exists = fuptoUserDetailService.existsByNickname(nickname);
+        return ResponseEntity.ok().body(Collections.singletonMap("exists", exists));
+    }
+
+    @GetMapping("/check/email/{email}")
+    public ResponseEntity<?> checkEmail(@PathVariable String email) {
+        boolean exists = fuptoUserDetailService.existsByEmail(email);
+        return ResponseEntity.ok().body(Collections.singletonMap("exists", exists));
     }
 
     @PostMapping("signin")
@@ -101,4 +121,5 @@ public class AuthController {
                     .body("Error during signup"+e.getMessage());
         }
     }
+
 }
