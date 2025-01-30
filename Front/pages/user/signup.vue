@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive } from "vue";
 import { useRouter } from "vue-router";
-import { useAuthFetch } from "~/composables/useAuthFetch.js";
 import debounce from "lodash/debounce";
 
 const router = useRouter();
@@ -13,8 +12,8 @@ const phone = ref("");
 const password = ref("");
 const confirmPassword = ref("");
 const gender = ref("");
-const agreement = ref(false);
 const birthDate = ref("");
+const agreement = ref(false);
 
 const validationStates = reactive({
   userId: null,
@@ -51,12 +50,9 @@ const checkDuplicate = async (field, value) => {
 
   checking[field] = true;
   try {
-    const { data, error } = await useAuthFetch(`/auth/check/${field}/${value}`);
+    const data = await use$Fetch(`/auth/check/${field}/${value}`);
 
-    if (error.value) {
-      validationStates[field] = "invalid";
-      validationMessages[field] = "확인 중 오류가 발생했습니다.";
-    } else if (data.value.exists) {
+    if (data.exists) {
       validationStates[field] = "invalid";
       validationMessages[field] = `이미 사용 중인 ${
         field === "userId" ? "아이디" : field === "nickname" ? "닉네임" : "이메일"
@@ -76,10 +72,7 @@ const checkDuplicate = async (field, value) => {
 };
 
 const debouncedCheckUserId = debounce(() => checkDuplicate("userId", userId.value), 500);
-const debouncedCheckNickname = debounce(() => {
-  console.log("Checking nickname:", nickname.value);
-  checkDuplicate("nickname", nickname.value);
-}, 500);
+const debouncedCheckNickname = debounce(() => checkDuplicate("nickname", nickname.value), 500);
 const debouncedCheckEmail = debounce(() => checkDuplicate("email", email.value), 500);
 
 const validateUserId = () => {
@@ -218,21 +211,17 @@ const handleSubmit = async () => {
         email: email.value,
       };
 
-      const { data, error } = await useAuthFetch("/auth/signup", {
+      const response = await use$Fetch("/auth/signup", {
         method: "POST",
         body: requestBody,
       });
-      if (error.value) {
-        console.error("Registration error:", error.value);
-        alert(`회원가입 실패: ${error.value.message || "알 수 없는 오류가 발생했습니다."}`);
-      } else {
-        console.log("Response data:", data.value);
-        alert("회원가입이 완료되었습니다!");
-        router.push("/user/signin");
-      }
+
+      console.log("Response data:", response);
+      alert("회원가입이 완료되었습니다!");
+      router.push("/user/joincomplete");
     } catch (error) {
-      console.error("Unexpected error:", error);
-      alert("회원가입 중 예기치 않은 오류가 발생했습니다. 다시 시도해주세요.");
+      console.error("Registration error:", error);
+      alert(`회원가입 실패: ${error.message || "알 수 없는 오류가 발생했습니다."}`);
     }
   }
 };
@@ -266,8 +255,13 @@ const handleSubmit = async () => {
         <input
           type="text"
           id="nickname"
-          v-model="nickname"
-          @input="validateNickname"
+          :value="nickname"
+          @input="
+            (e) => {
+              nickname = e.target.value;
+              validateNickname();
+            }
+          "
           @blur="validateNickname"
           placeholder="한글 또는 영문 2~20자"
         />
@@ -371,5 +365,5 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-@import url("@/public/css/user-join.css");
+@import url("@/public/css/sign-up.css");
 </style>

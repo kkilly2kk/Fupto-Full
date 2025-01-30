@@ -3,7 +3,7 @@ import { onMounted } from "vue";
 import { useAlerts } from "~/composables/useAlerts";
 
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/myAlert.css" }],
+  link: [{ rel: "stylesheet", href: "/css/my-alert.css" }],
 });
 
 const { alerts, isLoading, error, fetchAlerts, markAsRead, markAllAsRead } = useAlerts();

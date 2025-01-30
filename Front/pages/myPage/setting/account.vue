@@ -3,7 +3,7 @@ import { ref, computed } from "vue";
 import { use$Fetch } from "@/composables/use$Fetch";
 
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/myAccount.css" }],
+  link: [{ rel: "stylesheet", href: "/css/my-account.css" }],
 });
 
 const userDetails = useUserDetails();

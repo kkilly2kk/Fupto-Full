@@ -2,7 +2,7 @@
 import { use$Fetch } from "~/composables/use$Fetch.js";
 
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/myBoard.css" }],
+  link: [{ rel: "stylesheet", href: "/css/my-board.css" }],
 });
 
 const userDetails = useUserDetails();

@@ -4,7 +4,7 @@ const { connectSSE } = useSSE();
 const { hasUnreadAlerts, fetchAlerts } = useAlerts();
 
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/myLayout.css" }],
+  link: [{ rel: "stylesheet", href: "/css/my-page.css" }],
 });
 
 const userDetails = useUserDetails();

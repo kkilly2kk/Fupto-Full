@@ -1,17 +1,17 @@
 <script setup>
-import {jwtDecode} from "jwt-decode";
-import {useRouter} from "vue-router";
+import { jwtDecode } from "jwt-decode";
+import { useRouter } from "vue-router";
 
-const userDetails = useUserDetails()
-const route = useRoute()
+const userDetails = useUserDetails();
+const route = useRoute();
 const returnURL = route.query.returnURL || "/";
 
-const username = ref("")
-const password = ref("")
+const username = ref("");
+const password = ref("");
 
 const localLoginHandler = async () => {
   try {
-    let {data} = await useAuthFetch("/auth/signin", {
+    let { data } = await useAuthFetch("/auth/signin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,10 +19,10 @@ const localLoginHandler = async () => {
       body: {
         username: username.value,
         password: password.value,
-      }
+      },
     });
     const response = data.value;
-    console.log('Login response:', response);
+    console.log("Login response:", response);
 
     let userInfo = jwtDecode(response.token);
     userDetails.setAuthentication({
@@ -30,23 +30,22 @@ const localLoginHandler = async () => {
       username: userInfo.username,
       email: userInfo.email,
       roles: userInfo.roles.map((role) => role.authority),
-      token: response.token
+      token: response.token,
     });
-    userInfo.roles.map(role => {
-      console.log(role, role.authority)
+    userInfo.roles.map((role) => {
+      console.log(role, role.authority);
     });
     // 로그인 처리 로직 (api호출시)
-    console.log('User info:', userInfo);
-    console.log('User details:', userDetails);
+    console.log("User info:", userInfo);
+    console.log("User details:", userDetails);
 
     // 로그인 성공 후 리다이렉트
-    console.log("returnURL", returnURL)
+    console.log("returnURL", returnURL);
     return navigateTo(returnURL);
   } catch (error) {
-    console.error('Login failed:', error);
+    console.error("Login failed:", error);
   }
-}
-
+};
 </script>
 
 <template>
@@ -57,11 +56,11 @@ const localLoginHandler = async () => {
         <form @submit.prevent="localLoginHandler">
           <div class="input-group">
             <label for="username">아이디</label>
-            <input class="textbox" v-model="username" type="text" id="username" name="username" required>
+            <input class="textbox" v-model="username" type="text" id="username" name="username" required />
           </div>
           <div class="input-group">
             <label for="password">비밀번호</label>
-            <input class="textbox" v-model="password" type="password" id="password" name="password" required>
+            <input class="textbox" v-model="password" type="password" id="password" name="password" required />
           </div>
           <button type="submit" class="login-button">로그인</button>
         </form>
@@ -75,5 +74,5 @@ const localLoginHandler = async () => {
 </template>
 
 <style scoped>
-@import url("@/public/css/admin/admin-login.css");
+@import url("@/public/css/sign-in.css");
 </style>

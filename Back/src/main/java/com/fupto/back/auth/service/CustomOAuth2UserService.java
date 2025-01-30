@@ -51,12 +51,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     }
 
     private Member createMember(OAuth2Dto dto) {
+        // 1. 이메일 중복 체크
+        if (memberRepository.existsByEmail(dto.getEmail())) {
+            throw new OAuth2AuthenticationException("이미 사용 중인 이메일입니다. 다른 방식으로 로그인해주세요.");
+        }
+
+        // 2. 닉네임 중복 체크 및 수정
+        String nickname = dto.getName();
+        String uniqueNickname = nickname;
+        int suffix = 1;
+
+        while (memberRepository.existsByNickname(uniqueNickname)) {
+            uniqueNickname = nickname + suffix++;
+        }
+
         String randomPassword = UUID.randomUUID().toString();
         String userId = dto.getProvider().toLowerCase() + "_" + dto.getProviderId();
 
         return Member.builder()
                 .email(dto.getEmail())
-                .nickname(dto.getName())
+                .nickname(uniqueNickname)
                 .userId(userId)
                 .password(passwordEncoder.encode(randomPassword))
                 .provider(dto.getProvider())

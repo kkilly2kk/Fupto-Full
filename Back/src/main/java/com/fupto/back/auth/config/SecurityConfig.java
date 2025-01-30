@@ -1,6 +1,7 @@
 package com.fupto.back.auth.config;
 
 import com.fupto.back.auth.filter.JwtAuthenticationFilter;
+import com.fupto.back.auth.handler.OAuth2FailureHandler;
 import com.fupto.back.auth.handler.OAuth2SuccessHandler;
 import com.fupto.back.auth.service.CustomOAuth2UserService;
 import com.fupto.back.auth.util.JwtUtil;
@@ -27,22 +28,25 @@ import java.util.Arrays;
 @Configuration
 public class SecurityConfig {
     private JwtUtil jwtUtil;
+    private PasswordEncoder passwordEncoder;
     private AuthenticationConfiguration authenticationConfiguration;
     private CustomOAuth2UserService customOAuth2UserService;
     private OAuth2SuccessHandler oauth2SuccessHandler;
-    private PasswordEncoder passwordEncoder;
+    private OAuth2FailureHandler oauth2FailureHandler;
 
 
     public SecurityConfig(JwtUtil jwtUtil,
+                          PasswordEncoder passwordEncoder,
                           AuthenticationConfiguration authenticationConfiguration,
                           CustomOAuth2UserService customOAuth2UserService,
                           OAuth2SuccessHandler oauth2SuccessHandler,
-                          PasswordEncoder passwordEncoder) {
+                          OAuth2FailureHandler oauth2FailureHandler) {
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
         this.authenticationConfiguration = authenticationConfiguration;
         this.customOAuth2UserService = customOAuth2UserService;
         this.oauth2SuccessHandler = oauth2SuccessHandler;
-        this.passwordEncoder = passwordEncoder;
+        this.oauth2FailureHandler = oauth2FailureHandler;
     }
 
     @Bean
@@ -61,7 +65,10 @@ public class SecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService))
-                        .successHandler(oauth2SuccessHandler))
+                        .successHandler(oauth2SuccessHandler)
+                        .failureHandler(oauth2FailureHandler)
+                )
+
                 .authorizeHttpRequests(authorize-> authorize
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/auth/**").permitAll()

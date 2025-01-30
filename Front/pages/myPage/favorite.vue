@@ -1,7 +1,7 @@
 <script setup>
 import { use$Fetch } from "~/composables/use$Fetch.js";
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/myFavorite.css" }],
+  link: [{ rel: "stylesheet", href: "/css/my-favorite.css" }],
 });
 
 const userDetails = useUserDetails();

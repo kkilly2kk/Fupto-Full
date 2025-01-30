@@ -102,5 +102,5 @@ const localLoginHandler = async () => {
 </template>
 
 <style scoped>
-@import url("@/public/css/admin/admin-login.css");
+@import url("@/public/css/sign-in.css");
 </style>
