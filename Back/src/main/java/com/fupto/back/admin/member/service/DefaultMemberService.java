@@ -75,16 +75,16 @@ public class DefaultMemberService implements MemberService {
                 null : searchDto.getGender();
 
         // 날짜 변환
-        Instant startDateI = searchDto.getStartDate() != null ?
+        Instant startDateI = (searchDto.getStartDate() != null && !searchDto.getStartDate().isEmpty()) ?
                 LocalDate.parse(searchDto.getStartDate())
                         .atStartOfDay(ZoneId.of("Asia/Seoul"))
-                        .toInstant() : null;
+                        .toInstant().plusSeconds(9 * 60 * 60) : null;
 
-        Instant endDateI = searchDto.getEndDate() != null ?
+        Instant endDateI = (searchDto.getEndDate() != null && !searchDto.getEndDate().trim().isEmpty()) ?
                 LocalDate.parse(searchDto.getEndDate())
                         .atTime(LocalTime.MAX)
                         .atZone(ZoneId.of("Asia/Seoul"))
-                        .toInstant() : null;
+                        .toInstant().plusSeconds(9 * 60 * 60) : null;
 
         Page<Member> memberPage = memberRepository.searchMembers(
                 searchDto.getMemberStatus(),
