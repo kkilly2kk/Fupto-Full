@@ -138,7 +138,11 @@
 }
 
 /* 체크박스 영역 */
-.form-group:has(input[type="checkbox"]) {
+.form-group.checkbox-group {
+  display: block;
+}
+
+.checkbox-group .checkbox-wrapper {
   display: flex;
   align-items: center;
   gap: 8px;
