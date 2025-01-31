@@ -9,6 +9,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   //페이지 로드시 로컬 스토리지에서 사용자 정보를 로드
   await userDetails.loadUserFromStorage();
+
   if (process.client) {
     if (to.path.startsWith("/admin")) {
       // 새로고침이 아닌 경우에만 권한 체크

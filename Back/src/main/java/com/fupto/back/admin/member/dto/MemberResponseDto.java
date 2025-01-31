@@ -9,14 +9,13 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
 public class MemberResponseDto {
-    private Long totalCount;
-    private Long totalPages;
-    private Boolean hasNextPage;
-    private Boolean hasPrevPage;
-
-    private List<Long> pages;
-    private List<MemberListDto> members;
+    private Long totalCount;        // 전체 회원 수
+    private Long totalPages;        // 전체 페이지 수
+    private Boolean hasNextPage;    // 다음 페이지 존재 여부
+    private Boolean hasPrevPage;    // 이전 페이지 존재 여부
+    private List<Long> pages;       // 페이지 번호 목록
+    private List<MemberListDto> members;  // 회원 목록
 }

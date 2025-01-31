@@ -13,7 +13,8 @@ import java.time.Instant;
 public class MemberSearchDto {
     private Integer page;
     private Integer size;
-    private String memberType;
+    private String role;
+    private String memberStatus;
     private String gender;
     private String searchType;
     private String searchKeyWord;
@@ -26,6 +27,6 @@ public class MemberSearchDto {
         this.size = 10;
         this.searchType = "userId";
         this.searchKeyWord = "";
-
+        this.memberStatus = "active";
     }
 }

@@ -21,40 +21,52 @@ import java.util.List;
 @RequestMapping("admin/members")
 public class MemberController {
     private final MemberService memberService;
-    private final MemberRepository memberRepository;
 
-    public MemberController(MemberService memberService, MemberRepository memberRepository) {
+    public MemberController(MemberService memberService) {
         this.memberService = memberService;
-        this.memberRepository = memberRepository;
     }
 
-    @GetMapping
-    public List<MemberListDto> getAllMembers(){
-        return memberService.getMemberWithDetails();
-    }
-
-    @GetMapping("/all")
-    public List<Member> getMemberList(){
-        return memberRepository.findAll();
-    }
-
-    @GetMapping("{id}")
-    public ResponseEntity<MemberDetailDto> getMemberById(@PathVariable Long id){
-        return ResponseEntity.ok(memberService.getMemberById(id));
-    }
-
+    // 회원 목록 조회 (검색/필터링)
     @GetMapping("/search")
-    public ResponseEntity<MemberResponseDto> getMembers(@ModelAttribute MemberSearchDto memberSearchDto){
+    public ResponseEntity<MemberResponseDto> getMembers(@ModelAttribute MemberSearchDto memberSearchDto) {
         return ResponseEntity.ok(memberService.getMemberList(memberSearchDto));
     }
 
-    @GetMapping("fav/{id}/image")
+    // 회원 상세 정보 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<MemberDetailDto> getMemberById(@PathVariable Long id) {
+        return ResponseEntity.ok(memberService.getMemberById(id));
+    }
+
+    // 회원 상태(active) 변경
+    @PatchMapping("/{id}/active")
+    public ResponseEntity<?> updateMemberActive(
+            @PathVariable Long id,
+            @RequestParam Boolean active) {
+        memberService.updateMemberActive(id, active);
+        return ResponseEntity.ok().build();
+    }
+
+    // 회원 권한 변경
+    @PatchMapping("/{id}/role")
+    public ResponseEntity<?> updateMemberRole(
+            @PathVariable Long id,
+            @RequestBody String role) {
+        memberService.updateMemberRole(id, role);
+        return ResponseEntity.ok().build();
+    }
+
+    // 회원 삭제
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteMember(@PathVariable Long id) {
+        memberService.deleteMember(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // 찜한 상품 이미지 조회
+    @GetMapping("/fav/{id}/image")
     public ResponseEntity<Resource> getMembersFavImg(@PathVariable Long id) throws IOException {
-        System.out.println("------------요청 확인-------"+id);
         Resource resource = memberService.getProductImage(id);
-        System.out.println("------------이미지 요청 결과---------------");
-        System.out.println(resource.getURI());
-        System.out.println(resource.getFilename());
         String contentType = Files.probeContentType(Paths.get(resource.getURI()));
 
         if (contentType == null) {
@@ -65,5 +77,4 @@ public class MemberController {
                 .contentType(MediaType.parseMediaType(contentType))
                 .body(resource);
     }
-
 }

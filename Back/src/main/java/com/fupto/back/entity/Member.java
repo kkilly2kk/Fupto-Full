@@ -54,6 +54,14 @@ public class Member {
     @Column(name = "role", nullable = false, length = 10)
     private String role;
 
+    @Builder.Default
+    @Column(name = "active")
+    private Boolean active = true;
+
+    @Builder.Default
+    @Column(name = "state")
+    private Boolean state = true;
+
     @Column(name = "login_date")
     private Instant loginDate;
 
@@ -78,6 +86,7 @@ public class Member {
 
     @Column(name = "provider", length = 10)
     private String provider;
+
 
     public Member update(String name) {
         this.nickname = name;

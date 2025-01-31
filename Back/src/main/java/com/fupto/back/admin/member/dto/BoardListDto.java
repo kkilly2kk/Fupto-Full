@@ -15,5 +15,4 @@ import java.time.Instant;
 public class BoardListDto {
     private Long id;
     private String title;
-//    private Instant date;
 }

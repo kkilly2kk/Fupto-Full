@@ -15,18 +15,21 @@ import java.time.LocalDate;
 public class MemberListDto {
     private Long id;
     private String nickname;
-    private String password;
+    private String userId;
+    private String email;
     private String gender;
     private String tel;
-    private String email;
+    private String role;
+    private LocalDate birthDate;
+    private String provider;
+    private String profileImg;
+
+    // 계정 상태
+    private Boolean active;
+    private Boolean state;
+
+    // 날짜 정보
     private Instant createDate;
     private Instant updateDate;
-
     private Instant loginDate;
-    private Instant birthDate;
-    private String userId;
-    private String role;
-    //private 소셜 로그인은 어떻게?
-    //회원 유형 데이터 테이블은 어떻게? 권한설정?
-
 }

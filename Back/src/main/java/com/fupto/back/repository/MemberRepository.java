@@ -4,6 +4,7 @@ import com.fupto.back.entity.Member;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -12,41 +13,61 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
-    List<Member> findAll();
     Member findByUserId(String userId);
-    Optional<Member> findById(Long id);
+
     Optional<Member> findOptionalByUserId(String userId);
+
     Boolean existsByUserId(String userId);
+
     Boolean existsByEmail(String email);
+
     Boolean existsByNickname(String nickname);
+
     Optional<Member> findByProviderAndEmail(String provider, String email);
 
-    @Query("select m from Member m " +
-            "where" +
-            "(:role is null or m.role = :role)"+
-            "and (:gender is null or m.gender = :gender)"+
-            "and (:userId is null or m.userId like %:userId%)"+
-            "and (:nickname is null or m.nickname like %:nickname%)"+
-            "and (:email is null or m.email like %:email%)"+
-            "and (" +
-            "(:dateType = 'regDate' and " +
-            "(:startDate is null or m.createDate >= :startDate) and" +
-            "(:endDate is null or m.createDate <= :endDate))" +
-            "or (:dateType = 'updateDate' and" +
-            "(:startDate is null or m.updateDate >= :startDate) and" +
-            "(:endDate is null or m.updateDate <= :endDate))"+
-            "or (:dateType = 'loginDate' and" +
-            "(:startDate is null or m.loginDate >= :startDate) and" +
-            "(:endDate is null or m.loginDate <= :endDate))"+
+    @Query("SELECT m FROM Member m " +
+            "WHERE (:status = 'active' AND m.state = true AND m.active = true) OR " +
+            "(:status = 'suspended' AND m.state = true AND m.active = false) OR " +
+            "(:status = 'withdrawn' AND m.state = false) AND " +
+            "(:role is null OR m.role = :role) AND " +
+            "(:gender is null OR m.gender = :gender) AND " +
+            "(:userId is null OR m.userId LIKE %:userId%) AND " +
+            "(:nickname is null OR m.nickname LIKE %:nickname%) AND " +
+            "(:email is null OR m.email LIKE %:email%) AND " +
+            "(" +
+            "  (:dateType = 'regDate' AND " +
+            "    (:startDate is null OR m.createDate >= :startDate) AND " +
+            "    (:endDate is null OR m.createDate <= :endDate)" +
+            "  ) OR " +
+            "  (:dateType = 'updateDate' AND " +
+            "    (:startDate is null OR m.updateDate >= :startDate) AND " +
+            "    (:endDate is null OR m.updateDate <= :endDate)" +
+            "  ) OR " +
+            "  (:dateType = 'loginDate' AND " +
+            "    (:startDate is null OR m.loginDate >= :startDate) AND " +
+            "    (:endDate is null OR m.loginDate <= :endDate)" +
+            "  )" +
             ")")
-    Page<Member> searchMember(
-            @Param("role") String memberType,
+    Page<Member> searchMembers(
+            @Param("status") String status,
+            @Param("role") String role,
             @Param("gender") String gender,
-            @Param("userId") String userId, //searchType 대신 null 을 받으면 패스
+            @Param("userId") String userId,
             @Param("nickname") String nickname,
             @Param("email") String email,
-                String dateType,
-                Instant startDate,
-                Instant endDate,
-             Pageable pageable);
+            @Param("dateType") String dateType,
+            @Param("startDate") Instant startDate,
+            @Param("endDate") Instant endDate,
+            Pageable pageable
+    );
+
+    // 회원 상태 업데이트를 위한 메서드
+    @Modifying
+    @Query("UPDATE Member m SET m.active = :active WHERE m.id = :id")
+    void updateMemberActive(@Param("id") Long id, @Param("active") Boolean active);
+
+    // 회원 권한 업데이트를 위한 메서드
+    @Modifying
+    @Query("UPDATE Member m SET m.role = :role WHERE m.id = :id")
+    void updateMemberRole(@Param("id") Long id, @Param("role") String role);
 }

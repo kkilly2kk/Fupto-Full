@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -13,36 +14,32 @@ import java.util.List;
 @AllArgsConstructor
 @Data
 public class MemberDetailDto {
-    //회원 정보 목록
+    // 기본 회원 정보
     private Long id;
+    private String nickname;
+    private String userId;
+    private String email;
+    private String tel;
+    private String gender;
+    private String role;
+    private LocalDate birthDate;
+    private String provider;    // 소셜 로그인 제공자 (FUPTO, GOOGLE, NAVER, KAKAO)
+    private String profileImg;
 
-    private String nickname; //이름
-    private String userId; //닉네임
-    private String password; //?필요할까?
-    private String email; // 이메일
-    private String tel; // 전화번호 ?000-0000-000으로 받아야함
-    private String gender; // 성별
-    private String role; // 등급
-    private Instant birthDate; //나이
-    //소셜로그인
+    // 계정 상태 정보
+    private Boolean active;     // 계정 활성화 상태
+    private Boolean state;      // 회원 탈퇴 상태
 
-    //활동 기록 목록
-    private Instant createDate;
-    private Instant updateDate;
-    private Instant loginDate;
-        //작성글
-    //게시글
-    private long boardCount;
-    private List<BoardListDto> boardList;
-    //덧글
-    //자랑없음
-    //문의없음
-        //경고 여부
-    //경고 횟수 (post필요)
-    //제재여부
+    // 활동 기록
+    private Instant createDate; // 가입일
+    private Instant updateDate; // 정보 수정일
+    private Instant loginDate;  // 최근 로그인
 
-    //관심 목록
-        //찜
-    private long favoriteCount;
-    private List<FavoriteListDto> favoriteList;
+    // 활동 통계
+    private long boardCount;    // 게시글 수
+    private long favoriteCount; // 찜 수
+
+    // 연관 데이터
+    private List<BoardListDto> boardList;       // 작성 게시글 목록
+    private List<FavoriteListDto> favoriteList; // 찜 목록
 }

@@ -1,4 +1,4 @@
-*{
+* {
   font-size: 14px;
   font-weight: 400;
   border-color: #e0e0e0;
@@ -25,7 +25,7 @@
 table.report {
   border-collapse: collapse;
   width: 100%;
- }
+}
 
 table.report tr {
 }
@@ -46,11 +46,11 @@ table.report td {
   column-gap: 10px;
 }
 
-table.report td>* {
+table.report td > * {
   margin-right: 10px;
   /*padding: 5px;*/
 }
-table.report td>*:last-child {
+table.report td > *:last-child {
   margin-right: 0px;
   margin-bottom: 10px;
 }
@@ -58,23 +58,22 @@ table.report td select,
 table.report td input[type="date"],
 table.report td input[type="text"],
 table.report td button,
-table.report td option{
+table.report td option {
   padding: 5px;
   border: #e0e0e0 solid 1px;
   border-radius: 5px;
   /*text-align: center;*/
-
 }
-table.report td select{
+table.report td select {
   /*width: 80px;*/
   margin: 10px;
 }
-table.report td input[type="text"]{
+table.report td input[type="text"] {
   display: inline-flex;
   margin: 10px;
   border: 1px solid #e0e0e0;
   border-radius: 5px;
-  color : #e0e0e0;
+  color: #e0e0e0;
   width: 80%;
 }
 
@@ -86,18 +85,29 @@ table.report.f-list td {
   padding: 10px 0px 10px 10px;
   text-align: left;
 }
-.f-list th:nth-child(1){ width: 32px}
-.f-list th:nth-child(2){ width: 100px}
-.f-list th:nth-child(3){ width: 100px}
-.f-list th:nth-child(4){ width: 250px}
-.f-list th:nth-child(6){ width: 50px}
-.f-list th:nth-child(7){ width: 50px}
-
-table.report.member td,
-table.report.member td{
-  padding: 10px 0px;
+.f-list th:nth-child(1) {
+  width: 32px;
+}
+.f-list th:nth-child(2) {
+  width: 100px;
+}
+.f-list th:nth-child(3) {
+  width: 100px;
+}
+.f-list th:nth-child(4) {
+  width: 250px;
+}
+.f-list th:nth-child(6) {
+  width: 50px;
+}
+.f-list th:nth-child(7) {
+  width: 50px;
 }
 
+table.report.member td,
+table.report.member td {
+  padding: 10px 0px;
+}
 
 .image-preview {
   display: flex;
@@ -116,7 +126,6 @@ table.report.member td{
   object-fit: cover;
   border-radius: 4px;
 }
-
 
 @media screen and (max-width: 768px) {
   table.report th,
@@ -167,7 +176,7 @@ div .btn-url.active {
   color: white;
 }
 
-.btn-main{
+.btn-main {
   background-color: var(--blue);
   color: white;
   padding: 10px 20px;
@@ -175,7 +184,7 @@ div .btn-url.active {
   font-weight: 500;
 }
 
-.filter-btn{
+.filter-btn {
   text-align: center;
 }
 
@@ -184,50 +193,28 @@ div .btn-url:hover {
 }
 
 table.report.chart th,
-table.report.chart td{
+table.report.chart td {
   width: auto;
   padding: 5px 10px;
 }
-table.report.chart{
+table.report.chart {
   text-align: center;
 }
-table.report.chart td:nth-child(1){
+table.report.chart td:nth-child(1) {
   width: 50px;
 }
-table.report.chart td:nth-child(2){
+table.report.chart td:nth-child(2) {
   width: 80px;
 }
-table.report.chart td:nth-child(4){
+table.report.chart td:nth-child(4) {
   width: 100px;
 }
-table.report.chart td:nth-child(5){
+table.report.chart td:nth-child(5) {
   width: 80px;
 }
 
-.apexchart{
+.apexchart {
   display: flex;
   justify-content: center;
   padding-top: 20px;
 }
-
-/*.filter-section {*/
-/*  background-color: yellow;*/
-/*}*/
-/*.filter {*/
-/*  !* flex-wrap: wrap; *!*/
-/*  display: flex;*/
-/*  margin: 10px;*/
-/*  align-items: center;*/
-/*  background-color: blue;*/
-/*}*/
-/*.param {*/
-/*  padding: 0px 20px;*/
-/*  background-color: yellow;*/
-/*}*/
-/*.value {*/
-/*  !* display: inline-flex; *!*/
-
-/*  background-color: aquamarine;*/
-/*}*/
-/*.filter-list li {*/
-/*}*/

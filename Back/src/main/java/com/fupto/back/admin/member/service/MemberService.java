@@ -10,23 +10,16 @@ import java.util.List;
 
 
 public interface MemberService {
-    List<Member> getList();
-    MemberResponseDto getMemberList(Integer page,
-                                    Integer size,
-                                    String memberType,
-                                    String gender,
-                                    String searchType,
-                                    String searchKeyWord,
-                                    String dateType,
-                                    String startDate,
-                                    String endDate);
-    MemberResponseDto getMemberList(MemberSearchDto memberSearchDto);
-//    MemberListDto getMemberById(Long id);
-    List<MemberListDto> getMemberWithDetails();
-    MemberDetailDto getMemberById (Long id);
+    // 회원 목록 관련
+    MemberResponseDto getMemberList(MemberSearchDto searchDto);
+    MemberDetailDto getMemberById(Long id);
 
-    FavoriteListDto getFavorite (Favorite favorite);
-    FavoriteResponseDto getFavCount (Long memberId);
+    // 회원 관리 기능
+    void updateMemberActive(Long id, Boolean active);
+    void updateMemberRole(Long id, String role);
+    void deleteMember(Long id);
 
+    // 회원 즐겨찾기 관련
+    FavoriteListDto getFavorite(Favorite favorite);
     Resource getProductImage(Long id) throws IOException;
 }
