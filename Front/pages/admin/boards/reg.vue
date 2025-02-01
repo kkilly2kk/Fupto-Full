@@ -116,7 +116,7 @@ const handleCancel = () => {
     <ul class="breadcrumbs">
       <li><a href="#">FUPTO</a></li>
       <li class="divider">/</li>
-      <li><a href="#" class="active">게시판</a></li>
+      <li><a href="#">게시판</a></li>
       <li class="divider">/</li>
       <li><a href="#" class="active">게시판 등록</a></li>
     </ul>

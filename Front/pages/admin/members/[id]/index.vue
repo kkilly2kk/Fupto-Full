@@ -86,6 +86,11 @@ const handleDeleteMember = async () => {
   }
 };
 
+const handleBackToList = () => {
+  localStorage.setItem("fromMemberDetail", "true");
+  navigateTo("/admin/members/list");
+};
+
 onMounted(() => {
   fetchMember();
 });
@@ -109,7 +114,7 @@ onMounted(() => {
         <table class="table">
           <tbody>
             <tr>
-              <th>프로필 이미지</th>
+              <th>프로필<br />이미지</th>
               <td>
                 <img :src="profileImageUrl" :alt="member.nickname" class="profile-img" />
               </td>
@@ -154,10 +159,9 @@ onMounted(() => {
             <tr>
               <th>계정 상태</th>
               <td>
-                <label class="pl-switch">
-                  <input type="checkbox" v-model="member.active" :disabled="!member.state" />
+                <div class="pl-switch" :class="{ 'switch-active': member.active }">
                   <span class="pl-slider round"></span>
-                </label>
+                </div>
                 <span class="status-text">{{ member.active ? "활성" : "정지" }}</span>
               </td>
             </tr>
@@ -195,7 +199,7 @@ onMounted(() => {
               <td colspan="2">
                 <div class="button-container">
                   <button class="btn btn-outline-danger" @click="handleDeleteMember">회원 삭제</button>
-                  <button class="btn btn-outline-secondary" @click="$router.push('/admin/members')">목록으로</button>
+                  <button class="btn btn-outline-secondary" @click="handleBackToList">목록으로</button>
                 </div>
               </td>
             </tr>

@@ -12,13 +12,18 @@ const currentPage = ref(1);
 const pageSize = ref(10);
 const config = useRuntimeConfig();
 
+const persistPageState = () => {
+  localStorage.setItem("memberListPage", currentPage.value.toString());
+  localStorage.setItem("memberListPageSize", pageSize.value.toString());
+};
+
 const filterData = ref({
-  memberStatus: "active", // active, suspended, withdrawn
+  memberStatus: "all", // active, suspended, withdrawn
   role: "", // ROLE_USER, ROLE_ADMIN
   gender: "",
   searchType: "userId", // userId, nickname, email
   searchKeyword: "",
-  dateType: "create_date",
+  dateType: "all",
   startDate: "",
   endDate: "",
 });
@@ -47,6 +52,7 @@ const fetchMembers = async (page = 1) => {
     members.value = response.members;
     totalPages.value = response.totalPages;
     currentPage.value = page;
+    persistPageState();
   } catch (error) {
     console.error("데이터 조회 오류:", error);
     alert("회원 목록을 불러오는데 실패했습니다.");
@@ -229,7 +235,19 @@ const formatDate = (dateString) => {
 };
 
 onMounted(() => {
-  fetchMembers();
+  const fromDetail = localStorage.getItem("fromMemberDetail") === "true";
+  if (fromDetail) {
+    const savedPage = parseInt(localStorage.getItem("memberListPage")) || 1;
+    const savedPageSize = parseInt(localStorage.getItem("memberListPageSize")) || 10;
+    currentPage.value = savedPage;
+    pageSize.value = savedPageSize;
+    fetchMembers(savedPage);
+    localStorage.removeItem("fromMemberDetail"); // 상태 초기화
+  } else {
+    // 다른 페이지에서 왔을 경우 1페이지부터 시작
+    currentPage.value = 1;
+    fetchMembers(1);
+  }
   initializeFlatpickr();
 });
 </script>
@@ -255,6 +273,7 @@ onMounted(() => {
                 <th>날짜</th>
                 <td colspan="3">
                   <select v-model="filterData.dateType" class="select">
+                    <option value="all">전체</option>
                     <option value="create_date">가입일</option>
                     <option value="update_date">수정일</option>
                     <option value="login_date">접속일</option>
@@ -274,6 +293,7 @@ onMounted(() => {
                 <th>계정상태</th>
                 <td>
                   <select v-model="filterData.memberStatus" class="select">
+                    <option value="all">전체</option>
                     <option value="active">정상</option>
                     <option value="suspended">정지</option>
                     <option value="withdrawn">탈퇴</option>

@@ -17,7 +17,7 @@ public class MemberSearchDto {
     private String memberStatus;
     private String gender;
     private String searchType;
-    private String searchKeyWord;
+    private String searchKeyword;
     private String dateType;
     private String startDate;
     private String endDate;
@@ -26,7 +26,8 @@ public class MemberSearchDto {
         this.page = 1;
         this.size = 10;
         this.searchType = "userId";
-        this.searchKeyWord = "";
-        this.memberStatus = "active";
+        this.searchKeyword = "";
+        this.memberStatus = "all";
+        this.dateType = "all";
     }
 }

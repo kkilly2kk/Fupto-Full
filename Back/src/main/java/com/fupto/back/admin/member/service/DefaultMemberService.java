@@ -65,9 +65,9 @@ public class DefaultMemberService implements MemberService {
         );
 
         // 검색 조건 설정
-        String userId = searchDto.getSearchType().equals("userId") ? searchDto.getSearchKeyWord() : null;
-        String nickname = searchDto.getSearchType().equals("nickname") ? searchDto.getSearchKeyWord() : null;
-        String email = searchDto.getSearchType().equals("email") ? searchDto.getSearchKeyWord() : null;
+        String userId = searchDto.getSearchType().equals("userId") ? searchDto.getSearchKeyword() : null;
+        String nickname = searchDto.getSearchType().equals("nickname") ? searchDto.getSearchKeyword() : null;
+        String email = searchDto.getSearchType().equals("email") ? searchDto.getSearchKeyword() : null;
 
         String role = (searchDto.getRole() == null || searchDto.getRole().isEmpty()) ?
                 null : searchDto.getRole();
