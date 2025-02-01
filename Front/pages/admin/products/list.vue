@@ -1,6 +1,5 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { useAuthFetch } from "~/composables/useAuthFetch";
 import { use$Fetch } from "~/composables/use$Fetch";
 
 useHead({

@@ -199,7 +199,7 @@ watch(
         <ul class="side-dropdown" :class="{ show: shouldShowDropdown('members') }">
           <li>
             <NuxtLink to="/admin/members/list" :class="{ 'sub-menu-active': isSubMenuActive('/admin/members/list') }">
-              고객 관리
+              고객 목록
             </NuxtLink>
           </li>
         </ul>

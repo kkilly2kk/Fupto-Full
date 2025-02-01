@@ -1,17 +1,16 @@
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { use$Fetch } from "~/composables/use$Fetch";
 
 useHead({
-  link: [{ rel: "stylesheet", href: "/css/admin/report.css" }],
+  link: [{ rel: "stylesheet", href: "/css/admin/member-list.css" }],
 });
 
-// -------------------- State --------------------
 const members = ref([]);
 const isLoading = ref(false);
 const totalPages = ref(0);
 const currentPage = ref(1);
 const pageSize = ref(10);
+const config = useRuntimeConfig();
 
 const filterData = ref({
   memberStatus: "active", // active, suspended, withdrawn
@@ -24,7 +23,6 @@ const filterData = ref({
   endDate: "",
 });
 
-// -------------------- Methods --------------------
 const fetchMembers = async (page = 1) => {
   try {
     isLoading.value = true;
@@ -136,17 +134,34 @@ const handleActiveChange = async (memberId, active) => {
   }
 };
 
-const handleRoleChange = async (memberId, role) => {
+const handleRoleChange = async (memberId, newRole) => {
   try {
     await use$Fetch(`/admin/members/${memberId}/role`, {
       method: "PATCH",
-      body: role,
+      body: newRole,
     });
-    await fetchMembers(currentPage.value);
+    await fetchMembers();
   } catch (error) {
     console.error("권한 변경 실패:", error);
     alert("회원 권한 변경에 실패했습니다.");
+    await fetchMembers(); // 에러 시에도 목록 새로고침
   }
+};
+
+const handleRoleSelectChange = (event, member) => {
+  const select = event.target;
+  const originalValue = member.role;
+  const newValue = select.value;
+
+  const confirmMessage =
+    newValue === "ROLE_ADMIN" ? "정말로 관리자 권한으로 변경하시겠습니까?" : "정말로 일반회원 권한으로 변경하시겠습니까?";
+
+  if (!window.confirm(confirmMessage)) {
+    select.value = originalValue;
+    return;
+  }
+
+  handleRoleChange(member.id, newValue);
 };
 
 const handleDeleteMember = async (memberId) => {
@@ -198,11 +213,21 @@ const handleSearch = (event) => {
 // 날짜 포맷팅 함수
 const formatDate = (dateString) => {
   if (!dateString) return "";
+
   const date = new Date(dateString);
-  return date.toISOString().split("T")[0];
+
+  const ymd = `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(
+    2,
+    "0"
+  )}`;
+
+  const time = `${String(date.getUTCHours()).padStart(2, "0")}:${String(date.getUTCMinutes()).padStart(2, "0")}:${String(
+    date.getUTCSeconds()
+  ).padStart(2, "0")}`;
+
+  return [ymd, time];
 };
 
-// -------------------- Lifecycle Hooks --------------------
 onMounted(() => {
   fetchMembers();
   initializeFlatpickr();
@@ -224,7 +249,7 @@ onMounted(() => {
     <div class="card">
       <div class="card-body">
         <form @submit="handleSearch">
-          <table class="table">
+          <table class="table table-filter">
             <tbody>
               <tr>
                 <th>날짜</th>
@@ -266,11 +291,11 @@ onMounted(() => {
               <tr>
                 <th>성별</th>
                 <td colspan="3">
-                  <input type="radio" id="gender-all" v-model="filterData.gender" value="" checked />
+                  <input class="mr-2" type="radio" id="gender-all" v-model="filterData.gender" value="" checked />
                   <label for="gender-all">전체</label>
-                  <input type="radio" id="gender-male" v-model="filterData.gender" value="남성" />
+                  <input class="mr-2" type="radio" id="gender-male" v-model="filterData.gender" value="남성" />
                   <label for="gender-male">남성</label>
-                  <input type="radio" id="gender-female" v-model="filterData.gender" value="여성" />
+                  <input class="mr-2" type="radio" id="gender-female" v-model="filterData.gender" value="여성" />
                   <label for="gender-female">여성</label>
                 </td>
               </tr>
@@ -299,14 +324,14 @@ onMounted(() => {
       <div class="card-body">
         <div class="d-flex">
           <select class="select mr-2" v-model="pageSize" @change="pageSizeChange">
-            <option :value="10">10개씩 보기</option>
-            <option :value="25">25개씩 보기</option>
-            <option :value="50">50개씩 보기</option>
-            <option :value="100">100개씩 보기</option>
+            <option :value="10">10</option>
+            <option :value="25">25</option>
+            <option :value="50">50</option>
+            <option :value="100">100</option>
           </select>
         </div>
 
-        <table class="table">
+        <table class="table member-list-table">
           <thead>
             <tr>
               <th>프로필</th>
@@ -323,18 +348,40 @@ onMounted(() => {
           <tbody>
             <tr v-for="member in members" :key="member.id">
               <td>
-                <img :src="member.profileImg || '/imgs/user/default-profile.jpg'" :alt="member.nickname" class="profile-img" />
+                <img
+                  :src="member.profileImg ? `${config.public.apiBase}/${member.profileImg}` : '/imgs/user/default-profile.jpg'"
+                  :alt="member.nickname"
+                  class="profile-img"
+                />
               </td>
-              <td>{{ member.userId }}</td>
-              <td>{{ member.nickname }}</td>
-              <td>{{ member.email }}</td>
-              <td>{{ formatDate(member.createDate) }}</td>
-              <td>{{ formatDate(member.loginDate) }}</td>
+              <td>
+                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
+                  {{ member.userId }}
+                </NuxtLink>
+              </td>
+              <td>
+                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
+                  {{ member.nickname }}
+                </NuxtLink>
+              </td>
+              <td>
+                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
+                  {{ member.email }}
+                </NuxtLink>
+              </td>
+              <td>
+                <div>{{ formatDate(member.createDate)[0] }}</div>
+                <div>{{ formatDate(member.createDate)[1] }}</div>
+              </td>
+              <td>
+                <div>{{ formatDate(member.loginDate)[0] }}</div>
+                <div>{{ formatDate(member.loginDate)[1] }}</div>
+              </td>
               <td>
                 <select
                   class="role-select"
-                  v-model="member.role"
-                  @change="handleRoleChange(member.id, $event.target.value)"
+                  :value="member.role"
+                  @change="(event) => handleRoleSelectChange(event, member)"
                   :disabled="!member.state || !member.active"
                 >
                   <option value="ROLE_USER">일반회원</option>
@@ -346,7 +393,7 @@ onMounted(() => {
                   <input
                     type="checkbox"
                     v-model="member.active"
-                    @change="handleActiveChange(member.id, !member.active)"
+                    @change="handleActiveChange(member.id, member.active)"
                     :disabled="!member.state"
                   />
                   <span class="pl-slider round"></span>
@@ -385,125 +432,3 @@ onMounted(() => {
     </div>
   </main>
 </template>
-
-<style>
-.profile-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.role-select {
-  padding: 4px;
-  border: 1px solid #dee2e6;
-  border-radius: 4px;
-  background-color: #fff;
-}
-
-.role-select:disabled {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-}
-
-/* Switch 스타일링 */
-.pl-switch {
-  position: relative;
-  display: inline-block;
-  width: 35px;
-  height: 20px;
-}
-
-.pl-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.pl-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  transition: 0.4s;
-  border-radius: 34px;
-}
-
-.pl-slider:before {
-  position: absolute;
-  content: "";
-  height: 14px;
-  width: 14px;
-  left: 3px;
-  bottom: 3px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-}
-
-.pl-slider.round {
-  border-radius: 34px;
-}
-
-input:checked + .pl-slider {
-  background-color: #2196f3;
-}
-
-input:checked + .pl-slider:before {
-  transform: translateX(15px);
-}
-
-input:disabled + .pl-slider {
-  background-color: #e9ecef;
-  cursor: not-allowed;
-}
-
-/* 페이지네이션 스타일링 */
-.pagination-container {
-  margin-top: 1rem;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  padding: 0;
-}
-
-.page-item {
-  margin: 0 0.25rem;
-}
-
-.page-link {
-  padding: 0.5rem 1rem;
-  border: 1px solid #dee2e6;
-  background-color: #fff;
-  color: #007bff;
-  cursor: pointer;
-}
-
-.page-item.active .page-link {
-  background-color: #007bff;
-  border-color: #007bff;
-  color: #fff;
-}
-
-.page-item.disabled .page-link {
-  color: #6c757d;
-  pointer-events: none;
-  background-color: #fff;
-  border-color: #dee2e6;
-}
-
-.table td {
-  vertical-align: middle;
-}
-
-.btn-sm {
-  padding: 0.25rem 0.5rem;
-  font-size: 0.875rem;
-}
-</style>
