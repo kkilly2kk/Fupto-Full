@@ -21,6 +21,7 @@ const filterData = ref({
   memberStatus: "all", // active, suspended, withdrawn
   role: "", // ROLE_USER, ROLE_ADMIN
   gender: "",
+  provider: "",
   searchType: "userId", // userId, nickname, email
   searchKeyword: "",
   dateType: "all",
@@ -37,6 +38,7 @@ const fetchMembers = async (page = 1) => {
       memberStatus: filterData.value.memberStatus,
       role: filterData.value.role,
       gender: filterData.value.gender,
+      provider: filterData.value.provider,
       searchType: filterData.value.searchType,
       searchKeyword: filterData.value.searchKeyword,
       dateType: filterData.value.dateType,
@@ -310,13 +312,23 @@ onMounted(() => {
               </tr>
               <tr>
                 <th>성별</th>
-                <td colspan="3">
+                <td>
                   <input class="mr-2" type="radio" id="gender-all" v-model="filterData.gender" value="" checked />
                   <label for="gender-all">전체</label>
                   <input class="mr-2" type="radio" id="gender-male" v-model="filterData.gender" value="남성" />
                   <label for="gender-male">남성</label>
                   <input class="mr-2" type="radio" id="gender-female" v-model="filterData.gender" value="여성" />
                   <label for="gender-female">여성</label>
+                </td>
+                <th>로그인 유형</th>
+                <td>
+                  <select v-model="filterData.provider" class="select">
+                    <option value="">전체</option>
+                    <option value="FUPTO">일반</option>
+                    <option value="KAKAO">카카오</option>
+                    <option value="NAVER">네이버</option>
+                    <option value="GOOGLE">구글</option>
+                  </select>
                 </td>
               </tr>
               <tr>
@@ -333,7 +345,7 @@ onMounted(() => {
             </tbody>
           </table>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary">검색</button>
+            <button type="submit" class="btn btn-primary btn-search">검 색</button>
           </div>
         </form>
       </div>
@@ -354,7 +366,7 @@ onMounted(() => {
         <table class="table member-list-table">
           <thead>
             <tr>
-              <th>프로필</th>
+              <th>NO.</th>
               <th>아이디</th>
               <th>닉네임</th>
               <th>이메일</th>
@@ -367,17 +379,18 @@ onMounted(() => {
           </thead>
           <tbody>
             <tr v-for="member in members" :key="member.id">
+              <td>{{ member.id }}</td>
               <td>
-                <img
-                  :src="member.profileImg ? `${config.public.apiBase}/${member.profileImg}` : '/imgs/user/default-profile.jpg'"
-                  :alt="member.nickname"
-                  class="profile-img"
-                />
-              </td>
-              <td>
-                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
-                  {{ member.userId }}
-                </NuxtLink>
+                <div class="d-flex align-items-center">
+                  <img
+                    :src="member.profileImg ? `${config.public.apiBase}/${member.profileImg}` : '/imgs/user/default-profile.jpg'"
+                    :alt="member.nickname"
+                    class="profile-img"
+                  />
+                  <NuxtLink :to="`/admin/members/${member.id}`" class="member-link ml-3">
+                    {{ member.userId }}
+                  </NuxtLink>
+                </div>
               </td>
               <td>
                 <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">

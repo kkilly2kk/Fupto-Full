@@ -1,9 +1,9 @@
 <script setup>
-import { ref, onMounted} from "vue";
+import { ref, onMounted } from "vue";
 import { use$Fetch } from "~/composables/use$Fetch";
 
 useHead({
-    link: [{ rel: "stylesheet", href: "/css/admin/shoppingmall-list.css"}],
+  link: [{ rel: "stylesheet", href: "/css/admin/shoppingmall-list.css" }],
 });
 
 const shoppingmalls = ref([]);
@@ -18,40 +18,40 @@ const startDateInput = ref(null);
 const endDateInput = ref(null);
 const searchForm = ref(null);
 
-const noDataMessage = ref('');
+const noDataMessage = ref("");
 
 // 폼 데이터
 const formData = ref({
-  nameType: 'default_name',  // 쇼핑몰명 유형
-  name: '',                  // 쇼핑몰명 입력
-  active: '',                // 사용여부
-  dateType: 'reg',
-  startDate: '',
-  endDate: ''
+  nameType: "default_name", // 쇼핑몰명 유형
+  name: "", // 쇼핑몰명 입력
+  active: "", // 사용여부
+  dateType: "reg",
+  startDate: "",
+  endDate: "",
 });
 
 // 모달 표시 여부와 선택된 쇼핑몰 데이터
 const showModal = ref(false);
-const selectedshoppingmall = reactive({ 
-  id: '',
-  korName: '',
-  engName: '',
-  description: '',
-  img: '',
-  url: '',
-  deliveryfee: '',
-  taxes: ''
+const selectedshoppingmall = reactive({
+  id: "",
+  korName: "",
+  engName: "",
+  description: "",
+  img: "",
+  url: "",
+  deliveryfee: "",
+  taxes: "",
 });
 
 // 모달 열기 함수
 const openModal = (shoppingmall) => {
-    Object.assign(selectedshoppingmall, shoppingmall); // 선택된 쇼핑몰 정보를 selectedshoppingmall에 저장
-    showModal.value = true; // 모달 표시
+  Object.assign(selectedshoppingmall, shoppingmall); // 선택된 쇼핑몰 정보를 selectedshoppingmall에 저장
+  showModal.value = true; // 모달 표시
 };
 
 // 모달 닫기 함수
 const closeModal = () => {
-    showModal.value = false; // 모달 숨기기
+  showModal.value = false; // 모달 숨기기
 };
 
 // 체크박스 상태
@@ -75,15 +75,15 @@ const fetchshoppingmalls = async () => {
 
     // use$Fetch 호출
     const data = await use$Fetch(`/admin/shoppingmalls?${params.toString()}`);
-    
+
     shoppingmalls.value = data.shoppingmalls;
     totalElements.value = data.totalElements;
     totalPages.value = data.totalPages;
 
     if (shoppingmalls.value.length === 0) {
-      noDataMessage.value = '데이터가 없습니다.';
+      noDataMessage.value = "데이터가 없습니다.";
     } else {
-      noDataMessage.value = '';
+      noDataMessage.value = "";
     }
   } catch (error) {
     console.error("Error fetching shoppingmalls:", error);
@@ -127,7 +127,7 @@ const updateActive = async (shoppingmallId, active) => {
 };
 
 const confirmDelete = (shoppingmallId) => {
-  if (confirm('정말 삭제하시겠습니까?')) {
+  if (confirm("정말 삭제하시겠습니까?")) {
     handleDelete(shoppingmallId);
   }
 };
@@ -273,7 +273,7 @@ const initializeFlatpickr = () => {
     onChange: (selectedDates) => {
       const selectedDate = selectedDates[0];
       if (selectedDate && endDatePicker.value) {
-        endDatePicker.value.set('minDate', selectedDate); // 종료일 Picker의 최소 날짜 설정
+        endDatePicker.value.set("minDate", selectedDate); // 종료일 Picker의 최소 날짜 설정
       }
     },
   });
@@ -284,12 +284,11 @@ const initializeFlatpickr = () => {
     onChange: (selectedDates) => {
       const selectedDate = selectedDates[0];
       if (selectedDate && startDatePicker.value) {
-        startDatePicker.value.set('maxDate', selectedDate); // 시작일 Picker의 최대 날짜 설정
+        startDatePicker.value.set("maxDate", selectedDate); // 시작일 Picker의 최대 날짜 설정
       }
     },
   });
-  
-}
+};
 
 // 날짜 설정 함수들
 const setYesterday = () => {
@@ -376,10 +375,12 @@ const formatDate = (dateString) => {
   if (!dateString) return "";
   const date = new Date(dateString);
 
-   // 로컬 날짜를 YYYY-MM-DD 형식으로 포맷
-   const ymd =
-    date.getUTCFullYear() + "-" + 
-    String(date.getUTCMonth() + 1).padStart(2, "0") + "-" + 
+  // 로컬 날짜를 YYYY-MM-DD 형식으로 포맷
+  const ymd =
+    date.getUTCFullYear() +
+    "-" +
+    String(date.getUTCMonth() + 1).padStart(2, "0") +
+    "-" +
     String(date.getUTCDate()).padStart(2, "0");
 
   // 로컬 시간 (HH:mm:ss) 형식으로 포맷
@@ -405,19 +406,18 @@ onMounted(() => {
     initializeFlatpickr();
   });
 });
-
 </script>
 
 <template>
   <main>
     <h1 class="title">쇼핑몰 목록</h1>
-		<ul class="breadcrumbs">
-			<li><a href="#">FUPTO</a></li>
-			<li class="divider">/</li>
+    <ul class="breadcrumbs">
+      <li><a href="#">FUPTO</a></li>
+      <li class="divider">/</li>
       <li><a href="#">쇼핑몰</a></li>
-			<li class="divider">/</li>
-			<li><a href="#" class="active">쇼핑몰 목록</a></li>
-		</ul>
+      <li class="divider">/</li>
+      <li><a href="#" class="active">쇼핑몰 목록</a></li>
+    </ul>
 
     <div class="card">
       <div class="card-body">
@@ -432,7 +432,7 @@ onMounted(() => {
                     <option value="korName">한글명</option>
                     <option value="engName">영어명</option>
                   </select>
-                  <input v-model="formData.name" type="text"  class="input-text" />
+                  <input v-model="formData.name" type="text" class="input-text" />
                 </td>
               </tr>
               <tr>
@@ -467,7 +467,7 @@ onMounted(() => {
             </tbody>
           </table>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary">검 색</button>
+            <button type="submit" class="btn btn-primary btn-search">검 색</button>
           </div>
         </form>
       </div>
@@ -519,47 +519,51 @@ onMounted(() => {
               <template v-else>
                 <!-- 첫 번째 대표 상품 -->
                 <tr v-for="sm in shoppingmalls" :key="sm.id">
-                <td>
-                  <input
-                    type="checkbox"
-                    :id="'shoppingmall' + sm.id"
-                    :checked="selectedItems.has(sm.id)"
-                    @change="(e) => handleSelectItem(e, sm.id)"
-                    class="pl-checkbox"
-                  />
-                </td>
-                <td>{{ sm.id }}</td>
-                <td class="shoppingmall-cell">
-                  <div class="d-flex align-items-center">
-                    <img :src="'http://localhost:8085/api/v1/' + sm.img || 'https://via.placeholder.com/70'" :alt="sm.korName" class="shoppingmall-img" />
-                  </div>
-                </td>
-                <td class="text-md">{{ sm.korName }}</td>
-                <td class="text-md">{{ sm.engName }}</td>
-                <td>
-                  <button class="btn btn-outline-primary btn-sm"><a :href="sm.url" target="_blank">URL 이동</a></button>
-                </td>
-                <td class="text-md">￦{{ formatNumber(sm.deliveryfee) }}</td>
-                <td class="text-md">{{ formatNumber(sm.taxes) }}%</td>
-                <td class="text-md">{{ formatDate(sm.createDate)[0] }}<br>{{ formatDate(sm.createDate)[1] }}</td>
-                <td class="text-md">{{ formatDate(sm.updateDate)[0] }}<br>{{ formatDate(sm.updateDate)[1] }}</td>
-                <td>
-                  <label class="pl-switch">
-                    <input type="checkbox" :id="'active' + sm.id" v-model="sm.active" @change="() => handleActiveChange(sm)"/>
-                    <span class="pl-slider round"></span>
-                  </label>
-                </td>
-                <td>
-                  <button class="btn btn-outline-secondary btn-sm toggle-shoppingmalls" @click="openModal(sm)">
-                    <i class="mdi mdi-chevron-down"></i>
-                  </button>
-                  <NuxtLink :to="`/admin/shoppingmalls/${sm.id}/edit`" class="btn btn-outline-secondary btn-sm">
-                    <i class="bx bxs-pencil"></i>
-                  </NuxtLink>
-                  <button class="btn btn-outline-danger btn-sm" @click="confirmDelete(sm.id)">
-                    <i class="bx bx-trash"></i>
-                  </button>
-                </td>
+                  <td>
+                    <input
+                      type="checkbox"
+                      :id="'shoppingmall' + sm.id"
+                      :checked="selectedItems.has(sm.id)"
+                      @change="(e) => handleSelectItem(e, sm.id)"
+                      class="pl-checkbox"
+                    />
+                  </td>
+                  <td>{{ sm.id }}</td>
+                  <td class="shoppingmall-cell">
+                    <div class="d-flex align-items-center">
+                      <img
+                        :src="'http://localhost:8085/api/v1/' + sm.img || 'https://via.placeholder.com/70'"
+                        :alt="sm.korName"
+                        class="shoppingmall-img"
+                      />
+                    </div>
+                  </td>
+                  <td class="text-md">{{ sm.korName }}</td>
+                  <td class="text-md">{{ sm.engName }}</td>
+                  <td>
+                    <button class="btn btn-outline-primary btn-sm"><a :href="sm.url" target="_blank">URL 이동</a></button>
+                  </td>
+                  <td class="text-md">￦{{ formatNumber(sm.deliveryfee) }}</td>
+                  <td class="text-md">{{ formatNumber(sm.taxes) }}%</td>
+                  <td class="text-md">{{ formatDate(sm.createDate)[0] }}<br />{{ formatDate(sm.createDate)[1] }}</td>
+                  <td class="text-md">{{ formatDate(sm.updateDate)[0] }}<br />{{ formatDate(sm.updateDate)[1] }}</td>
+                  <td>
+                    <label class="pl-switch">
+                      <input type="checkbox" :id="'active' + sm.id" v-model="sm.active" @change="() => handleActiveChange(sm)" />
+                      <span class="pl-slider round"></span>
+                    </label>
+                  </td>
+                  <td>
+                    <button class="btn btn-outline-secondary btn-sm toggle-shoppingmalls" @click="openModal(sm)">
+                      <i class="mdi mdi-chevron-down"></i>
+                    </button>
+                    <NuxtLink :to="`/admin/shoppingmalls/${sm.id}/edit`" class="btn btn-outline-secondary btn-sm">
+                      <i class="bx bxs-pencil"></i>
+                    </NuxtLink>
+                    <button class="btn btn-outline-danger btn-sm" @click="confirmDelete(sm.id)">
+                      <i class="bx bx-trash"></i>
+                    </button>
+                  </td>
                 </tr>
               </template>
             </tbody>
@@ -588,22 +592,27 @@ onMounted(() => {
       <div class="modal-content" @click.stop>
         <div class="modal-header">
           <h5 class="modal-title">쇼핑몰 상세 정보</h5>
-          <button type="button" class="close" @click="closeModal">
-            &times;
-          </button>
+          <button type="button" class="close" @click="closeModal">&times;</button>
         </div>
-        
+
         <div class="modal-body">
           <p><strong>번호:</strong> {{ selectedshoppingmall.id }}번</p>
-          <p><strong>쇼핑몰 이미지:</strong><br><img :src="'http://localhost:8085/api/v1/' + selectedshoppingmall.img || 'https://via.placeholder.com/70'" :alt="selectedshoppingmall.korName"></p>
+          <p>
+            <strong>쇼핑몰 이미지:</strong><br /><img
+              :src="'http://localhost:8085/api/v1/' + selectedshoppingmall.img || 'https://via.placeholder.com/70'"
+              :alt="selectedshoppingmall.korName"
+            />
+          </p>
           <p><strong>쇼핑몰 한글명:</strong> {{ selectedshoppingmall.korName }}</p>
           <p><strong>쇼핑몰 영어명:</strong> {{ selectedshoppingmall.engName }}</p>
-          <p><strong>쇼핑몰 URL:</strong><a :href="selectedshoppingmall.url" target="_blank"> {{ selectedshoppingmall.url }}</a></p>
+          <p>
+            <strong>쇼핑몰 URL:</strong><a :href="selectedshoppingmall.url" target="_blank"> {{ selectedshoppingmall.url }}</a>
+          </p>
           <p><strong>배송비:</strong> ￦{{ formatNumber(selectedshoppingmall.deliveryfee) }}</p>
           <p><strong>관부가세:</strong> ￦{{ formatNumber(selectedshoppingmall.taxes) }}</p>
-          <p><strong>상세설명:</strong><br>{{ selectedshoppingmall.description }}</p>
+          <p><strong>상세설명:</strong><br />{{ selectedshoppingmall.description }}</p>
         </div>
-        
+
         <div class="modal-footer">
           <button class="btn btn-primary" @click="closeModal">닫기</button>
         </div>

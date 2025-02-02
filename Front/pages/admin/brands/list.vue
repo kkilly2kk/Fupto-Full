@@ -73,7 +73,7 @@ const fetchBrands = async () => {
 
     // use$Fetch 호출
     const data = await use$Fetch(`/admin/brands?${params.toString()}`);
-  
+
     brands.value = data.brands;
     totalElements.value = data.totalElements;
     totalPages.value = data.totalPages;
@@ -83,7 +83,6 @@ const fetchBrands = async () => {
     } else {
       noDataMessage.value = "";
     }
-    
   } catch (error) {
     console.error("Error fetching brands:", error);
   }
@@ -437,7 +436,7 @@ onMounted(() => {
             </tbody>
           </table>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary">검 색</button>
+            <button type="submit" class="btn btn-primary btn-search">검 색</button>
           </div>
         </form>
       </div>

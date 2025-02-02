@@ -60,6 +60,10 @@
   font-size: 12px;
   transition: background-color 0.3s;
 }
+.btn-search {
+  padding: 8px 20px;
+  font-size: 14px;
+}
 .btn-primary {
   background-color: var(--blue);
   color: white;

@@ -73,6 +73,8 @@ public class DefaultMemberService implements MemberService {
                 null : searchDto.getRole();
         String gender = (searchDto.getGender() == null || searchDto.getGender().isEmpty()) ?
                 null : searchDto.getGender();
+        String provider = (searchDto.getProvider() == null || searchDto.getProvider().isEmpty()) ?
+                null : searchDto.getProvider();
 
         // 날짜 변환
         Instant startDateI = (searchDto.getStartDate() != null && !searchDto.getStartDate().isEmpty()) ?
@@ -93,6 +95,7 @@ public class DefaultMemberService implements MemberService {
                 userId,
                 nickname,
                 email,
+                provider,
                 searchDto.getDateType(),
                 startDateI,
                 endDateI,

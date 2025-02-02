@@ -37,6 +37,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "(:userId is null OR m.userId LIKE %:userId%) AND " +
             "(:nickname is null OR m.nickname LIKE %:nickname%) AND " +
             "(:email is null OR m.email LIKE %:email%) AND " +
+            "(:provider is null OR m.provider = :provider) AND " +
             "(" +
             ":dateType = 'all' OR " +
             "(:dateType = 'create_date' AND (:startDate is null OR m.createDate >= :startDate) AND (:endDate is null OR m.createDate <= :endDate)) OR " +
@@ -50,6 +51,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             @Param("userId") String userId,
             @Param("nickname") String nickname,
             @Param("email") String email,
+            @Param("provider") String provider,
             @Param("dateType") String dateType,
             @Param("startDate") Instant startDate,
             @Param("endDate") Instant endDate,

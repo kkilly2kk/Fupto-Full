@@ -193,13 +193,13 @@ watch(
       <li class="divider">User</li>
       <li>
         <a href="#" @click="handleDropdownClick('members', $event)" :class="{ active: isMenuActive('members') }">
-          <i class="bx bx-user icon"></i> 고객
+          <i class="bx bx-user icon"></i> 회원
           <i class="bx bx-chevron-right icon-right"></i>
         </a>
         <ul class="side-dropdown" :class="{ show: shouldShowDropdown('members') }">
           <li>
             <NuxtLink to="/admin/members/list" :class="{ 'sub-menu-active': isSubMenuActive('/admin/members/list') }">
-              고객 목록
+              회원 목록
             </NuxtLink>
           </li>
         </ul>

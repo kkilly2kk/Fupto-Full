@@ -89,10 +89,8 @@ public class AuthController {
                     .provider(userDetails.getProvider())
                     .token(token) // 토큰 발급 (응답 본문에 담아서)
                     .build());
-        }
-        catch (AuthenticationException e){
-
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 

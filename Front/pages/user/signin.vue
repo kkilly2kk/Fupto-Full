@@ -18,7 +18,7 @@ const saveReturnUrl = () => {
 
 const localLoginHandler = async () => {
   try {
-    let { data } = await useAuthFetch("/auth/signin", {
+    const { data, error } = await useAuthFetch("/auth/signin", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -30,7 +30,6 @@ const localLoginHandler = async () => {
     });
 
     const response = data.value;
-
     let userInfo = jwtDecode(response.token);
 
     userDetails.setAuthentication({
@@ -41,19 +40,11 @@ const localLoginHandler = async () => {
       roles: userInfo.roles.map((role) => role.authority),
       token: response.token,
     });
-    userInfo.roles.map((role) => {
-      console.log(role, role.authority);
-    });
-    // 로그인 처리 로직 (api호출시)
-    console.log("User info:", userInfo);
-    console.log("User details:", userDetails);
 
-    // 로그인 성공 후 리다이렉트
-    console.log("returnURL", returnURL);
     return navigateTo(returnURL);
   } catch (error) {
     console.error("Login failed:", error);
-    alert("계정이 일치하지 않습니다.");
+    alert(error.data || "계정이 일치하지 않습니다.");
   }
 };
 </script>

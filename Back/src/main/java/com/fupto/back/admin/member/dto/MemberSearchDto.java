@@ -16,6 +16,7 @@ public class MemberSearchDto {
     private String role;
     private String memberStatus;
     private String gender;
+    private String provider;
     private String searchType;
     private String searchKeyword;
     private String dateType;
@@ -29,5 +30,6 @@ public class MemberSearchDto {
         this.searchKeyword = "";
         this.memberStatus = "all";
         this.dateType = "all";
+        this.provider = "";
     }
 }

@@ -47,7 +47,16 @@
 }
 
 .table label {
-  margin-right: 1rem; /* 0.5rem보다 좀 더 큰 간격 */
+  margin-right: 1rem;
+}
+
+.table-filter td:nth-child(2) {
+  width: 700px; /* 계정상태의 select box가 있는 td의 너비를 줄임 */
+}
+
+.table-filter th:nth-child(3),
+.table-filter th:nth-child(7) {
+  width: 130px;
 }
 
 /* 폼 요소 스타일링 */
@@ -90,6 +99,11 @@
   cursor: pointer;
   font-size: 12px;
   transition: background-color 0.3s;
+}
+
+.btn-search {
+  padding: 8px 20px;
+  font-size: 14px;
 }
 
 .btn-primary {
@@ -213,6 +227,9 @@ input:disabled + .pl-slider {
 .ml-2 {
   margin-left: 0.5rem;
 }
+.ml-3 {
+  margin-left: 1rem;
+}
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -257,11 +274,11 @@ input:disabled + .pl-slider {
 /* 열 너비 조절 */
 .member-list-table th:nth-child(1),
 .member-list-table td:nth-child(1) {
-  width: 60px;
-} /* 프로필 */
+  width: 40px;
+} /* NO. */
 .member-list-table th:nth-child(2),
 .member-list-table td:nth-child(2) {
-  width: 120px;
+  width: 180px;
 } /* 아이디 */
 .member-list-table th:nth-child(3),
 .member-list-table td:nth-child(3) {
@@ -273,11 +290,11 @@ input:disabled + .pl-slider {
 } /* 이메일 */
 .member-list-table th:nth-child(5),
 .member-list-table td:nth-child(5) {
-  width: 100px;
+  width: 85px;
 } /* 가입일 */
 .member-list-table th:nth-child(6),
 .member-list-table td:nth-child(6) {
-  width: 100px;
+  width: 85px;
 } /* 최근접속 */
 .member-list-table th:nth-child(7),
 .member-list-table td:nth-child(7) {
@@ -285,9 +302,9 @@ input:disabled + .pl-slider {
 } /* 회원유형 */
 .member-list-table th:nth-child(8),
 .member-list-table td:nth-child(8) {
-  width: 80px;
+  width: 70px;
 } /* 상태 */
 .member-list-table th:nth-child(9),
 .member-list-table td:nth-child(9) {
-  width: 100px;
+  width: 70px;
 } /* 관리 */

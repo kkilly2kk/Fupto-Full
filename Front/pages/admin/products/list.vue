@@ -576,7 +576,7 @@ onMounted(() => {
             </tbody>
           </table>
           <div class="text-center">
-            <button type="submit" class="btn btn-primary btn-modify">검&nbsp;&nbsp;&nbsp;색</button>
+            <button type="submit" class="btn btn-primary btn-modify btn-search">검 색</button>
           </div>
         </form>
       </div>

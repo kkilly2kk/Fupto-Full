@@ -6,6 +6,7 @@ import com.fupto.back.auth.exception.UserAlreadyExistsException;
 import com.fupto.back.entity.Member;
 import com.fupto.back.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -35,10 +36,18 @@ public class FuptoUserDetailService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String userId) throws BadCredentialsException {
+
         Member member = memberRepository.findByUserId(userId);
-        if (member == null){
-            throw new UsernameNotFoundException(userId+" User not found");
+
+        if (member == null) {
+            throw new BadCredentialsException("아이디 또는 비밀번호가 일치하지 않습니다.");
+        }
+        if (!member.getState()) {
+            throw new BadCredentialsException("탈퇴한 회원입니다.");
+        }
+        if (!member.getActive()) {
+            throw new BadCredentialsException("계정이 정지되었습니다. 관리자에게 문의해주세요.");
         }
 
         List<SimpleGrantedAuthority> authorities = new ArrayList<SimpleGrantedAuthority>();

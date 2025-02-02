@@ -43,10 +43,18 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private Member saveOrUpdate(OAuth2Dto dto) {
         Member member = memberRepository.findByProviderAndEmail(dto.getProvider(), dto.getEmail())
-                .map(entity -> entity.update(dto.getName()))
+                .map(entity -> {
+                    if (!entity.getState()) {
+                        throw new OAuth2AuthenticationException("탈퇴한 회원입니다.");
+                    }
+                    if (!entity.getActive()) {
+                        throw new OAuth2AuthenticationException("계정이 정지되었습니다. 관리자에게 문의해주세요.");
+                    }
+                    return entity.update(dto.getName());
+                })
                 .orElseGet(() -> createMember(dto));
-        member.setLoginDate(Instant.now().plusSeconds(32400));
 
+        member.setLoginDate(Instant.now().plusSeconds(32400));
         return memberRepository.save(member);
     }
 

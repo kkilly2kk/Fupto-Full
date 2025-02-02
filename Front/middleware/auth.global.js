@@ -1,6 +1,6 @@
 import useUserDetails from "~/composables/useUserDetails.js";
 
-export default defineNuxtRouteMiddleware(async (to) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   const userDetails = useUserDetails();
   const isRefresh = () => {
     const navEntries = performance.getEntriesByType("navigation");
@@ -53,6 +53,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
           });
         }
       }
+    }
+
+    // admin/members/list 페이지에서 회원 상세 페이지로 이동할 때, 이전 페이지 정보를 저장
+    if (
+      from.path.includes("/admin/members/") &&
+      from.path.includes("/admin/members/list") === false &&
+      to.path === "/admin/members/list"
+    ) {
+      localStorage.setItem("fromMemberDetail", "true");
     }
   }
 });

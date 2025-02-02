@@ -60,6 +60,10 @@
   font-size: 12px;
   transition: background-color 0.3s;
 }
+.btn-search {
+  padding: 8px 20px;
+  font-size: 14px;
+}
 .btn-primary {
   background-color: var(--blue);
   color: white;
@@ -107,7 +111,8 @@
   height: calc(1rem - 4px);
   background-color: #adb5bd;
   border-radius: 0.5rem;
-  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  transition: transform 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out,
+    box-shadow 0.15s ease-in-out;
 }
 .custom-switch .custom-control-input:checked ~ .custom-control-label::after {
   background-color: #fff;
@@ -330,7 +335,7 @@
   background-color: #007bff; /* 활성화된 페이지의 배경색 */
   color: white; /* 활성화된 페이지의 텍스트 색상 */
 }
- 
+
 .date-cell {
   text-align: center;
   vertical-align: middle;
