@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @Component
 public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler {
@@ -17,10 +19,11 @@ public class OAuth2FailureHandler extends SimpleUrlAuthenticationFailureHandler 
                                         HttpServletResponse response,
                                         AuthenticationException exception) throws IOException {
 
-        // 프론트엔드의 에러 처리 페이지로 리다이렉트
+        String errorMessage = URLEncoder.encode(exception.getMessage(), StandardCharsets.UTF_8.toString());
+
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/error")
-                .queryParam("error", exception.getMessage())
+                .queryParam("error", errorMessage)
                 .build()
                 .toUriString();
 

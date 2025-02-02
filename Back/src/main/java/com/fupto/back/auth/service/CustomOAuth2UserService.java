@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
@@ -45,10 +46,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         Member member = memberRepository.findByProviderAndEmail(dto.getProvider(), dto.getEmail())
                 .map(entity -> {
                     if (!entity.getState()) {
-                        throw new OAuth2AuthenticationException("탈퇴한 회원입니다.");
+                        throw new OAuth2AuthenticationException(new OAuth2Error
+                                ("user_withdrawn", "탈퇴한 회원입니다.", null));
                     }
                     if (!entity.getActive()) {
-                        throw new OAuth2AuthenticationException("계정이 정지되었습니다. 관리자에게 문의해주세요.");
+                        throw new OAuth2AuthenticationException(new OAuth2Error
+                                ("user_suspended", "계정이 정지되었습니다. 관리자에게 문의해주세요.", null));
                     }
                     return entity.update(dto.getName());
                 })
@@ -61,7 +64,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private Member createMember(OAuth2Dto dto) {
         // 1. 이메일 중복 체크
         if (memberRepository.existsByEmail(dto.getEmail())) {
-            throw new OAuth2AuthenticationException("이미 사용 중인 이메일입니다. 다른 방식으로 로그인해주세요.");
+            throw new OAuth2AuthenticationException(new OAuth2Error
+                            ("email_exists", "이미 가입된 이메일입니다. 다른 방식으로 로그인해주세요.", null)
+            );
         }
 
         // 2. 닉네임 중복 체크 및 수정

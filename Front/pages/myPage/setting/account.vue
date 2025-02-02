@@ -49,7 +49,6 @@ const updateMember = async () => {
     const requestBody = isSocialUser.value
       ? {
           nickname: nickname.value,
-          email: email.value,
           birthDate: birthDate.value,
           tel: phone.value,
           gender: gender.value,
@@ -59,7 +58,6 @@ const updateMember = async () => {
           newPassword: newPassword.value,
           confirmPassword: confirmPassword.value,
           nickname: nickname.value,
-          email: email.value,
           birthDate: birthDate.value,
           tel: phone.value,
         };
@@ -126,7 +124,7 @@ onMounted(() => {
 
           <div class="info-item">
             <label>이메일</label>
-            <input type="email" v-model="email" />
+            <input type="email" v-model="email" disabled class="readonly-input" />
           </div>
 
           <div class="info-item">

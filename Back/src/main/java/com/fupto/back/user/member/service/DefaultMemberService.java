@@ -79,10 +79,8 @@ public class DefaultMemberService implements MemberService {
     public MemberResponseDto editMember(Member member, MemberEditDto dto) {
         // 비밀번호 검증
         validatePassword(member, dto.getPassword());
-
         // 새 비밀번호가 있는 경우 처리
         updatePasswordIfProvided(member, dto);
-
         // 나머지 정보 업데이트
         updateMemberInfo(member, dto);
 
@@ -103,10 +101,6 @@ public class DefaultMemberService implements MemberService {
     private void updateMemberInfo(Member member, MemberEditDto dto) {
         if (StringUtils.hasText(dto.getNickname())) {
             member.setNickname(dto.getNickname());
-        }
-
-        if (StringUtils.hasText(dto.getEmail())) {
-            member.setEmail(dto.getEmail());
         }
 
         if (StringUtils.hasText(dto.getTel())) {

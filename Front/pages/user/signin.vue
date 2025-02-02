@@ -18,20 +18,15 @@ const saveReturnUrl = () => {
 
 const localLoginHandler = async () => {
   try {
-    const { data, error } = await useAuthFetch("/auth/signin", {
+    const response = await use$Fetch("/auth/signin", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: {
         username: username.value,
         password: password.value,
       },
     });
 
-    const response = data.value;
     let userInfo = jwtDecode(response.token);
-
     userDetails.setAuthentication({
       id: response.userId,
       username: userInfo.username,
@@ -85,7 +80,7 @@ const localLoginHandler = async () => {
 
         <div class="login-links">
           <a href="#">아이디/비밀번호 찾기</a>
-          <nuxt-link to="signup">회원가입</nuxt-link>
+          <nuxt-link to="/user/signup">회원가입</nuxt-link>
         </div>
       </div>
     </div>

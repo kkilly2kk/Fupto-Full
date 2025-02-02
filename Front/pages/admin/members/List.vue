@@ -392,16 +392,8 @@ onMounted(() => {
                   </NuxtLink>
                 </div>
               </td>
-              <td>
-                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
-                  {{ member.nickname }}
-                </NuxtLink>
-              </td>
-              <td>
-                <NuxtLink :to="`/admin/members/${member.id}`" class="member-link">
-                  {{ member.email }}
-                </NuxtLink>
-              </td>
+              <td>{{ member.nickname }}</td>
+              <td>{{ member.email }}</td>
               <td>
                 <div>{{ formatDate(member.createDate)[0] }}</div>
                 <div>{{ formatDate(member.createDate)[1] }}</div>

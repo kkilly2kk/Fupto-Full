@@ -17,7 +17,6 @@ public class MemberEditDto {
     private String confirmPassword;
     private String nickname;
     private String birthDate;
-    private String email;
     private String tel;
     private Instant updateDate;
     private String gender;
