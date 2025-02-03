@@ -56,20 +56,6 @@ const calculateAge = (birthDate) => {
   return age;
 };
 
-// // 회원 상태 관리 함수들
-// const handleActiveChange = async () => {
-//   try {
-//     await use$Fetch(`/admin/members/${member.value.id}/active`, {
-//       method: "PATCH",
-//       params: { active: !member.value.active },
-//     });
-//     await fetchMember();
-//   } catch (error) {
-//     console.error("상태 변경 실패:", error);
-//     alert("회원 상태 변경에 실패했습니다.");
-//   }
-// };
-
 const handleDeleteMember = async () => {
   if (!confirm("정말로 이 회원을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
     return;
@@ -141,7 +127,7 @@ onMounted(() => {
             </tr>
             <tr>
               <th>나이</th>
-              <td>{{ calculateAge(member.birthDate) }}</td>
+              <td>{{ calculateAge(member.birthDate) }}세 ({{ member.birthDate }})</td>
             </tr>
             <tr>
               <th>전화번호</th>

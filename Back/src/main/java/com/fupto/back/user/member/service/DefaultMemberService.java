@@ -267,7 +267,7 @@ public class DefaultMemberService implements MemberService {
 
         // 기존 이미지가 있다면 삭제
         if (member.getProfileImg() != null) {
-            File oldFile = new File(uploadPath, member.getProfileImg());
+            File oldFile = new File(member.getProfileImg());
             if (oldFile.exists()) {
                 oldFile.delete();
             }
@@ -288,7 +288,7 @@ public class DefaultMemberService implements MemberService {
 
         if (member.getProfileImg() != null) {
             try {
-                Files.deleteIfExists(Paths.get(uploadPath, member.getProfileImg()));
+                Files.deleteIfExists(Paths.get(member.getProfileImg()));
             } catch (IOException e) {
                 throw new RuntimeException("이미지 삭제 실패", e);
             }
