@@ -82,6 +82,41 @@ const updateMember = async () => {
   }
 };
 
+const confirmWithdrawal = async () => {
+  if (!confirm("정말 탈퇴하시겠습니까?\n탈퇴 시 모든 정보가 삭제되며 복구할 수 없습니다.")) {
+    return;
+  }
+
+  let isEmailValid = false;
+  while (!isEmailValid) {
+    const inputEmail = prompt("본인 확인을 위해 가입했던 이메일을 입력해주세요.");
+    if (!inputEmail) return; // 취소를 누른 경우
+
+    if (inputEmail.trim() === "") {
+      continue;
+    }
+
+    try {
+      await use$Fetch("/user/member/withdrawal", {
+        method: "DELETE",
+        body: { email: inputEmail },
+      });
+      alert("회원 탈퇴가 완료되었습니다.");
+      userDetails.logout();
+      await navigateTo("/user/signin", { replace: true });
+      isEmailValid = true;
+    } catch (error) {
+      if (error.response?.status === 401) {
+        alert("이메일이 일치하지 않습니다.");
+        continue;
+      } else {
+        alert("회원 탈퇴 처리 중 오류가 발생했습니다.");
+        return;
+      }
+    }
+  }
+};
+
 onMounted(() => {
   getMember();
 });
@@ -161,6 +196,7 @@ onMounted(() => {
       </section>
 
       <div class="button-group">
+        <span @click="confirmWithdrawal" class="withdraw-text"> 회원 탈퇴 </span>
         <button @click="updateMember" class="update-btn">정보 수정</button>
       </div>
     </div>

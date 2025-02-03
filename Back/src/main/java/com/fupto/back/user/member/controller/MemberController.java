@@ -6,6 +6,7 @@ import com.fupto.back.user.emitter.dto.AlertPriceDto;
 import com.fupto.back.user.member.dto.BoardListDto;
 import com.fupto.back.user.member.dto.MemberEditDto;
 import com.fupto.back.user.member.dto.MemberResponseDto;
+import com.fupto.back.user.member.dto.MemberWithdrawalDto;
 import com.fupto.back.user.member.exception.InvalidPasswordException;
 import com.fupto.back.user.member.service.MemberService;
 import org.springframework.core.io.Resource;
@@ -32,14 +33,13 @@ public class MemberController {
     }
 
     @PutMapping("edit")
-    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MemberResponseDto> editMember(@AuthenticationPrincipal FuptoUserDetails userDetails,
                                                         @RequestBody MemberEditDto requestDto) {
         try {
             Member member = memberService.findByUserId(userDetails.getUsername());
-            MemberResponseDto editMember = member.getProvider() != null
-                    ? memberService.editSocialMember(member, requestDto)
-                    : memberService.editMember(member, requestDto);
+            MemberResponseDto editMember = "FUPTO".equals(member.getProvider())
+                    ? memberService.editMember(member, requestDto) // 일반 회원
+                    : memberService.editSocialMember(member, requestDto); // 소셜 로그인 회원
 
             return ResponseEntity.ok(editMember);
         } catch (InvalidPasswordException e) {
@@ -103,7 +103,6 @@ public class MemberController {
     }
 
     @PostMapping(value = "{id}/profile-image")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> uploadProfileImage(
             @PathVariable Long id,
             @RequestPart("file") MultipartFile file
@@ -114,10 +113,22 @@ public class MemberController {
     }
 
     @DeleteMapping("{id}/profile-image")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProfileImage(@PathVariable Long id) {
         memberService.deleteProfileImage(id);
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("withdrawal")
+    public ResponseEntity<Void> withdrawMember(
+            @AuthenticationPrincipal FuptoUserDetails userDetails,
+            @RequestBody(required = false) MemberWithdrawalDto requestDto) {
+        try {
+            Member member = memberService.findByUserId(userDetails.getUsername());
+            memberService.withdrawMember(member, requestDto);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 
 }

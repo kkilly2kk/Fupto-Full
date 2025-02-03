@@ -2,10 +2,7 @@ package com.fupto.back.user.member.service;
 
 import com.fupto.back.entity.Favorite;
 import com.fupto.back.entity.Member;
-import com.fupto.back.user.member.dto.BoardListDto;
-import com.fupto.back.user.member.dto.FavoriteListDto;
-import com.fupto.back.user.member.dto.MemberEditDto;
-import com.fupto.back.user.member.dto.MemberResponseDto;
+import com.fupto.back.user.member.dto.*;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -26,5 +23,6 @@ public interface MemberService {
     void updateAlertPrice( Long favoriteId, Long memberID, Integer alertPrice);
     void updateProfileImage(Long memberId, MultipartFile file) throws IOException;
     void deleteProfileImage(Long memberId);
+    void withdrawMember(Member member, MemberWithdrawalDto dto);
 
 }

@@ -105,6 +105,7 @@
 
 .button-group {
   margin-top: 40px;
+  position: relative;
   text-align: center;
 }
 
@@ -125,6 +126,20 @@
   transform: translateY(-1px);
 }
 
+.withdraw-text {
+  position: absolute; /* absolute 포지셔닝으로 오른쪽 배치 */
+  right: 20px; /* 오른쪽 여백 */
+  top: 50%; /* 세로 중앙 정렬을 위한 설정 */
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.withdraw-text:hover {
+  color: #4b5563;
+}
 @media screen and (max-width: 768px) {
   .edit-member-container {
     margin: 20px auto;

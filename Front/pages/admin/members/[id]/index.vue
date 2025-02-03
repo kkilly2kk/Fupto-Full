@@ -79,7 +79,7 @@ const handleDeleteMember = async () => {
     await use$Fetch(`/admin/members/${member.value.id}`, {
       method: "DELETE",
     });
-    navigateTo("/admin/members");
+    navigateTo("/admin/members/list");
   } catch (error) {
     console.error("회원 삭제 실패:", error);
     alert("회원 삭제에 실패했습니다.");

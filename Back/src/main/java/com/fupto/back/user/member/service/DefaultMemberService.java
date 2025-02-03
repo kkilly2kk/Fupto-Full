@@ -2,10 +2,7 @@ package com.fupto.back.user.member.service;
 
 import com.fupto.back.entity.*;
 import com.fupto.back.repository.*;
-import com.fupto.back.user.member.dto.BoardListDto;
-import com.fupto.back.user.member.dto.FavoriteListDto;
-import com.fupto.back.user.member.dto.MemberEditDto;
-import com.fupto.back.user.member.dto.MemberResponseDto;
+import com.fupto.back.user.member.dto.*;
 import com.fupto.back.user.member.exception.InvalidPasswordException;
 import com.fupto.back.user.member.exception.PasswordMismatchException;
 import jakarta.persistence.EntityNotFoundException;
@@ -298,6 +295,16 @@ public class DefaultMemberService implements MemberService {
             member.setProfileImg(null);
             memberRepository.save(member);
         }
+    }
+
+    @Transactional
+    public void withdrawMember(Member member, MemberWithdrawalDto dto) {
+        if (dto != null && !member.getEmail().equals(dto.getEmail())) {
+            throw new IllegalArgumentException("이메일이 일치하지 않습니다.");
+        }
+        member.setState(false);
+        member.setActive(false);
+        memberRepository.save(member);
     }
 
     private String getExtension(String filename) {
