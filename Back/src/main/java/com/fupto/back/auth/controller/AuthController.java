@@ -1,12 +1,11 @@
 package com.fupto.back.auth.controller;
 
-import com.fupto.back.auth.dto.SignUpRequestDto;
-import com.fupto.back.auth.dto.SignInRequestDto;
-import com.fupto.back.auth.dto.AuthResponseDto;
+import com.fupto.back.auth.dto.*;
 import com.fupto.back.auth.entity.FuptoUserDetails;
 import com.fupto.back.auth.exception.UserAlreadyExistsException;
 import com.fupto.back.auth.service.FuptoUserDetailService;
 import com.fupto.back.auth.util.JwtUtil;
+import com.fupto.back.entity.RefreshToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -61,33 +60,39 @@ public class AuthController {
         return ResponseEntity.ok().body(Collections.singletonMap("exists", exists));
     }
 
+    @PostMapping("refresh")
+    public ResponseEntity<?> refreshToken(@RequestBody TokenRefreshRequest request) {
+        try {
+            String newAccessToken = jwtUtil.refreshAccessToken(request.getRefreshToken());
+            return ResponseEntity.ok(TokenRefreshResponse.builder()
+                    .accessToken(newAccessToken)
+                    .build());
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+    }
+
     @PostMapping("signin")
-    public ResponseEntity<?> signIn (@RequestBody SignInRequestDto requestDto){
-        System.out.println(requestDto);
-        String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
+    public ResponseEntity<?> signIn(@RequestBody SignInRequestDto requestDto) {
+        try {
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(requestDto.getUsername(), requestDto.getPassword());
 
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(username, password);
-
-        System.out.println(authenticationToken);
-
-        try{
             Authentication authentication = authenticationManager.authenticate(authenticationToken);
             FuptoUserDetails userDetails = (FuptoUserDetails) authentication.getPrincipal();
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            String token = jwtUtil.generateToken(userDetails);
-            fuptoUserDetailService.updateLoginDate(username);
+            String accessToken = jwtUtil.generateToken(userDetails);
+            RefreshToken refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-            System.out.println("인증완료");
+            fuptoUserDetailService.updateLoginDate(userDetails.getUsername());
 
-            return ResponseEntity.ok(AuthResponseDto
-                    .builder()
+            return ResponseEntity.ok(AuthResponseDto.builder()
                     .userId(userDetails.getId())
                     .provider(userDetails.getProvider())
-                    .token(token) // 토큰 발급 (응답 본문에 담아서)
+                    .token(accessToken)
+                    .refreshToken(refreshToken.getToken())
                     .build());
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -95,28 +100,22 @@ public class AuthController {
     }
 
     @PostMapping("signup")
-    public ResponseEntity<?> signUp (@RequestBody SignUpRequestDto requestDto){
+    public ResponseEntity<?> signUp(@RequestBody SignUpRequestDto requestDto) {
         try {
-            System.out.println("dto 매개변수 입력 :"+ requestDto);
             FuptoUserDetails userDetails = fuptoUserDetailService.regNewUser(requestDto);
-            String token = jwtUtil.generateToken(userDetails);
+            String accessToken = jwtUtil.generateToken(userDetails);
+            RefreshToken refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
-            return ResponseEntity.ok(AuthResponseDto
-                    .builder()
+            return ResponseEntity.ok(AuthResponseDto.builder()
                     .userId(userDetails.getId())
-                    .token(token)
+                    .token(accessToken)
+                    .refreshToken(refreshToken.getToken())
                     .build());
-
         } catch (UserAlreadyExistsException e) {
-
             return ResponseEntity.status(HttpStatus.CONFLICT).body("User already exists");
-
         } catch (Exception e) {
-            e.printStackTrace();
-
-            return ResponseEntity.status(HttpStatus
-                    .INTERNAL_SERVER_ERROR)
-                    .body("Error during signup"+e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error during signup" + e.getMessage());
         }
     }
 

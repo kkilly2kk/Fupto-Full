@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Builder
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuthResponseDto {
     private Long userId;
     private String provider;
     private String token;
+    private String refreshToken;
 }

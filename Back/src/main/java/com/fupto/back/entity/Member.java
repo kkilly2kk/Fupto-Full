@@ -84,6 +84,9 @@ public class Member {
     @JsonManagedReference
     private List<Alert> alert;
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private RefreshToken refreshTokens;
+
     @Column(name = "provider", length = 10)
     private String provider;
 

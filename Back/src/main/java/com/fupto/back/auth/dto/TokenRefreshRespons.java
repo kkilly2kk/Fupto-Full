@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignInRequestDto {
-    private String username;
-    private String password;
+public class TokenRefreshResponse {
+    private String accessToken;
 }
