@@ -27,6 +27,7 @@ const localLoginHandler = async () => {
     });
 
     let userInfo = jwtDecode(response.token);
+
     userDetails.setAuthentication({
       id: response.userId,
       username: userInfo.username,
@@ -34,6 +35,7 @@ const localLoginHandler = async () => {
       provider: response.provider,
       roles: userInfo.roles.map((role) => role.authority),
       token: response.token,
+      refreshToken: response.refreshToken,
     });
 
     return navigateTo(returnURL);

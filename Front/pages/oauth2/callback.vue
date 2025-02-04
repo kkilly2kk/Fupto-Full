@@ -12,6 +12,7 @@ onMounted(() => {
     const token = route.query.token;
     const userId = route.query.userId;
     const provider = route.query.provider;
+    const refreshToken = route.query.refreshToken;
 
     // 세션 스토리지에서 returnURL 가져오기
     const savedReturnURL = process.client ? sessionStorage.getItem("oauth2_return_url") || "/" : "/";
@@ -26,6 +27,7 @@ onMounted(() => {
         roles: userInfo.roles.map((role) => role.authority),
         token: token,
         provider: provider,
+        refreshToken: refreshToken,
       });
 
       // 저장된 returnURL로 이동

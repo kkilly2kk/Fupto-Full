@@ -33,6 +33,6 @@ public class RefreshToken {
     private Instant createDate;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", unique = true)
     private Member member;
 }

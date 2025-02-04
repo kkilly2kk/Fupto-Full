@@ -13,6 +13,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.time.Instant;
@@ -83,45 +84,33 @@ public class JwtUtil {
               .setClaims(claims)
               .setSubject(userDetails.getUsername())
               .setIssuedAt(new Date())
-              .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+              .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60))) // 1시간(밀리초 단위)
               .signWith(secretKey, SignatureAlgorithm.HS512)
               .compact();
     }
 
-    // 리프레시 토큰 생성
+    @Transactional
     public RefreshToken generateRefreshToken(FuptoUserDetails userDetails) {
         String refreshToken = Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14)) // 14일
+                .setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 14))) // 14일(밀리초 단위)
                 .signWith(secretKey, SignatureAlgorithm.HS512)
                 .compact();
 
         // 기존 리프레시 토큰이 있다면 삭제
-        refreshTokenRepository.findByMember_Id(userDetails.getId())
-                .ifPresent(refreshTokenRepository::delete);
+        if (refreshTokenRepository.existsByMember_Id(userDetails.getId())) {
+            refreshTokenRepository.deleteByMemberId(userDetails.getId());
+        }
 
-        // 새 리프레시 토큰 생성 및 저장
+        // 새 토큰 생성
         RefreshToken refreshTokenEntity = RefreshToken.builder()
                 .token(refreshToken)
                 .member(Member.builder().id(userDetails.getId()).build())
-                .expiryDate(Instant.now().plusSeconds(60 * 60 * 24 * 14)) // 14일
+                .expiryDate(Instant.now().plusSeconds(60 * 60 * 24 * 14)) // 14일(초 단위)
                 .build();
 
         return refreshTokenRepository.save(refreshTokenEntity);
-    }
-
-    // 리프레시 토큰 검증
-    public boolean validateRefreshToken(String token) {
-        try {
-            Jwts.parserBuilder()
-                    .setSigningKey(secretKey)
-                    .build()
-                    .parseClaimsJws(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
     }
 
     // 리프레시 토큰으로 새 액세스 토큰 발급
@@ -129,7 +118,7 @@ public class JwtUtil {
         RefreshToken refreshTokenEntity = refreshTokenRepository.findByToken(refreshToken)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
 
-        // 리프레시 토큰 만료 확인
+        // 리프레시 토큰 만료 검증
         if (refreshTokenEntity.getExpiryDate().isBefore(Instant.now())) {
             refreshTokenRepository.delete(refreshTokenEntity);
             throw new RuntimeException("Refresh token expired");
@@ -150,11 +139,5 @@ public class JwtUtil {
 
         // 새 액세스 토큰 생성
         return generateToken(userDetails);
-    }
-
-    // 리프레시 토큰 삭제
-    public void deleteRefreshToken(Long memberId) {
-        refreshTokenRepository.findByMember_Id(memberId)
-                .ifPresent(refreshTokenRepository::delete);
     }
 }

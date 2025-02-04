@@ -1,3 +1,4 @@
+// plugins/auth-reload.js
 import authGlobal from "~/middleware/auth.global.js";
 
 export default defineNuxtPlugin((nuxtApp) => {

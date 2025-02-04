@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fupto.back.auth.dto.AuthResponseDto;
 import com.fupto.back.auth.entity.FuptoUserDetails;
 import com.fupto.back.auth.util.JwtUtil;
+import com.fupto.back.entity.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         FuptoUserDetails userDetails = (FuptoUserDetails) authentication.getPrincipal();
         String token = jwtUtil.generateToken(userDetails);
+        RefreshToken refreshToken = jwtUtil.generateRefreshToken(userDetails);
 
         String returnURL = request.getParameter("returnURL");
         if (returnURL == null || returnURL.isEmpty()) {
@@ -37,6 +39,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String targetUrl = UriComponentsBuilder
                 .fromUriString("http://localhost:3000/oauth2/callback")
                 .queryParam("token", token)
+                .queryParam("refreshToken", refreshToken.getToken())
                 .queryParam("userId", userDetails.getId())
                 .queryParam("provider", userDetails.getProvider())
                 .build()

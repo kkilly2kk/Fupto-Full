@@ -5,10 +5,33 @@ export default () => {
   const provider = useState("provider", () => null);
   const roles = useState("roles", () => []);
   const token = useState("token", () => []);
+  const refreshToken = useState("refreshToken", () => null);
 
   const isAnonymous = () => {
     if (process.server) return true;
     return username.value === null;
+  };
+
+  const refreshAccessToken = async () => {
+    const config = useRuntimeConfig();
+    try {
+      const response = await $fetch(`${config.public.apiBase}/auth/refresh`, {
+        method: "POST",
+        body: {
+          refreshToken: refreshToken.value,
+        },
+      });
+      token.value = response.accessToken;
+
+      if (process.client) {
+        localStorage.setItem("token", response.accessToken);
+      }
+      return response;
+    } catch (error) {
+      console.error("Token refresh failed:", error);
+      logout();
+      throw error;
+    }
   };
 
   const setAuthentication = (loginInfo) => {
@@ -18,6 +41,7 @@ export default () => {
     provider.value = loginInfo.provider;
     roles.value = loginInfo.roles;
     token.value = loginInfo.token;
+    refreshToken.value = loginInfo.refreshToken;
 
     if (process.client) {
       localStorage.setItem("id", loginInfo.id);
@@ -26,6 +50,7 @@ export default () => {
       localStorage.setItem("provider", loginInfo.provider);
       localStorage.setItem("roles", JSON.stringify(loginInfo.roles)); //[]->"[]"
       localStorage.setItem("token", loginInfo.token);
+      localStorage.setItem("refreshToken", loginInfo.refreshToken);
     }
   };
 
@@ -39,8 +64,7 @@ export default () => {
       provider.value = localStorage.getItem("provider");
       roles.value = JSON.parse(localStorage.getItem("roles")); //[ROLE_ADMIN]
       token.value = localStorage.getItem("token");
-
-      // await new Promise(resolve => setTimeout(resolve, 10));
+      refreshToken.value = localStorage.getItem("refreshToken");
     }
   };
 
@@ -51,6 +75,7 @@ export default () => {
     provider.value = null;
     roles.value = [];
     token.value = null;
+    refreshToken.value = null;
 
     if (process.client) {
       localStorage.removeItem("id");
@@ -59,6 +84,7 @@ export default () => {
       localStorage.removeItem("provider");
       localStorage.removeItem("roles");
       localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
     }
   };
 
@@ -71,6 +97,8 @@ export default () => {
     provider,
     roles,
     token,
+    refreshToken,
+    refreshAccessToken,
     isAnonymous,
     setAuthentication,
     hasRole,
