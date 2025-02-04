@@ -13,7 +13,6 @@ import java.util.Optional;
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
     Optional<RefreshToken> findByToken(String token);
-    Optional<RefreshToken> findByMember_Id(Long memberId);
     boolean existsByMember_Id(Long memberId);
 
     @Modifying
