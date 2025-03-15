@@ -32,6 +32,9 @@ public class DefaultProductService implements ProductService {
     @Value("${file.upload.path}")
     private String uploadPath;
 
+    @Value("${fupto.base-url}")
+    private String baseUrl;
+
     private ProductRepository productRepository;
     private ProductImageRepository productImageRepository;
     private PriceHistoryRepository priceHistoryRepository;
@@ -163,7 +166,7 @@ public class DefaultProductService implements ProductService {
     }
 
     private String getImageUrl(Long productId, Integer displayOrder) {
-        return String.format("http://localhost:8085/api/v1/products/%d/image/%d", productId, displayOrder);
+        return String.format("%s/products/%d/image/%d", baseUrl, productId, displayOrder);
     }
 
     @Override

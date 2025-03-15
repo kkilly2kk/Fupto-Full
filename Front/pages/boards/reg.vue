@@ -10,6 +10,7 @@ useHead({
 const route = useRoute();
 const imageUrl = ref("");
 const userDetails = useUserDetails();
+const config = useRuntimeConfig();
 
 const isAdmin = computed(() => {
   return userDetails.hasRole("ROLE_ADMIN");
@@ -100,7 +101,7 @@ const handleSubmit = async () => {
     console.log("게시글 등록 성공:", data);
     alert("게시글이 등록되었습니다.");
     resetForm();
-    window.location.href = "http://localhost:3000/boards/list";
+    window.location.href = `${config.public.frontendUrl}/boards/list`;
   } catch (error) {
     console.error("Error:", error);
     alert("게시글 등록 중 오류가 발생했습니다.");
@@ -108,7 +109,7 @@ const handleSubmit = async () => {
 };
 
 const handleCancel = () => {
-  window.location.href = "http://localhost:3000/boards/list";
+  window.location.href = `${config.public.frontendUrl}/boards/list`;
 };
 
 const resetForm = () => {

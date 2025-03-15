@@ -39,6 +39,7 @@ const goToSlide = (index) => {
 };
 
 const route = useRoute();
+const config = useRuntimeConfig();
 const products = ref([]);
 const designers = ref([]);
 const loadingProducts = ref(false);
@@ -154,7 +155,7 @@ onMounted(() => {
         <div v-for="brand in designers" :key="brand.id" class="brand-card">
           <NuxtLink :to="`/brands/${brand.id}/detail`">
             <div class="brand-logo">
-              <img :src="`http://localhost:8085/api/v1/${brand.img}`" :alt="brand.korName" />
+              <img :src="`${config.public.apiBase}/${brand.img}`" :alt="brand.korName" />
               <p>{{ brand.engName }}</p>
             </div>
           </NuxtLink>

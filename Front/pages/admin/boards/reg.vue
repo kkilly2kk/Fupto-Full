@@ -18,6 +18,7 @@ const board = ref({
 
 const imageUrl = ref("");
 const userDetails = useUserDetails();
+const config = useRuntimeConfig();
 
 // 이미지 미리보기 기능
 const previewImage = (event) => {
@@ -85,7 +86,7 @@ const handleSubmit = async () => {
     console.log("게시글 등록 성공:", data);
     alert("게시글이 등록되었습니다.");
     resetForm();
-    window.location.href = "http://localhost:3000/admin/boards/list";
+    window.location.href = `${config.public.frontendUrl}/admin/boards/list`;
   } catch (error) {
     console.error("Error:", error);
     alert("게시글 등록 중 오류가 발생했습니다.");
@@ -106,7 +107,7 @@ const resetForm = () => {
 
 const handleCancel = () => {
   resetForm();
-  window.location.href = "http://localhost:3000/admin/boards/list";
+  window.location.href = `${config.public.frontendUrl}/admin/boards/list`;
 };
 </script>
 

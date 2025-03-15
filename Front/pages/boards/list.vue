@@ -191,7 +191,7 @@ onMounted(() => {
             </td>
             <td class="product-img">
               <div class="d-flex align-items-center">
-                <img v-if="board.img" :src="'http://localhost:8085/api/v1/' + board.img" class="product-img" />
+                <img v-if="board.img" :src="config.public.apiBase + '/' + board.img" class="product-img" />
                 <!-- 이미지가 없을 경우, 빈 공간 표시되지 않음 -->
               </div>
             </td>

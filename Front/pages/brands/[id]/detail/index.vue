@@ -383,17 +383,15 @@ onUnmounted(() => {
     <div class="main-content-wrapper">
       <FuptoAside2 ref="asideRef" :initialGender="gender" @filter-change="handleFilterChange" @search="handleSearch" />
       <div class="product-content">
-
         <section>
           <!-- Brand Profile Section -->
           <div class="brand-profile">
-
             <div class="brand-background">
-              <img class="brand-background-img" src="/imgs/brand/banner.jpg" alt="Brand Background">
+              <img class="brand-background-img" src="/imgs/brand/banner.jpg" alt="Brand Background" />
             </div>
 
             <div class="brand-header">
-              <img class="brand-image" :src="'http://localhost:8085/api/v1/' + brand.img" :alt="brand.korName" />
+              <img class="brand-image" :src="config.public.apiBase + '/' + brand.img" :alt="brand.korName" />
               <div class="brand-info">
                 <h1 class="brand-name">{{ brand.engName }}</h1>
                 <p class="brand-subtitle">{{ brand.korName }}</p>
@@ -404,25 +402,18 @@ onUnmounted(() => {
             </div>
 
             <div class="tabs">
-              <span
-                class="tab"
-                :class="{ active: isDetailsVisible }"
-                @click="toggleDetails"
-              >
-                상세 설명
-              </span>
+              <span class="tab" :class="{ active: isDetailsVisible }" @click="toggleDetails"> 상세 설명 </span>
             </div>
 
             <div v-if="isDetailsVisible" class="brand-details">
               <p class="about-title">About</p>
               <p class="about-description">{{ brand.description }}</p>
             </div>
-            
           </div>
         </section>
 
-         <!-- 필터 태그 -->
-         <section
+        <!-- 필터 태그 -->
+        <section
           v-if="selectedFilters.category.length || selectedFilters.sub.length || selectedFilters.brand.length"
           class="filter-tags"
         >
@@ -509,7 +500,6 @@ onUnmounted(() => {
             </ul>
           </div>
         </section>
-
       </div>
     </div>
   </main>
@@ -558,12 +548,12 @@ onUnmounted(() => {
 }
 
 .brand-image {
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;        /* 원형으로 만들기 */
-    object-fit: cover;         /* 이미지가 원 안에 꽉 차도록 */
-    border: 0.5px solid var(--color-text-unselected);
-    background-color: var(--color-ui-white)
+  width: 70px;
+  height: 70px;
+  border-radius: 50%; /* 원형으로 만들기 */
+  object-fit: cover; /* 이미지가 원 안에 꽉 차도록 */
+  border: 0.5px solid var(--color-text-unselected);
+  background-color: var(--color-ui-white);
 }
 
 .brand-info {
@@ -587,18 +577,18 @@ onUnmounted(() => {
 }
 
 .favorite1 {
-    bottom: 10px;
-    right: 10px;
-    z-index: 2;
-    width: 28.42px;
-    height: 25px;
+  bottom: 10px;
+  right: 10px;
+  z-index: 2;
+  width: 28.42px;
+  height: 25px;
 }
 
 .favorite-btn1 {
-    background: none;
-    border: none;
-    padding: 0;
-    cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 .button {

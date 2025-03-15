@@ -8,6 +8,7 @@ import com.fupto.back.entity.RefreshToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,9 @@ import java.io.IOException;
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final JwtUtil jwtUtil;
     private final ObjectMapper objectMapper;
+
+    @Value("${fupto.frontend-url}")
+    private String frontendUrl;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -37,7 +41,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         // 프론트엔드로 리다이렉트
         String targetUrl = UriComponentsBuilder
-                .fromUriString("http://localhost:3000/oauth2/callback")
+                .fromUriString(frontendUrl + "/oauth2/callback")
                 .queryParam("token", token)
                 .queryParam("refreshToken", refreshToken.getToken())
                 .queryParam("userId", userDetails.getId())

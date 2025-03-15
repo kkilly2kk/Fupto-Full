@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 const userDetails = useUserDetails();
 const route = useRoute();
+const config = useRuntimeConfig();
 const isClient = ref(false);
 
 onMounted(() => {
@@ -22,7 +23,7 @@ const isActiveLink = (path, gender) => {
 };
 
 const redirect = () => {
-  window.location.href = "http://localhost:3000/boards/list";
+  window.location.href = `${config.public.frontendUrl}/boards/list`;
 };
 </script>
 

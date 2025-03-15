@@ -15,9 +15,9 @@ const board = ref({
   active: "",
 });
 
-const config = useRuntimeConfig();
 const route = useRoute();
 const router = useRouter();
+const config = useRuntimeConfig();
 const boardId = route.params.id;
 
 const userDetails = useUserDetails();
@@ -150,7 +150,7 @@ const handleDelete = async () => {
 
 const closeModal = () => {
   showModal.value = false;
-  window.location.href = "http://localhost:3000/boards/list";
+  window.location.href = `${config.public.frontendUrl}/boards/list`;
 };
 
 onMounted(async () => {

@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: "http://localhost:8085/api/v1",
+      frontendUrl: "http://localhost:3000",
     },
   },
   routeRules: {

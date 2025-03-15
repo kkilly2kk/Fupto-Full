@@ -5,6 +5,7 @@ import com.fupto.back.auth.handler.OAuth2FailureHandler;
 import com.fupto.back.auth.handler.OAuth2SuccessHandler;
 import com.fupto.back.auth.service.CustomOAuth2UserService;
 import com.fupto.back.auth.util.JwtUtil;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -31,6 +32,9 @@ public class SecurityConfig {
     private CustomOAuth2UserService customOAuth2UserService;
     private OAuth2SuccessHandler oauth2SuccessHandler;
     private OAuth2FailureHandler oauth2FailureHandler;
+
+    @Value("${fupto.frontend-url}")
+    private String frontendUrl;
 
 
     public SecurityConfig(JwtUtil jwtUtil,
@@ -93,7 +97,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfSource(){
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost","http://localhost:3000","http://localhost:3001"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost", frontendUrl,"http://localhost:3001"));
         config.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
 //        config.setAllowedHeaders(Arrays.asList("*"));
         config.addAllowedHeader("*");

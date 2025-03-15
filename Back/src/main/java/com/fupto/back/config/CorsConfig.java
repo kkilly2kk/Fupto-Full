@@ -22,14 +22,14 @@ public class CorsConfig {
                         .addResourceLocations("file:./" + uploadPath + "/");
             }
 
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOriginPatterns("*")
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
-//                        .allowCredentials(true)
-                        .allowedHeaders("*")
-                        .exposedHeaders("Authorization");
-            }
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOriginPatterns("*")
+//                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+////                        .allowCredentials(true)
+//                        .allowedHeaders("*")
+//                        .exposedHeaders("Authorization");
+//            }
         };
     }
 }

@@ -17,6 +17,7 @@ const brand = ref({
 
 const imageUrl = ref("");
 const errors = ref({});
+const config = useRuntimeConfig();
 
 const validateKorName = () => {
   if (!brand.value.korName) {
@@ -124,7 +125,7 @@ const handleSubmit = async () => {
     alert("브랜드가 성공적으로 등록되었습니다!");
     resetForm();
 
-    window.location.href = "http://localhost:3000/admin/brands/list";
+    window.location.href = `${config.public.frontendUrl}/admin/brands/list`;
   } catch (error) {
     console.error("Error:", error);
     alert(`브랜드 등록 중 오류가 발생했습니다: ${error.message}`);
@@ -147,7 +148,7 @@ const resetForm = () => {
 const handleCancel = () => {
   resetForm();
   // 취소 버튼을 클릭했을 때 리다이렉트
-  window.location.href = "http://localhost:3000/admin/brands/list";
+  window.location.href = `${config.public.frontendUrl}/admin/brands/list`;
 };
 </script>
 

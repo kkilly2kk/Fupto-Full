@@ -19,6 +19,7 @@ const endDateInput = ref(null);
 const searchForm = ref(null);
 
 const noDataMessage = ref("");
+const config = useRuntimeConfig();
 
 // 폼 데이터
 const formData = ref({
@@ -499,7 +500,7 @@ onMounted(() => {
                   <td class="brand-cell">
                     <div class="d-flex align-items-center">
                       <img
-                        :src="'http://localhost:8085/api/v1/' + b.img || 'https://via.placeholder.com/70'"
+                        :src="config.public.apiBase + '/' + b.img || 'https://via.placeholder.com/70'"
                         :alt="b.korName"
                         class="brand-img"
                       />
@@ -564,7 +565,7 @@ onMounted(() => {
           <p><strong>번호:</strong> {{ selectedBrand.id }}번</p>
           <p>
             <strong>브랜드 이미지:</strong><br /><img
-              :src="'http://localhost:8085/api/v1/' + selectedBrand.img || 'https://via.placeholder.com/70'"
+              :src="config.public.apiBase + '/' + selectedBrand.img || 'https://via.placeholder.com/70'"
               :alt="selectedBrand.korName"
             />
           </p>

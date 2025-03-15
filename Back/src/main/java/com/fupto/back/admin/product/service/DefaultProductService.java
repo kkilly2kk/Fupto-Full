@@ -38,6 +38,9 @@ public class DefaultProductService implements ProductService {
     @Value("${file.upload.path}")
     private String uploadPath;
 
+    @Value("${fupto.base-url}")
+    private String baseUrl;
+
     private ProductRepository productRepository;
     private CategoryRepository categoryRepository;
     private BrandRepository brandRepository;
@@ -718,7 +721,7 @@ public class DefaultProductService implements ProductService {
                 .filter(image -> image.getDisplayOrder() == 1)
                 .findFirst()
                 .ifPresent(image -> productListDto.setImagePath(
-                        "http://localhost:8085/api/v1/admin/products/" + product.getId() + "/image/1"
+                        baseUrl + "/admin/products/" + product.getId() + "/image/1"
                 ));
 
         return productListDto;

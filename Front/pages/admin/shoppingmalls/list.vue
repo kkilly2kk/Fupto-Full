@@ -6,6 +6,7 @@ useHead({
   link: [{ rel: "stylesheet", href: "/css/admin/shoppingmall-list.css" }],
 });
 
+const config = useRuntimeConfig();
 const shoppingmalls = ref([]);
 const totalElements = ref(0);
 const totalPages = ref(0);
@@ -89,27 +90,6 @@ const fetchshoppingmalls = async () => {
     console.error("Error fetching shoppingmalls:", error);
   }
 };
-
-// // API 호출
-// const fetchshoppingmalls = async () => {
-//   try {
-//     const response = await fetch(
-//       `http://localhost:8080/api/v1/admin/shoppingmalls?page=${currentPage.value}&size=${pageSize.value}&active=${formData.value.active}&nameType=${formData.value.nameType}&name=${formData.value.name}&dateType=${formData.value.dateType}&startDate=${formData.value.startDate}&endDate=${formData.value.endDate}`
-//     );
-//     const data = await response.json();
-//     console.log(data);
-//     shoppingmalls.value = data.shoppingmalls;
-//     totalElements.value = data.totalElements;
-//     totalPages.value = data.totalPages;
-//     if (shoppingmalls.value.length === 0) {
-//       noDataMessage.value = '데이터가 없습니다.';
-//     } else {
-//       noDataMessage.value = '';
-//     }
-//   } catch (error) {
-//     console.error("Error fetching shoppingmalls:", error);
-//   }
-// };
 
 // active 상태 변경
 const updateActive = async (shoppingmallId, active) => {
@@ -532,7 +512,7 @@ onMounted(() => {
                   <td class="shoppingmall-cell">
                     <div class="d-flex align-items-center">
                       <img
-                        :src="'http://localhost:8085/api/v1/' + sm.img || 'https://via.placeholder.com/70'"
+                        :src="config.public.apiBase + '/' + sm.img || 'https://via.placeholder.com/70'"
                         :alt="sm.korName"
                         class="shoppingmall-img"
                       />
@@ -599,7 +579,7 @@ onMounted(() => {
           <p><strong>번호:</strong> {{ selectedshoppingmall.id }}번</p>
           <p>
             <strong>쇼핑몰 이미지:</strong><br /><img
-              :src="'http://localhost:8085/api/v1/' + selectedshoppingmall.img || 'https://via.placeholder.com/70'"
+              :src="config.public.apiBase + '/' + selectedshoppingmall.img || 'https://via.placeholder.com/70'"
               :alt="selectedshoppingmall.korName"
             />
           </p>
