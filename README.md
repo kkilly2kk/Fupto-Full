@@ -79,6 +79,7 @@ npm run dev
 JWT_SECRET=your_jwt_secret
 DB_USERNAME=your_db_username
 DB_PASSWORD=your_db_password
+DB_URL=your_db_url
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 NAVER_CLIENT_ID=your_naver_client_id
