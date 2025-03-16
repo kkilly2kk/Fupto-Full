@@ -109,4 +109,6 @@ KAKAO_CLIENT_SECRET=your_kakao_client_secret
 각 서비스의 클라이언트 ID와 시크릿은 `application-dev.yml` 파일에서 설정해야 합니다.
 
 ## 라이선스
-이 프로젝트는 오픈소스이며, 자유롭게 사용 및 수정할 수 있습니다.
+이 프로젝트는 **MIT 라이선스**를 따릅니다.  
+자세한 사항은 [`LICENSE`](LICENSE) 파일을 참고하세요.
+
