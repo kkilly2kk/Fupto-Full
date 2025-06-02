@@ -1,11 +1,13 @@
 export function useAuthFetch(url, options = {}) {
-  const { token, refreshToken, refreshAccessToken } = useUserDetails();
+  const { token, refreshAccessToken } = useUserDetails();
   const config = useRuntimeConfig();
 
   options.headers = {
     ...options.headers,
     ...(token.value && { Authorization: `Bearer ${token.value}` }),
   };
+
+  options.credentials = "include"; // 쿠키를 포함한 요청
 
   const fullUrl = `${config.public.apiBase}${url}`;
   console.log("요청 URL:", fullUrl);
@@ -14,7 +16,7 @@ export function useAuthFetch(url, options = {}) {
   return useFetch(`${config.public.apiBase}${url}`, {
     ...options,
     async onResponseError({ response }) {
-      if (response.status === 401 && refreshToken.value) {
+      if (response.status === 401) {
         try {
           await refreshAccessToken();
           // 토큰 리프레시 후 새 토큰으로 헤더 업데이트

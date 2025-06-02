@@ -13,5 +13,5 @@ public class AuthResponseDto {
     private Long userId;
     private String provider;
     private String token;
-    private String refreshToken;
+//    private String refreshToken;
 }

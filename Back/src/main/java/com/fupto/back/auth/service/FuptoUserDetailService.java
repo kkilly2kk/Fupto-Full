@@ -5,6 +5,7 @@ import com.fupto.back.auth.entity.FuptoUserDetails;
 import com.fupto.back.auth.exception.UserAlreadyExistsException;
 import com.fupto.back.entity.Member;
 import com.fupto.back.repository.MemberRepository;
+import com.fupto.back.repository.RefreshTokenRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -27,11 +28,16 @@ public class FuptoUserDetailService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
     private MemberRepository memberRepository;
+    private RefreshTokenRepository refreshTokenRepository;
 
-    public FuptoUserDetailService(MemberRepository memberRepository, PasswordEncoder passwordEncoder, ModelMapper modelMapper) {
+    public FuptoUserDetailService(MemberRepository memberRepository,
+                                  PasswordEncoder passwordEncoder,
+                                  ModelMapper modelMapper,
+                                  RefreshTokenRepository refreshTokenRepository) {
         this.memberRepository = memberRepository;
         this.passwordEncoder = passwordEncoder;
         this.modelMapper = modelMapper;
+        this.refreshTokenRepository = refreshTokenRepository;
     }
 
     @Override
@@ -110,6 +116,14 @@ public class FuptoUserDetailService implements UserDetailsService {
         System.out.println("권한 확인:"+userDetails.getAuthorities());
 
         return userDetails;
+    }
+
+    @Transactional
+    public void logout(String refreshToken) {
+        if (refreshToken != null) {
+            refreshTokenRepository.findByToken(refreshToken)
+                    .ifPresent(token -> refreshTokenRepository.delete(token));
+        }
     }
 
     public boolean existsByUserId(String userId) {

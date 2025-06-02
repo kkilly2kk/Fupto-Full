@@ -4,12 +4,30 @@ export default () => {
   const email = useState("email", () => null);
   const provider = useState("provider", () => null);
   const roles = useState("roles", () => []);
-  const token = useState("token", () => []);
-  const refreshToken = useState("refreshToken", () => null);
+  const token = useState("token", () => null);
+  // const refreshToken = useState("refreshToken", () => null);
 
   const isAnonymous = () => {
     if (process.server) return true;
     return username.value === null;
+  };
+
+  const clearAuthState = () => {
+    id.value = null;
+    username.value = null;
+    email.value = null;
+    provider.value = null;
+    roles.value = [];
+    token.value = null;
+
+    if (process.client) {
+      localStorage.removeItem("id");
+      localStorage.removeItem("username");
+      localStorage.removeItem("email");
+      localStorage.removeItem("provider");
+      localStorage.removeItem("roles");
+      localStorage.removeItem("token");
+    }
   };
 
   const refreshAccessToken = async () => {
@@ -17,9 +35,7 @@ export default () => {
     try {
       const response = await $fetch(`${config.public.apiBase}/auth/refresh`, {
         method: "POST",
-        body: {
-          refreshToken: refreshToken.value,
-        },
+        credentials: "include", // 쿠키 포함하여 요청(리프레시 토큰이 쿠키에 있으므로)
       });
       token.value = response.accessToken;
 
@@ -29,7 +45,7 @@ export default () => {
       return response;
     } catch (error) {
       console.error("Token refresh failed:", error);
-      logout();
+      clearAuthState();
       throw error;
     }
   };
@@ -41,7 +57,7 @@ export default () => {
     provider.value = loginInfo.provider;
     roles.value = loginInfo.roles;
     token.value = loginInfo.token;
-    refreshToken.value = loginInfo.refreshToken;
+    // refreshToken.value = loginInfo.refreshToken;
 
     if (process.client) {
       localStorage.setItem("id", loginInfo.id);
@@ -50,7 +66,7 @@ export default () => {
       localStorage.setItem("provider", loginInfo.provider);
       localStorage.setItem("roles", JSON.stringify(loginInfo.roles)); //[]->"[]"
       localStorage.setItem("token", loginInfo.token);
-      localStorage.setItem("refreshToken", loginInfo.refreshToken);
+      // localStorage.setItem("refreshToken", loginInfo.refreshToken);
     }
   };
 
@@ -64,27 +80,24 @@ export default () => {
       provider.value = localStorage.getItem("provider");
       roles.value = JSON.parse(localStorage.getItem("roles")); //[ROLE_ADMIN]
       token.value = localStorage.getItem("token");
-      refreshToken.value = localStorage.getItem("refreshToken");
+      // refreshToken.value = localStorage.getItem("refreshToken");
     }
   };
 
-  const logout = () => {
-    id.value = null;
-    username.value = null;
-    email.value = null;
-    provider.value = null;
-    roles.value = [];
-    token.value = null;
-    refreshToken.value = null;
+  const logout = async () => {
+    clearAuthState();
 
     if (process.client) {
-      localStorage.removeItem("id");
-      localStorage.removeItem("username");
-      localStorage.removeItem("email");
-      localStorage.removeItem("provider");
-      localStorage.removeItem("roles");
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
+      try {
+        const config = useRuntimeConfig();
+        await $fetch(`${config.public.apiBase}/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+      } catch (error) {
+        // 로그아웃 API 실패해도 무시 (이미 상태는 정리됨)
+        console.warn("Logout API failed, but local state cleared:", error);
+      }
     }
   };
 
@@ -97,7 +110,7 @@ export default () => {
     provider,
     roles,
     token,
-    refreshToken,
+    // refreshToken,
     refreshAccessToken,
     isAnonymous,
     setAuthentication,
